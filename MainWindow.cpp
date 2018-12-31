@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include "SurfaceBuilder.h"
+#include <QStatusBar>
 
 
 
@@ -44,9 +45,25 @@ void MainWindow::changeEvent(QEvent *pEvent) {
 } // changeEvent
 
 
+void MainWindow::initBuilder() {
+
+	SurfaceBuilder *pBuilder = new SurfaceBuilder();
+	this->pUi->tabBuilder->layout()->addWidget(pBuilder);
+
+	connect(pBuilder, SIGNAL(debugMessage(QString)),
+			this, SLOT(onDebugMessage(QString)));
+
+	connect(pBuilder, SIGNAL(statusMessage(QString)),
+			this, SLOT(onStatusMessage(QString)));
+
+	pBuilder->initCells();
+
+} // initBuilder
+
+
 void MainWindow::onDebugMessage(const QString &sMessage) const {
 
-	QString sOut = "MainWindow:" + sMessage;
+	QString sOut = "MW:" + sMessage;
 
 	std::cout << sOut.toStdString() << std::endl;
 
@@ -55,15 +72,17 @@ void MainWindow::onDebugMessage(const QString &sMessage) const {
 } // onDebugMessage
 
 
+void MainWindow::onStatusMessage(const QString &sMessage) const {
+
+	this->pUi->statusBar->showMessage(sMessage);
+	this->pUi->statusBar->setToolTip(sMessage);
+
+} // onStatusMessage
+
+
 void MainWindow::run() {
 
-	SurfaceBuilder *pBuilder = new SurfaceBuilder();
-	this->pUi->tabBuilder->layout()->addWidget(pBuilder);
-
-	connect(pBuilder, SIGNAL(debugMessage(QString)),
-			this, SLOT(onDebugMessage(QString)));
-
-	pBuilder->initCells();
+	this->initBuilder();
 
 } // run
 

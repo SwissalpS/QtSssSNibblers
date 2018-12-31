@@ -36,17 +36,22 @@ private slots:
 	void on_buttonSave_clicked();
 	void on_buttonLoad_clicked();
 
+	void on_buttonSetStarts_clicked();
+
 protected:
-	AppSettings *pAS;
 	QList<QList<SurfaceCell*>> aRows;
-	quint8 ubLastColumn;
-	quint8 ubLastRow;
-	quint8 ubCurrentLevel;
+	AppSettings *pAS;
 	DialogLoad *pDialogLoad;
 	DialogSave *pDialogSave;
+	quint8 ubCurrentLevel;
+	quint8 ubDrawMode;
+	quint8 ubLastColumn;
+	quint8 ubLastRow;
 
 	void changeEvent(QEvent *pEvent);
 	virtual void clearSurface();
+	virtual void clearSurfaceOf(const quint8 ubState);
+	virtual void clearSurfaceOf(const QVector<quint8>aStates);
 	virtual void setCellState(SurfaceCell *pCell, const quint8 ubState);
 	virtual void setCellState(const quint8 ubColumn, const quint8 ubRow, const quint8 ubState);
 	virtual void toggleCell(SurfaceCell *pCell);
@@ -55,6 +60,8 @@ protected:
 protected slots:
 	virtual void dialogLoadFinished(const int iResult);
 	virtual void dialogSaveFinished(const int iResult);
+	virtual void onCellClickedForStartPoints(const quint8 ubColumn,
+											 const quint8 ubRow, SurfaceCell *pCell);
 
 public:
 	explicit SurfaceBuilder(QWidget *pParent = nullptr);
@@ -66,6 +73,7 @@ signals:
 	void cellClicked(const quint8 ubColumn, const quint8 ubRow,
 					 bool bShift) const;
 
+	void statusMessage(const QString &sMessage) const;
 	void debugMessage(const QString &sMessage) const;
 
 public slots:

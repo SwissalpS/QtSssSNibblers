@@ -29,6 +29,7 @@ private:
 
 protected:
 	void changeEvent(QEvent *pEvent);
+	virtual void initBuilder();
 
 public:
 	explicit MainWindow(QWidget *pParent = nullptr);
@@ -39,6 +40,7 @@ signals:
 
 public slots:
 	void onDebugMessage(const QString &sMessage) const;
+	void onStatusMessage(const QString &sMessage) const;
 
 	void run();
 

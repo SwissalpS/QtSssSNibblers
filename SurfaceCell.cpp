@@ -61,36 +61,88 @@ void SurfaceCell::changeEvent(QEvent *pEvent) {
 
 QColor SurfaceCell::colour() const {
 
-	// most common -> empty space
-	if (0u == this->ubState) return QColor(Qt::transparent); // black
+	switch (this->ubState) {
 
-	// also common -> walls
-	if (200u <= this->ubState) return QColor(Qt::white);
+		// most common -> empty space
+		case 0u: return QColor(Qt::transparent); // black
+		break;
 
-	// players
-	if (1u == this->ubState) return QColor(Qt::green);
-	if (2u == this->ubState) return QColor(Qt::red);
-	if (3u == this->ubState) return QColor(Qt::blue);
-	if (4u == this->ubState) return QColor(Qt::yellow);
-	if (5u == this->ubState) return QColor(Qt::darkGreen);
-	if (6u == this->ubState) return QColor(Qt::darkRed);
-	if (7u == this->ubState) return QColor(Qt::darkBlue);
-	if (8u == this->ubState) return QColor(Qt::darkYellow);
+		// also common -> walls
+		case 200u:
+		case 201u:
+		case 202u:
+		case 203u:
+		case 204u:
+		case 205u:
+		case 206u:
+		case 207u:
+		case 208u:
+		case 209u: return QColor(Qt::white); break;
 
-	// bonuses
-	// apples -> add length and advance level
-	if (100u == this->ubState) return QColor(Qt::cyan);
-	// cherries -> shorten
-	if (110u == this->ubState) return QColor(Qt::magenta);
-	// bananas -> add length
-	if (120u == this->ubState) return QColor(Qt::darkCyan);
-	// hearts -> add life
-	if (130u == this->ubState) return QColor(Qt::darkMagenta);
-	// diamonds -> reverse direction
-	if (140u == this->ubState) return QColor(Qt::gray);
+			// players
+		case 10u:
+		case 11u:
+		case 12u: return QColor(Qt::green);	break;
 
-	// default
-	return QColor(Qt::lightGray);
+		case 20u:
+		case 21u:
+		case 22u: return QColor(Qt::red); break;
+
+		case 30u:
+		case 31u:
+		case 32u: return QColor(Qt::blue); break;
+
+		case 40u:
+		case 41u:
+		case 42u: return QColor(Qt::yellow); break;
+
+		case 50u:
+		case 51u:
+		case 52u: return QColor(Qt::darkGreen); break;
+
+		case 60u:
+		case 61u:
+		case 62u: return QColor(Qt::darkRed); break;
+
+		case 70u:
+		case 71u:
+		case 72u: return QColor(Qt::darkBlue); break;
+
+		case 80u:
+		case 81u:
+		case 82u: return QColor(Qt::darkYellow); break;
+
+			// bonuses
+			// apples -> add length and advance level
+		case 100u:
+		case 101u:
+		case 102u:
+		case 103u: return QColor(Qt::cyan); break;
+			// cherries -> shorten
+		case 110u:
+		case 111u:
+		case 112u:
+		case 113u: return QColor(Qt::magenta); break;
+			// bananas -> add length
+		case 120u:
+		case 121u:
+		case 122u:
+		case 123u: return QColor(Qt::darkCyan); break;
+			// hearts -> add life
+		case 130u:
+		case 131u:
+		case 132u:
+		case 133u: return QColor(Qt::darkMagenta); break;
+			// diamonds -> reverse direction
+		case 140u:
+		case 141u:
+		case 142u:
+		case 143u: return QColor(Qt::gray); break;
+
+		default: return QColor(Qt::lightGray); break;
+
+	} // switch this->ubState
+
 	/*
 		color0,
 		color1,
