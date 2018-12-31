@@ -2,6 +2,9 @@
 #include "ui_SurfaceBuilder.h"
 
 #include "definitions.h"
+#include <QDir>
+#include <QFile>
+#include <QFileInfo>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 
@@ -13,9 +16,13 @@ namespace SwissalpS { namespace QtNibblers {
 
 SurfaceBuilder::SurfaceBuilder(QWidget *pParent) :
 	QFrame(pParent),
+	pAS(AppSettings::pAppSettings()),
 	pUi(new Ui::SurfaceBuilder),
 	ubLastColumn(0xFFu),
-	ubLastRow(0xFFu) {
+	ubLastRow(0xFFu),
+	ubCurrentLevel(0xFFu),
+	pDialogLoad(nullptr),
+	pDialogSave(nullptr) {
 
 	this->pUi->setupUi(this);
 
@@ -34,6 +41,7 @@ SurfaceBuilder::~SurfaceBuilder() {
 
 
 void SurfaceBuilder::changeEvent(QEvent *pEvent) {
+
 	QFrame::changeEvent(pEvent);
 
 	switch (pEvent->type()) {
@@ -48,6 +56,167 @@ void SurfaceBuilder::changeEvent(QEvent *pEvent) {
 	} // switch
 
 } // changeEvent
+
+
+void SurfaceBuilder::clearSurface() {
+
+	quint8 ubRows = this->aRows.count();
+	quint8 ubColumns = this->aRows.first().count();
+	quint8 ubX = 0u;
+	quint8 ubY = 0u;
+	QList<SurfaceCell*> aRow;
+	SurfaceCell *pCell;
+
+	for (ubY = 0u; ubY < ubRows; ubY++) {
+
+		aRow = this->aRows.at(ubY);
+
+		for (ubX = 0u; ubX < ubColumns; ubX++) {
+
+			pCell = aRow.at(ubX);
+			pCell->setState(0u);
+			//pCell->update();
+
+		} // loop columns
+
+	} // loop rows
+
+	this->update();
+
+} // clearSurface
+
+
+void SurfaceBuilder::dialogLoadFinished(const int iResult) {
+
+	// canceled
+	if (0 == iResult) return;
+
+	this->ubCurrentLevel = this->pDialogLoad->getSelected();
+
+	QString sPath = this->pAS->getDataPath() + "Level_"
+					+ QString::number(this->ubCurrentLevel);
+
+	QFileInfo oFI = QFileInfo(sPath);
+	if (oFI.exists() && oFI.isFile()) {
+
+		QFile oFile(sPath);
+		if (!oFile.open(QFile::ReadOnly)) {
+
+			this->onDebugMessage("KO: failed to open: " + sPath);
+
+			this->clearSurface();
+
+			return;
+
+		} // if failed to open
+
+		QByteArray aFile = oFile.readAll();
+
+		if ((SssS_Nibblers_Surface_Height * SssS_Nibblers_Surface_Width)
+				> aFile.length()) {
+
+			this->onDebugMessage("invalid length (too short)");
+
+			this->clearSurface();
+
+			return;
+
+		} // if invalid length
+
+		int iPos = 0u;
+		quint8 ubColumns = 0u;
+		quint8 ubRows = 0u;
+		QList<SurfaceCell*> aRow;
+		SurfaceCell *pCell;
+		quint8 ubState = 0u;
+
+		for (; ubRows < SssS_Nibblers_Surface_Height; ++ubRows) {
+
+			aRow = this->aRows.at(ubRows);
+
+			for (ubColumns = 0u; ubColumns < SssS_Nibblers_Surface_Width; ++ubColumns) {
+
+				pCell = aRow.at(ubColumns);
+
+				ubState = quint8(aFile.at(iPos));
+
+				this->setCellState(pCell, ubState);
+
+				iPos++;
+
+			} // loop columns
+
+		} // loop rows
+
+	} else {
+
+		this->clearSurface();
+
+	} // if file exists or not
+
+} // dialogLoadFinished
+
+
+void SurfaceBuilder::dialogSaveFinished(const int iResult) {
+
+	// canceled
+	if (0 == iResult) return;
+
+	this->ubCurrentLevel = this->pDialogSave->getSelected();
+
+	QString sPath = this->pAS->getDataPath();
+	QDir oDir(sPath);
+	if (!oDir.mkpath(sPath)) {
+
+		this->onDebugMessage("KO: failed to create path: " + sPath);
+		return;
+
+	} // if failed to create path or path not existing
+
+	sPath += "Level_" + QString::number(this->ubCurrentLevel);
+
+	QByteArray aOut;
+	quint8 ubColumns = 0u;
+	quint8 ubRows = 0u;
+	QList<SurfaceCell*> aRow;
+	SurfaceCell *pCell;
+	quint8 ubState = 0u;
+
+	for (; ubRows < SssS_Nibblers_Surface_Height; ++ubRows) {
+
+		aRow = this->aRows.at(ubRows);
+
+		for (ubColumns = 0u; ubColumns < SssS_Nibblers_Surface_Width; ++ubColumns) {
+
+			pCell = aRow.at(ubColumns);
+
+			ubState = pCell->getState();
+
+			aOut.append(char(ubState));
+
+		} // loop columns
+
+	} // loop rows
+
+	QFile oFile(sPath);
+	if (oFile.open(QFile::WriteOnly)) {
+
+		int iLen = oFile.write(aOut);
+
+		if (iLen < aOut.length()) {
+
+			this->onDebugMessage("KO: failed to write all. Only: "
+								 + QString::number(iLen));
+
+		} // if didn't write all
+
+	} else {
+
+		this->onDebugMessage("KO: failed to write to: " + sPath);
+
+	} // if opened or not
+
+} // dialogSaveFinished
 
 
 void SurfaceBuilder::initCells() {
@@ -91,32 +260,45 @@ void SurfaceBuilder::initCells() {
 
 void SurfaceBuilder::on_buttonClear_clicked() {
 
-	this->onDebugMessage("Clear clicked");
-
-	quint8 ubRows = this->aRows.count();
-	quint8 ubColumns = this->aRows.first().count();
-	quint8 ubX = 0u;
-	quint8 ubY = 0u;
-	QList<SurfaceCell*> aRow;
-	SurfaceCell *pCell;
-
-	for (ubY = 0u; ubY < ubRows; ubY++) {
-
-		aRow = this->aRows.at(ubY);
-
-		for (ubX = 0u; ubX < ubColumns; ubX++) {
-
-			pCell = aRow.at(ubX);
-			pCell->setState(0u);
-			//pCell->update();
-
-		} // loop columns
-
-	} // loop rows
-
-	this->update();
+	this->clearSurface();
 
 } // on_buttonClear_clicked
+
+
+void SurfaceBuilder::on_buttonLoad_clicked() {
+
+	if (nullptr == this->pDialogLoad) {
+
+		this->pDialogLoad = new DialogLoad(this);
+
+		connect(this->pDialogLoad, SIGNAL(finished(int)),
+			this, SLOT(dialogLoadFinished(int)));
+
+	} // if first time
+
+	this->pDialogLoad->setSelected(this->ubCurrentLevel);
+
+	this->pDialogLoad->exec();
+
+} // on_buttonLoad_clicked
+
+
+void SurfaceBuilder::on_buttonSave_clicked() {
+
+	if (nullptr == this->pDialogSave) {
+
+		this->pDialogSave = new DialogSave(this);
+
+		connect(this->pDialogSave, SIGNAL(finished(int)),
+			this, SLOT(dialogSaveFinished(int)));
+
+	} // if first time
+
+	this->pDialogSave->setSelected(this->ubCurrentLevel);
+
+	this->pDialogSave->exec();
+
+} // on_buttonSave_clicked
 
 
 void SurfaceBuilder::onCellClicked(const quint8 ubColumn, const quint8 ubRow,
@@ -194,6 +376,29 @@ void SurfaceBuilder::onCellClicked(const quint8 ubColumn, const quint8 ubRow,
 	this->ubLastRow = ubRow;
 
 } // onCellClicked
+
+
+void SurfaceBuilder::setCellState(SurfaceCell *pCell, const quint8 ubState) {
+
+	pCell->setState(ubState);
+	pCell->update();
+
+} // setCellState
+
+
+void SurfaceBuilder::setCellState(const quint8 ubColumn, const quint8 ubRow,
+								  const quint8 ubState) {
+
+	// check limits
+	if (ubRow >= this->aRows.count()) return;
+	if (ubColumn >= this->aRows.first().count()) return;
+
+	QList<SurfaceCell *> aRow = this->aRows.at(ubRow);
+	SurfaceCell *pCell = aRow.at(ubColumn);
+
+	this->setCellState(pCell, ubState);
+
+} // setCellState
 
 
 void SurfaceBuilder::toggleCell(SurfaceCell *pCell) {

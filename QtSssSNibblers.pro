@@ -24,19 +24,26 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += \
+	AppSettings.cpp \
+	DialogLoad.cpp \
+	DialogSave.cpp \
 	main.cpp \
 	MainWindow.cpp \
-    SurfaceBuilder.cpp \
-    SurfaceCell.cpp
+	SurfaceBuilder.cpp \
+	SurfaceCell.cpp
 
 HEADERS += \
-	definitions.h \ \
+	AppSettings.h \
+	definitions.h \
+	DialogLoad.h \
+	DialogSave.h \
 	MainWindow.h \
-    SurfaceBuilder.h \
-    SurfaceCell.h
+	SurfaceBuilder.h \
 	SurfaceCell.h
 
 FORMS += \
+	DialogLoad.ui \
+	DialogSave.ui \
 	MainWindow.ui \
-    SurfaceBuilder.ui \
-    SurfaceCell.ui
+	SurfaceBuilder.ui \
+	SurfaceCell.ui

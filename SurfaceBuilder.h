@@ -2,6 +2,9 @@
 #define SURFACEBUILDER_H
 
 #include <QFrame>
+#include "AppSettings.h"
+#include "DialogLoad.h"
+#include "DialogSave.h"
 #include "SurfaceCell.h"
 
 
@@ -28,14 +31,30 @@ class SurfaceBuilder : public QFrame {
 private:
 	Ui::SurfaceBuilder *pUi;
 
+private slots:
+	void on_buttonClear_clicked();
+	void on_buttonSave_clicked();
+	void on_buttonLoad_clicked();
+
 protected:
+	AppSettings *pAS;
 	QList<QList<SurfaceCell*>> aRows;
 	quint8 ubLastColumn;
 	quint8 ubLastRow;
+	quint8 ubCurrentLevel;
+	DialogLoad *pDialogLoad;
+	DialogSave *pDialogSave;
 
 	void changeEvent(QEvent *pEvent);
+	virtual void clearSurface();
+	virtual void setCellState(SurfaceCell *pCell, const quint8 ubState);
+	virtual void setCellState(const quint8 ubColumn, const quint8 ubRow, const quint8 ubState);
 	virtual void toggleCell(SurfaceCell *pCell);
 	virtual void toggleCell(const quint8 ubColumn, const quint8 ubRow);
+
+protected slots:
+	virtual void dialogLoadFinished(const int iResult);
+	virtual void dialogSaveFinished(const int iResult);
 
 public:
 	explicit SurfaceBuilder(QWidget *pParent = nullptr);
@@ -55,9 +74,6 @@ public slots:
 
 	inline void onDebugMessage(const QString &sMessage) const {
 		Q_EMIT this->debugMessage("SurfaceBuilder:" + sMessage); }
-
-private slots:
-	void on_buttonClear_clicked();
 }; // SurfaceBuilder
 
 
