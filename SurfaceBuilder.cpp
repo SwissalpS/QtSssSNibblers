@@ -57,7 +57,7 @@ void SurfaceBuilder::initCells() {
 	QList<SurfaceCell*> aRow;
 	SurfaceCell *pCell;
 	QHBoxLayout *pHBox;
-	quint8 ubState = 1u;
+	quint8 ubState = 0u;
 
 	for (; ubRows < SssS_Nibblers_Surface_Height; ++ubRows) {
 
@@ -79,7 +79,8 @@ void SurfaceBuilder::initCells() {
 
 		} // loop columns
 
-		ubState++;
+		//ubState++;
+
 		this->aRows.append(aRow);
 		this->pUi->surfaceRows->addItem(pHBox);
 
@@ -121,148 +122,73 @@ void SurfaceBuilder::on_buttonClear_clicked() {
 void SurfaceBuilder::onCellClicked(const quint8 ubColumn, const quint8 ubRow,
 								   bool bShift, SurfaceCell *pCell) {
 
-	this->onDebugMessage(QString::number(ubColumn) + " " + QString::number(ubRow)
-						 + " " + QString::number(this->aRows.count()));
 
 	// has a click already occured?
-	if (0xFF > ubLastColumn) {
+	if ((0xFF == this->ubLastColumn) || (!bShift)) {
 
-		if (bShift) {
+		this->toggleCell(pCell);
 
-			quint8 ubCountX;
-			quint8 ubCountY;
-			int iX;
-			int iY;
-			QList<SurfaceCell *> aRow;
-			SurfaceCell *pCell_;
+		this->ubLastColumn = ubColumn;
+		this->ubLastRow = ubRow;
 
-			if ((ubColumn == this->ubLastColumn) && (ubRow == this->ubLastRow)) {
+		return;
 
-				// same cell, skip and handle as simple click
+	} // if first click
 
-			} else if (ubColumn == this->ubLastColumn) {
+	qreal fX1 = this->ubLastColumn;
+	qreal fX2 = ubColumn;
+	qreal fY1 = this->ubLastRow;
+	qreal fY2 = ubRow;
 
-				// same column
+	// Bresenham's line algorithm
+	// adopted from: https://rosettacode.org/wiki/Bitmap/Bresenham%27s_line_algorithm#C.2B.2B
+	const bool bSteep = (qAbs(fY2 - fY1) > qAbs(fX2 - fX1));
 
-				if (ubRow < this->ubLastRow) {
+	if (bSteep) {
 
-					// bottom to top
-					for (iY = this->ubLastRow - 1u; iY >= ubRow; --iY) {
+		std::swap(fX1, fY1);
+		std::swap(fX2, fY2);
 
-						aRow = this->aRows.at(iY);
-						pCell_ = aRow.at(ubColumn);
-						this->toggleCell(pCell_);
+	} // if 'steep'
 
-					} // loop
+	if (fX1 > fX2) {
 
-				} else {
+		std::swap(fX1, fX2);
+		std::swap(fY1, fY2);
 
-					// top to bottom
-					for (ubCountY = this->ubLastRow + 1u; ubCountY <= ubRow; ++ubCountY) {
+	} // if reversed
 
-						aRow = this->aRows.at(ubCountY);
-						pCell_ = aRow.at(ubColumn);
-						this->toggleCell(pCell_);
+	const float fDx = fX2 - fX1;
+	const float fDy = qAbs(fY2 - fY1);
 
-					} // loop
+	float fError = fDx / 2.0f;
 
-				} // if ttb or btt
+	const int iStepY = (fY1 < fY2) ? 1 : -1;
+	int iY = int(fY1);
 
-				this->ubLastColumn = ubColumn;
-				this->ubLastRow = ubRow;
+	const int iMaxX = int(fX2);
 
-				return;
+	for (int iX = int(fX1); iX < iMaxX; iX++) {
 
-			} else if (ubRow == this->ubLastRow) {
+		if (bSteep) {
 
-				// same row
-				aRow = this->aRows.at(ubRow);
+			this->toggleCell(iY, iX);
 
-				if (ubColumn < this->ubLastColumn) {
+		} else {
 
-					// right to left {
-					for (iX = this->ubLastColumn - 1u; iX >= ubColumn; iX--) {
+			this->toggleCell(iX, iY);
 
-						pCell_ = aRow.at(iX);
-						this->toggleCell(pCell_);
+		} // if steep
 
-					} // loop
+		fError -= fDy;
+		if (fError < 0) {
 
-				} else {
+			iY += iStepY;
+			fError += fDx;
 
-					// left to right
-					for (ubCountX = this->ubLastColumn + 1u; ubCountX <= ubColumn; ++ubCountX) {
+		} // if error margin negative
 
-						pCell_ = aRow.at(ubCountX);
-						this->toggleCell(pCell_);
-
-					} // loop
-
-				} // if rtl or ltr
-
-				this->ubLastColumn = ubColumn;
-				this->ubLastRow = ubRow;
-
-				return;
-
-			} else {
-
-				// 'diagonal'
-//if (false) {
-				quint8 ubBiggerX = qMax(ubColumn, this->ubLastColumn);
-				quint8 ubBiggerY = qMax(ubRow, this->ubLastRow);
-				quint8 ubSmallerX = qMin(ubColumn, this->ubLastColumn);
-				quint8 ubSmallerY = qMin(ubRow, this->ubLastRow);
-				quint8 ubDiffX = ubBiggerX - ubSmallerX;
-				quint8 ubDiffY = ubBiggerY - ubSmallerY;
-				qreal fStepX = qreal(ubDiffX) / qreal(ubDiffY);
-				qreal fStepY = qreal(ubDiffY) / qreal(ubDiffX);
-				qreal ubSteps = qMax(ubDiffX, ubDiffY);
-
-				quint8 ubX = ubSmallerX;
-				quint8 ubY = ubSmallerY;
-				ubCountX = 0u;
-
-				this->onDebugMessage(" diffX: " + QString::number(ubDiffX) +
-									 " diffY: " + QString::number(ubDiffY) +
-									 " stepX: " + QString::number(fStepX) +
-									 " stepY: " + QString::number(fStepY));
-
-				for (; ubSteps > 0u; ubSteps--) {
-
-					this->toggleCell(ubX, ubY);
-
-//					aRow = this->aRows.at(ubY);
-//					pCell_ = aRow.at(ubX);
-
-//					this->toggleCell(pCell_);
-
-					ubCountX++;
-					ubX = ubSmallerX + quint8(qreal(ubCountX) * fStepX);
-					ubY = ubSmallerY + quint8(qreal(ubCountX) * fStepY);
-
-				} // loop
-
-				this->ubLastColumn = ubColumn;
-				this->ubLastRow = ubRow;
-
-				return;
-//} // if false
-			} // if same cell, same column, same row or diagonal
-
-		} // if shift was pressed
-
-	} // if not first click
-
-	// check limits just in case
-	//if (ubRow >= this->aRows.count()) return;
-	//QList<SurfaceCell*> aRow = this->aRows.at(ubRow);
-
-	//if (ubColumn >= aRow.count()) return;
-	//SurfaceCell *pCell = aRow.at(ubColumn);
-
-	toggleCell(pCell);
-	//this->update();
+	} // loop
 
 	this->ubLastColumn = ubColumn;
 	this->ubLastRow = ubRow;
