@@ -15,51 +15,17 @@ namespace SwissalpS { namespace QtNibblers {
 
 AppSettings *AppSettings::pSingelton = 0;
 
-const QString AppSettings::sSettingBTautostart = "autoStartScanning";
-const QString AppSettings::sSettingChartTab = "chartTabIndex";
-const QString AppSettings::sSettingChartView = "chartViewIndex";
+const QString AppSettings::sSettingBuilderLastLevel = "builderLastLevel";
 const QString AppSettings::sSettingPowerUser = "PU";
-const QString AppSettings::sSettingTargetMAC = "targetMAC";
-const QString AppSettings::sSettingWindowPositionCharts = "windowPositionCharts";
-const QString AppSettings::sSettingWindowPositionDash = "windowPositionDash";
-const QString AppSettings::sSettingWindowPositionDevices = "windowPositionDevices";
-const QString AppSettings::sSettingWindowPositionExplorer = "windowPositionExplorer";
-const QString AppSettings::sSettingWindowPositionLobby = "windowPositionLobby";
-const QString AppSettings::sSettingWindowPositionMain = "windowPositionDebug";
-const QString AppSettings::sSettingWindowShowCharts = "windowShowCharts";
-const QString AppSettings::sSettingWindowShowDash = "windowShowDash";
-const QString AppSettings::sSettingWindowShowDevices = "windowShowDevices";
-const QString AppSettings::sSettingWindowShowExplorer = "windowShowExplorer";
-const QString AppSettings::sSettingWindowShowMain = "windowShowDebug";
-const QString AppSettings::sSettingWindowSizeCharts = "windowSizeCharts";
-const QString AppSettings::sSettingWindowSizeDash = "windowSizeDash";
-const QString AppSettings::sSettingWindowSizeDevices = "windowSizeDevices";
-const QString AppSettings::sSettingWindowSizeExplorer = "windowSizeExplorer";
-const QString AppSettings::sSettingWindowSizeLobby = "windowSizeLobby";
-const QString AppSettings::sSettingWindowSizeMain = "windowSizeDebug";
+const QString AppSettings::sSettingTabMain = "mainTabIndex";
+const QString AppSettings::sSettingWindowMainPosition = "windowMainPosition";
+const QString AppSettings::sSettingWindowMainSize = "windowMainSize";
 
-const bool AppSettings::bSettingBTautostartDefault = true;
-const qint8 AppSettings::iSettingChartTabDefault = 0;
-const qint8 AppSettings::iSettingChartViewDefault = 0;
+const quint8 AppSettings::ubSettingBuilderLastLevelDefault = 0x0u;
 const bool AppSettings::bSettingPowerUserDefault = false;
-const QString AppSettings::sSettingTargetMACdefault = "";
-const QPoint AppSettings::sSettingWindowPositionChartsDefault = QPoint(1821, 151);
-const QPoint AppSettings::sSettingWindowPositionDashDefault = QPoint(1780, 208);
-const QPoint AppSettings::sSettingWindowPositionDevicesDefault = QPoint(222, 94);
-const QPoint AppSettings::sSettingWindowPositionExplorerDefault = QPoint(1815, 178);
-const QPoint AppSettings::sSettingWindowPositionLobbyDefault = QPoint(94, 94);
-const QPoint AppSettings::sSettingWindowPositionMainDefault = QPoint(1788, 28);
-const bool AppSettings::bSettingWindowShowChartsDefault = false;
-const bool AppSettings::bSettingWindowShowDashDefault = true;
-const bool AppSettings::bSettingWindowShowDevicesDefault = true;
-const bool AppSettings::bSettingWindowShowExplorerDefault = false;
-const bool AppSettings::bSettingWindowShowMainDefault = false;
-const QSize AppSettings::sSettingWindowSizeChartsDefault = QSize(800, 600);
-const QSize AppSettings::sSettingWindowSizeDashDefault = QSize(800, 560);
-const QSize AppSettings::sSettingWindowSizeDevicesDefault = QSize(648, 316);
-const QSize AppSettings::sSettingWindowSizeExplorerDefault = QSize(800, 483);
-const QSize AppSettings::sSettingWindowSizeLobbyDefault = QSize(98, 152);
-const QSize AppSettings::sSettingWindowSizeMainDefault = QSize(790, 771);
+const qint8 AppSettings::iSettingTabMainDefault = 1u;
+const QPoint AppSettings::sSettingWindowMainPositionDefault = QPoint(94, 94);
+const QSize AppSettings::sSettingWindowMainSizeDefault = QSize(800, 600);
 
 
 AppSettings::AppSettings(QObject *parent) :
@@ -81,27 +47,10 @@ AppSettings::AppSettings(QObject *parent) :
 
 	QSettings *pS = this->pSettings;
 
-	//pS->setValue(sSettingBTautostart, this->get(sSettingBTautostart));
-	//pS->setValue(sSettingChartTab, this->get(sSettingChartTab));
-	//pS->setValue(sSettingChartView, this->get(sSettingChartView));
-	//pS->setValue(sSettingTargetMAC, this->get(sSettingTargetMAC));
-	//pS->setValue(sSettingWindowPositionCharts, this->get(sSettingWindowPositionCharts));
-	//pS->setValue(sSettingWindowPositionDash, this->get(sSettingWindowPositionDash));
-	//pS->setValue(sSettingWindowPositionDevices, this->get(sSettingWindowPositionDevices));
-	//pS->setValue(sSettingWindowPositionExplorer, this->get(sSettingWindowPositionExplorer));
-	//pS->setValue(sSettingWindowPositionLobby, this->get(sSettingWindowPositionLobby));
-	//pS->setValue(sSettingWindowPositionMain, this->get(sSettingWindowPositionMain));
-	//pS->setValue(sSettingWindowShowCharts, this->get(sSettingWindowShowCharts));
-	//pS->setValue(sSettingWindowShowDash, this->get(sSettingWindowShowDash));
-	//pS->setValue(sSettingWindowShowDevices, this->get(sSettingWindowShowDevices));
-	//pS->setValue(sSettingWindowShowExplorer, this->get(sSettingWindowShowExplorer));
-	//pS->setValue(sSettingWindowShowMain, this->get(sSettingWindowShowMain));
-	//pS->setValue(sSettingWindowSizeCharts, this->get(sSettingWindowSizeCharts));
-	//pS->setValue(sSettingWindowSizeDash, this->get(sSettingWindowSizeDash));
-	//pS->setValue(sSettingWindowSizeDevices, this->get(sSettingWindowSizeDevices));
-	//pS->setValue(sSettingWindowSizeExplorer, this->get(sSettingWindowSizeExplorer));
-	//pS->setValue(sSettingWindowSizeLobby, this->get(sSettingWindowSizeLobby));
-	//pS->setValue(sSettingWindowSizeMain, this->get(sSettingWindowSizeMain));
+	pS->setValue(sSettingBuilderLastLevel, this->get(sSettingBuilderLastLevel));
+	pS->setValue(sSettingTabMain, this->get(sSettingTabMain));
+	pS->setValue(sSettingWindowMainPosition, this->get(sSettingWindowMainPosition));
+	pS->setValue(sSettingWindowMainSize, this->get(sSettingWindowMainSize));
 
 	this->pSettings->sync();
 
@@ -165,105 +114,25 @@ void AppSettings::drop() {
 
 QVariant AppSettings::get(const QString sKey) const {
 
-	if (sSettingBTautostart == sKey) {
+	if (sSettingBuilderLastLevel == sKey) {
 
-		return this->pSettings->value(sKey, bSettingBTautostartDefault);
+		return this->pSettings->value(sKey, ubSettingBuilderLastLevelDefault);
 
-	} else if (sSettingChartTab == sKey) {
+	} else if (sSettingTabMain == sKey) {
 
-		this->onDebugMessage("@Coder: You may want to use getChartTab(QString sMAC)");
+		return this->pSettings->value(sKey, iSettingTabMainDefault);
 
-		return this->pSettings->value(sKey, "{}");
+	} else if (sSettingWindowMainPosition == sKey) {
 
-	} else if (sSettingChartView == sKey) {
-
-		this->onDebugMessage("@Coder: You may want to use getChartView(QString sMAC)");
+		this->onDebugMessage("@Coder: You may want to use getWindowMainPosition()");
 
 		return this->pSettings->value(sKey, "{}");
 
-	} else if (sSettingTargetMAC == sKey) {
+	} else if (sSettingWindowMainSize == sKey) {
 
-		return this->pSettings->value(sKey, sSettingTargetMACdefault);
+		this->onDebugMessage("@Coder: You may want to use getWindowMainSize()");
 
-	} else if (sSettingWindowPositionCharts == sKey) {
-
-		this->onDebugMessage("@Coder: You may want to use getWindowPositionCharts(QString sMAC)");
-
-		return this->pSettings->value(sKey, "{}");
-
-	} else if (sSettingWindowPositionDash == sKey) {
-
-		this->onDebugMessage("@Coder: You may want to use getWindowPositionDash(QString sMAC)");
-
-		return this->pSettings->value(sKey, "{}");
-
-	} else if (sSettingWindowPositionDevices == sKey) {
-
-		return this->pSettings->value(sKey, sSettingWindowPositionDevicesDefault);
-
-	} else if (sSettingWindowPositionExplorer == sKey) {
-
-		return this->pSettings->value(sKey, sSettingWindowPositionExplorerDefault);
-
-	} else if (sSettingWindowPositionLobby == sKey) {
-
-		return this->pSettings->value(sKey, sSettingWindowPositionLobbyDefault);
-
-	} else if (sSettingWindowPositionMain == sKey) {
-
-		return this->pSettings->value(sKey, sSettingWindowPositionMainDefault);
-
-	} else if (sSettingWindowShowCharts == sKey) {
-
-		this->onDebugMessage("@Coder: You may want to use getShowCharts(QString sMAC)");
-
-		return this->pSettings->value(sKey, "{}");
-
-	} else if (sSettingWindowShowDash == sKey) {
-
-		this->onDebugMessage("@Coder: You may want to use getShowDash(QString sMAC)");
-
-		return this->pSettings->value(sKey, "{}");
-
-	} else if (sSettingWindowShowDevices == sKey) {
-
-		return this->pSettings->value(sKey, bSettingWindowShowDevicesDefault);
-
-	} else if (sSettingWindowShowExplorer == sKey) {
-
-		return this->pSettings->value(sKey, bSettingWindowShowExplorerDefault);
-
-	} else if (sSettingWindowShowMain == sKey) {
-
-		return this->pSettings->value(sKey, bSettingWindowShowMainDefault);
-
-	} else if (sSettingWindowSizeCharts == sKey) {
-
-		this->onDebugMessage("@Coder: You may want to use getWindowSizeCharts(QString sMAC)");
-
-		return this->pSettings->value(sKey, "{}");
-
-	} else if (sSettingWindowSizeDash == sKey) {
-
-		this->onDebugMessage("@Coder: You may want to use getWindowSizeDash(QString sMAC)");
-
-		return this->pSettings->value(sKey, "{}");
-
-	} else if (sSettingWindowSizeDevices == sKey) {
-
-		return this->pSettings->value(sKey, sSettingWindowSizeDevicesDefault);
-
-	} else if (sSettingWindowSizeExplorer == sKey) {
-
-		return this->pSettings->value(sKey, sSettingWindowSizeExplorerDefault);
-
-	} else if (sSettingWindowSizeLobby == sKey) {
-
-		return this->pSettings->value(sKey, sSettingWindowSizeLobbyDefault);
-
-	} else if (sSettingWindowSizeMain == sKey) {
-
-		return this->pSettings->value(sKey, sSettingWindowSizeMainDefault);
+		return this->pSettings->value(sKey, sSettingWindowMainSizeDefault);
 
 	} else {
 
@@ -274,51 +143,11 @@ QVariant AppSettings::get(const QString sKey) const {
 } // get
 
 
-int AppSettings::getChartTab(const QString sMAC) const {
-
-	const QJsonObject oJo = this->pSettings->value(
-						  sSettingChartTab, "{}").toJsonObject();
-
-	return oJo.value(sMAC).toInt(iSettingChartTabDefault);
-
-} // getChartTab
-
-
-int AppSettings::getChartView(const QString sMAC) const {
-
-	const QJsonObject oJo = this->pSettings->value(
-						  sSettingChartView, "{}").toJsonObject();
-
-	return oJo.value(sMAC).toInt(iSettingChartViewDefault);
-
-} // getChartView
-
-
 QString AppSettings::getDataPath() const {
 
 	return this->sPathDataBase;
 
 } // getDataPath
-
-
-bool AppSettings::getShowCharts(const QString sMAC) const {
-
-	const QJsonObject oJo = this->pSettings->value(
-						  sSettingWindowShowCharts, "{}").toJsonObject();
-
-	return oJo.value(sMAC).toBool(bSettingWindowShowChartsDefault);
-
-} // getShowCharts
-
-
-bool AppSettings::getShowDash(const QString sMAC) const {
-
-	const QJsonObject oJo = this->pSettings->value(
-						  sSettingWindowShowDash, "{}").toJsonObject();
-
-	return oJo.value(sMAC).toBool(bSettingWindowShowDashDefault);
-
-} // getShowDash
 
 
 QSettings *AppSettings::getSettings() const {
@@ -335,176 +164,56 @@ void AppSettings::setSettings(QSettings *pQSettings) {
 } // setSettings
 
 
-QPoint AppSettings::getWindowPositionCharts(const QString sMAC) const {
+QPoint AppSettings::getWindowMainPosition() const {
 
 	const QJsonObject oJo = this->pSettings->value(
-						  sSettingWindowPositionCharts, "{}").toJsonObject();
+						  sSettingWindowMainPosition, "{}").toJsonObject();
 
-	const QJsonObject oJp = oJo.value(sMAC).toObject();
-	const int x = oJp.value("x").toDouble(sSettingWindowPositionChartsDefault.x());
-	const int y = oJp.value("y").toDouble(sSettingWindowPositionChartsDefault.y());
+	const int x = oJo.value("x").toDouble(sSettingWindowMainPositionDefault.x());
+	const int y = oJo.value("y").toDouble(sSettingWindowMainPositionDefault.y());
 
 	return QPoint(x, y);
 
-} // getWindowPositionCharts
+} // getWindowMainPosition
 
 
-QPoint AppSettings::getWindowPositionDash(const QString sMAC) const {
-
-	const QJsonObject oJo = this->pSettings->value(
-						  sSettingWindowPositionDash, "{}").toJsonObject();
-
-	const QJsonObject oJp = oJo.value(sMAC).toObject();
-	const int x = oJp.value("x").toDouble(sSettingWindowPositionDashDefault.x());
-	const int y = oJp.value("y").toDouble(sSettingWindowPositionDashDefault.y());
-
-	return QPoint(x, y);
-
-} // getWindowPositionDash
-
-
-QSize AppSettings::getWindowSizeCharts(const QString sMAC) const {
+QSize AppSettings::getWindowMainSize() const {
 
 	const QJsonObject oJo = this->pSettings->value(
-						  sSettingWindowSizeCharts, "{}").toJsonObject();
+						  sSettingWindowMainSize, "{}").toJsonObject();
 
-	const QJsonObject oJs = oJo.value(sMAC).toObject();
-	const int w = oJs.value("w").toDouble(sSettingWindowSizeChartsDefault.width());
-	const int h = oJs.value("h").toDouble(sSettingWindowSizeChartsDefault.height());
+	const int w = oJo.value("w").toDouble(sSettingWindowMainSizeDefault.width());
+	const int h = oJo.value("h").toDouble(sSettingWindowMainSizeDefault.height());
 
 	return QSize(w, h);
 
-} // getWindowSizeCharts
+} // getWindowMainSize
 
 
-QSize AppSettings::getWindowSizeDash(const QString sMAC) const {
-
-	const QJsonObject oJo = this->pSettings->value(
-						  sSettingWindowSizeDash, "{}").toJsonObject();
-
-	const QJsonObject oJs = oJo.value(sMAC).toObject();
-	const int w = oJs.value("w").toDouble(sSettingWindowSizeDashDefault.width());
-	const int h = oJs.value("h").toDouble(sSettingWindowSizeDashDefault.height());
-
-	return QSize(w, h);
-
-} // getWindowSizeDash
-
-
-void AppSettings::setChartTab(const int iPos, const QString sMAC) const {
+void AppSettings::setWindowMainPosition(const QPoint oPos) {
 
 	QJsonObject oJo = this->pSettings->value(
-						  sSettingChartTab, "{}").toJsonObject();
+						  sSettingWindowMainPosition, "{}").toJsonObject();
 
-	oJo.insert(sMAC, iPos);
+	oJo.insert("x", oPos.x());
+	oJo.insert("y", oPos.y());
 
-	this->pSettings->setValue(sSettingChartTab, oJo);
+	this->pSettings->setValue(sSettingWindowMainPosition, oJo);
 
-} // setChartTab
-
-
-void AppSettings::setChartView(const int iPos, const QString sMAC) const {
-
-	QJsonObject oJo = this->pSettings->value(
-						  sSettingChartView, "{}").toJsonObject();
-
-	oJo.insert(sMAC, iPos);
-
-	this->pSettings->setValue(sSettingChartView, oJo);
-
-} // setChartView
+} // setWindowMainPosition
 
 
-void AppSettings::setShowCharts(const bool bShow, const QString sMAC) {
+void AppSettings::setWindowMainSize(const QSize oSize) {
 
 	QJsonObject oJo = this->pSettings->value(
-						  sSettingWindowShowCharts, "{}").toJsonObject();
+						  sSettingWindowMainSize, "{}").toJsonObject();
 
-	oJo.insert(sMAC, bShow);
+	oJo.insert("w", oSize.width());
+	oJo.insert("h", oSize.height());
 
-	this->pSettings->setValue(sSettingWindowShowCharts, oJo);
+	this->pSettings->setValue(sSettingWindowMainSize, oJo);
 
-} // setShowCharts
-
-
-void AppSettings::setShowDash(const bool bShow, const QString sMAC) {
-
-	QJsonObject oJo = this->pSettings->value(
-						  sSettingWindowShowDash, "{}").toJsonObject();
-
-	oJo.insert(sMAC, bShow);
-
-	this->pSettings->setValue(sSettingWindowShowDash, oJo);
-
-} // setShowDash
-
-
-void AppSettings::setWindowPositionCharts(const QPoint oPos, const QString sMAC) {
-
-	QJsonObject oJo = this->pSettings->value(
-						  sSettingWindowPositionCharts, "{}").toJsonObject();
-
-	QJsonObject oJp = oJo.value(sMAC).toObject();
-
-	oJp.insert("x", oPos.x());
-	oJp.insert("y", oPos.y());
-
-	oJo.insert(sMAC, oJp);
-
-	this->pSettings->setValue(sSettingWindowPositionCharts, oJo);
-
-} // setWindowPositionCharts
-
-
-void AppSettings::setWindowPositionDash(const QPoint oPos, const QString sMAC) {
-
-	QJsonObject oJo = this->pSettings->value(
-						  sSettingWindowPositionDash, "{}").toJsonObject();
-
-	QJsonObject oJp = oJo.value(sMAC).toObject();
-
-	oJp.insert("x", oPos.x());
-	oJp.insert("y", oPos.y());
-
-	oJo.insert(sMAC, oJp);
-
-	this->pSettings->setValue(sSettingWindowPositionDash, oJo);
-
-} // setWindowPositionDash
-
-
-void AppSettings::setWindowSizeCharts(const QSize oSize, const QString sMAC) {
-
-	QJsonObject oJo = this->pSettings->value(
-						  sSettingWindowSizeCharts, "{}").toJsonObject();
-
-	QJsonObject oJs = oJo.value(sMAC).toObject();
-
-	oJs.insert("w", oSize.width());
-	oJs.insert("h", oSize.height());
-
-	oJo.insert(sMAC, oJs);
-
-	this->pSettings->setValue(sSettingWindowShowCharts, oJo);
-
-} // setWindowSizeCharts
-
-
-void AppSettings::setWindowSizeDash(const QSize oSize, const QString sMAC) {
-
-	QJsonObject oJo = this->pSettings->value(
-						  sSettingWindowSizeDash, "{}").toJsonObject();
-
-	QJsonObject oJs = oJo.value(sMAC).toObject();
-
-	oJs.insert("w", oSize.width());
-	oJs.insert("h", oSize.height());
-
-	oJo.insert(sMAC, oJs);
-
-	this->pSettings->setValue(sSettingWindowShowDash, oJo);
-
-} // setWindowSizeDash
+} // setWindowMainSize
 
 
 

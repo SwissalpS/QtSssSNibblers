@@ -29,6 +29,8 @@ SurfaceBuilder::SurfaceBuilder(QWidget *pParent) :
 
 	this->aRows.clear();
 
+	this->ubCurrentLevel = this->pAS->get(AppSettings::sSettingBuilderLastLevel).toUInt();
+
 } // construct
 
 
@@ -136,6 +138,8 @@ void SurfaceBuilder::dialogLoadFinished(const int iResult) {
 	if (0 == iResult) return;
 
 	this->ubCurrentLevel = this->pDialogLoad->getSelected();
+	this->pAS->setValue(AppSettings::sSettingBuilderLastLevel,
+						this->ubCurrentLevel);
 
 	QString sPath = this->pAS->getDataPath() + "Level_"
 					+ QString::number(this->ubCurrentLevel);
@@ -207,6 +211,8 @@ void SurfaceBuilder::dialogSaveFinished(const int iResult) {
 	if (0 == iResult) return;
 
 	this->ubCurrentLevel = this->pDialogSave->getSelected();
+	this->pAS->setValue(AppSettings::sSettingBuilderLastLevel,
+						this->ubCurrentLevel);
 
 	QString sPath = this->pAS->getDataPath();
 	QDir oDir(sPath);

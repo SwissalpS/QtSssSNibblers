@@ -36,52 +36,19 @@ private:
 	//AppSettings& operator=(const AppSettings &other);
 
 public:
-	static const QString sSettingBTautostart;
-	static const QString sSettingChartTab;
-	static const QString sSettingChartView;
+	static const QString sSettingBuilderLastLevel;
 	static const QString sSettingPowerUser;
-	static const QString sSettingWindowShowCharts;
-	static const QString sSettingWindowShowDash;
-	static const QString sSettingWindowShowDevices;
-	static const QString sSettingWindowShowExplorer;
-	static const QString sSettingWindowShowMain;
-	static const QString sSettingTargetMAC;
-	static const QString sSettingTargetMAChey;
-	static const QString sSettingWindowSizeCharts;
-	static const QString sSettingWindowPositionCharts;
-	static const QString sSettingWindowSizeDash;
-	static const QString sSettingWindowPositionDash;
-	static const QString sSettingWindowSizeDevices;
-	static const QString sSettingWindowPositionDevices;
-	static const QString sSettingWindowSizeExplorer;
-	static const QString sSettingWindowPositionExplorer;
-	static const QString sSettingWindowSizeLobby;
-	static const QString sSettingWindowPositionLobby;
-	static const QString sSettingWindowSizeMain;
-	static const QString sSettingWindowPositionMain;
+	static const QString sSettingTabMain;
+	static const QString sSettingWindowMainPosition;
+	static const QString sSettingWindowMainSize;
 
-	static const bool bSettingBTautostartDefault;
-	static const qint8 iSettingChartTabDefault;
-	static const qint8 iSettingChartViewDefault;
+
+	static const quint8 ubSettingBuilderLastLevelDefault;
 	static const bool bSettingPowerUserDefault;
-	static const bool bSettingWindowShowChartsDefault;
-	static const bool bSettingWindowShowDashDefault;
-	static const bool bSettingWindowShowDevicesDefault;
-	static const bool bSettingWindowShowExplorerDefault;
-	static const bool bSettingWindowShowMainDefault;
-	static const QString sSettingTargetMACdefault;
-	static const QSize sSettingWindowSizeChartsDefault;
-	static const QPoint sSettingWindowPositionChartsDefault;
-	static const QSize sSettingWindowSizeDashDefault;
-	static const QPoint sSettingWindowPositionDashDefault;
-	static const QSize sSettingWindowSizeDevicesDefault;
-	static const QPoint sSettingWindowPositionDevicesDefault;
-	static const QSize sSettingWindowSizeExplorerDefault;
-	static const QPoint sSettingWindowPositionExplorerDefault;
-	static const QSize sSettingWindowSizeLobbyDefault;
-	static const QPoint sSettingWindowPositionLobbyDefault;
-	static const QSize sSettingWindowSizeMainDefault;
-	static const QPoint sSettingWindowPositionMainDefault;
+	static const qint8 iSettingTabMainDefault;
+	static const QPoint sSettingWindowMainPositionDefault;
+	static const QSize sSettingWindowMainSizeDefault;
+
 
 	// destroy singelton
 	static void drop();
@@ -90,32 +57,15 @@ public:
 	virtual ~AppSettings();
 
 	QVariant get(const QString sKey) const;
-	int getChartTab(const QString sMAC) const;
-	int getChartView(const QString sMAC) const;
 	QString getDataPath() const;
-	bool getShowCharts(const QString sMAC) const;
-	bool getShowDash(const QString sMAC) const;
-
 	QSettings *getSettings() const;
 	void setSettings(QSettings *pQSettings);
 
-	QPoint getWindowPositionCharts(const QString sMAC) const;
-	QPoint getWindowPositionDash(const QString sMAC) const;
+	QPoint getWindowMainPosition() const;
+	QSize getWindowMainSize() const;
 
-	QSize getWindowSizeCharts(const QString sMAC) const;
-	QSize getWindowSizeDash(const QString sMAC) const;
-
-	void setChartTab(const int iPos, const QString sMAC) const;
-	void setChartView(const int iPos, const QString sMAC) const;
-
-	void setShowCharts(const bool bShow, const QString sMAC);
-	void setShowDash(const bool bShow, const QString sMAC);
-
-	void setWindowPositionCharts(const QPoint oPos, const QString sMAC);
-	void setWindowPositionDash(const QPoint oPos, const QString sMAC);
-
-	void setWindowSizeCharts(const QSize oSize, const QString sMAC);
-	void setWindowSizeDash(const QSize oSize, const QString sMAC);
+	void setWindowMainPosition(const QPoint oPos);
+	void setWindowMainSize(const QSize oSize);
 
 	inline void setValue(const QString &sKey, const QVariant &mValue) {
 		this->pSettings->setValue(sKey, mValue); }

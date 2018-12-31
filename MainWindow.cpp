@@ -13,7 +13,8 @@ namespace SwissalpS { namespace QtNibblers {
 
 MainWindow::MainWindow(QWidget *pParent) :
 	QMainWindow(pParent),
-	pUi(new Ui::MainWindow) {
+	pUi(new Ui::MainWindow),
+	pAS(AppSettings::pAppSettings()) {
 
 	this->pUi->setupUi(this);
 
@@ -43,6 +44,17 @@ void MainWindow::changeEvent(QEvent *pEvent) {
 	} // switch type
 
 } // changeEvent
+
+
+void MainWindow::closeEvent(QCloseEvent *pEvent) {
+	Q_UNUSED(pEvent)
+
+	this->pAS->setWindowMainPosition(this->pos());
+	this->pAS->setWindowMainSize(this->size());
+	this->pAS->setValue(AppSettings::sSettingTabMain,
+						this->pUi->tabWidget->currentIndex());
+
+} // closeEvent
 
 
 void MainWindow::initBuilder() {

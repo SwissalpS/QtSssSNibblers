@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "AppSettings.h"
 
 
 
@@ -28,7 +29,10 @@ private:
 	Ui::MainWindow *pUi;
 
 protected:
+	AppSettings *pAS;
+
 	void changeEvent(QEvent *pEvent);
+	void closeEvent(QCloseEvent *pEvent);
 	virtual void initBuilder();
 
 public:
