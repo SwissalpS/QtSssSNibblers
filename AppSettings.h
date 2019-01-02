@@ -42,9 +42,11 @@ public:
 	static const QString sSettingGameCountAIs;
 	static const QString sSettingGameCountHumans;
 	static const QString sSettingGameFakeBonuses;
+	static const QString sSettingGameRelative;
 	static const QString sSettingGameSound;
 	static const QString sSettingGameSpeed;
 	static const QString sSettingGameStartLevel;
+	static const QString sSettingGameUseMouse;
 	static const QString sSettingPowerUser;
 	static const QString sSettingTabMainIndex;
 	static const QString sSettingTabSettingIndex;
@@ -80,10 +82,14 @@ public:
 
 	quint8 getPlayerColour(const quint8 ubWorm) const;
 	quint8 getPlayerByColour(const quint8 ubColour) const;
+	bool getPlayerRelative(const quint8 ubWorm) const;
+	bool getPlayerUseMouse(const quint8 ubWorm) const;
 	QPoint getWindowMainPosition() const;
 	QSize getWindowMainSize() const;
 
 	void setPlayerColour(const quint8 ubWorm, const quint8 ubColour);
+	void setPlayerRelative(const quint8 ubWorm, const bool bChecked) const;
+	void setPlayerUseMouse(const quint8 ubWorm, const bool bChecked) const;
 	void setWindowMainPosition(const QPoint oPos);
 	void setWindowMainSize(const QSize oSize);
 

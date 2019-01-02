@@ -89,8 +89,11 @@ protected:
 	virtual void initBuilder();
 	virtual void initSettings();
 	virtual void onPlayerColourChanged(const quint8 ubWorm, const quint8 ubIndex);
+	virtual void onPlayerRelativeToggled(const quint8 ubWorm, const bool bChecked);
+	virtual void onPlayerUseMouseToggled(const quint8 ubWorm, const bool bChecked);
 	virtual void settingsUpdatePlayerColours();
 	virtual void settingsUpdatePlayerCount();
+	virtual void settingsUpdatePlayerMouseAndRelative();
 
 public:
 	explicit MainWindow(QWidget *pParent = nullptr);

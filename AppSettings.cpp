@@ -20,9 +20,11 @@ const QString AppSettings::sSettingGameColours = "aGameColours";
 const QString AppSettings::sSettingGameCountAIs = "iGameCountAIs";
 const QString AppSettings::sSettingGameCountHumans = "iGameCountHumans";
 const QString AppSettings::sSettingGameFakeBonuses = "bGameFakeBonuses";
+const QString AppSettings::sSettingGameRelative = "aGameRelative";
 const QString AppSettings::sSettingGameSound = "bGameSound";
 const QString AppSettings::sSettingGameSpeed = "iGameSpeed0-3";
 const QString AppSettings::sSettingGameStartLevel = "ubGameStartLevel0-255";
+const QString AppSettings::sSettingGameUseMouse = "aGameUseMouse";
 const QString AppSettings::sSettingPowerUser = "bPU";
 const QString AppSettings::sSettingTabMainIndex = "iMainTabIndex";
 const QString AppSettings::sSettingTabSettingIndex = "iSettingTabIndex";
@@ -68,7 +70,6 @@ AppSettings::AppSettings(QObject *parent) :
 
 	// make sure we have a valid list of colours
 	QList<QVariant> aList = pS->value(sSettingGameColours).toList();
-
 	if (8 > aList.length()) {
 
 		aList.clear();
@@ -83,9 +84,33 @@ AppSettings::AppSettings(QObject *parent) :
 	pS->setValue(sSettingGameCountAIs, this->get(sSettingGameCountAIs));
 	pS->setValue(sSettingGameCountHumans, this->get(sSettingGameCountHumans));
 	pS->setValue(sSettingGameFakeBonuses, this->get(sSettingGameFakeBonuses));
+
+	// make sure the list of relative steering is long enough
+	aList = pS->value(sSettingGameRelative).toList();
+	if (4 > aList.length()) {
+		aList.clear();
+		for (int iWorm = 0; iWorm < 4; ++iWorm)
+			aList.append(QVariant(false));
+
+		pS->setValue(sSettingGameRelative, aList);
+
+	} // if not valid length
+
 	pS->setValue(sSettingGameSound, this->get(sSettingGameSound));
 	pS->setValue(sSettingGameSpeed, this->get(sSettingGameSpeed));
 	pS->setValue(sSettingGameStartLevel, this->get(sSettingGameStartLevel));
+
+	// make sure the list of mouse steering is long enough
+	aList = pS->value(sSettingGameUseMouse).toList();
+	if (4 > aList.length()) {
+		aList.clear();
+		for (int iWorm = 0; iWorm < 4; ++iWorm)
+			aList.append(QVariant(false));
+
+		pS->setValue(sSettingGameUseMouse, aList);
+
+	} // if not valid length
+
 	pS->setValue(sSettingTabMainIndex, this->get(sSettingTabMainIndex));
 	pS->setValue(sSettingTabSettingIndex, this->get(sSettingTabSettingIndex));
 	pS->setValue(sSettingWindowMainPosition, this->get(sSettingWindowMainPosition));
@@ -163,7 +188,7 @@ QVariant AppSettings::get(const QString sKey) const {
 
 	} else if (sSettingGameColours == sKey) {
 
-		return this->pSettings->value(sSettingGameColours);
+		return this->pSettings->value(sKey);
 
 	} else if (sSettingGameCountAIs == sKey) {
 
@@ -177,6 +202,10 @@ QVariant AppSettings::get(const QString sKey) const {
 
 		return this->pSettings->value(sKey, bSettingGameFakeBonusesDefault);
 
+	} else if (sSettingGameRelative == sKey) {
+
+		return this->pSettings->value(sKey);
+
 	} else if (sSettingGameSound == sKey) {
 
 		return this->pSettings->value(sKey, bSettingGameSoundDefault);
@@ -188,6 +217,10 @@ QVariant AppSettings::get(const QString sKey) const {
 	} else if (sSettingGameStartLevel == sKey) {
 
 		return this->pSettings->value(sKey, ubSettingGameStartLevelDefault);
+
+	} else if (sSettingGameUseMouse == sKey) {
+
+		return this->pSettings->value(sKey);
 
 	} else if (sSettingTabMainIndex == sKey) {
 
@@ -268,6 +301,28 @@ quint8 AppSettings::getPlayerByColour(const quint8 ubColour) const {
 } // getPlayerByColour
 
 
+bool AppSettings::getPlayerRelative(const quint8 ubWorm) const {
+
+	QList<QVariant> aList = this->get(sSettingGameRelative).toList();
+
+	if (aList.length() <= ubWorm) return false;
+
+	return aList.at(ubWorm).toBool();
+
+} // getPlayerRelative
+
+
+bool AppSettings::getPlayerUseMouse(const quint8 ubWorm) const {
+
+	QList<QVariant> aList = this->get(sSettingGameUseMouse).toList();
+
+	if (aList.length() <= ubWorm) return false;
+
+	return aList.at(ubWorm).toBool();
+
+} // getPlayerUseMouse
+
+
 QPoint AppSettings::getWindowMainPosition() const {
 
 	return this->get(sSettingWindowMainPosition).toPoint();
@@ -298,6 +353,42 @@ void AppSettings::setPlayerColour(const quint8 ubWorm, const quint8 ubColour) {
 	this->pSettings->setValue(sSettingGameColours, aListNew);
 
 } // setPlayerColour
+
+
+void AppSettings::setPlayerRelative(const quint8 ubWorm, const bool bChecked) const {
+
+	QList<QVariant> aList = this->get(sSettingGameRelative).toList();
+	QList<QVariant> aListNew;
+	bool bOld;
+
+	for (int iWorm = 0; iWorm < 4; ++iWorm) {
+
+		bOld = aList.at(iWorm).toBool();
+		aListNew.append(QVariant((ubWorm == quint8(iWorm)) ? bChecked : bOld));
+
+	} // loop
+
+	this->pSettings->setValue(sSettingGameRelative, aListNew);
+
+} // getPlayerRelative
+
+
+void AppSettings::setPlayerUseMouse(const quint8 ubWorm, const bool bChecked) const {
+
+	QList<QVariant> aList = this->get(sSettingGameUseMouse).toList();
+	QList<QVariant> aListNew;
+	bool bOld;
+
+	for (int iWorm = 0; iWorm < 4; ++iWorm) {
+
+		bOld = aList.at(iWorm).toBool();
+		aListNew.append(QVariant((ubWorm == quint8(iWorm)) ? bChecked : bOld));
+
+	} // loop
+
+	this->pSettings->setValue(sSettingGameUseMouse, aListNew);
+
+} // getPlayerUseMouse
 
 
 void AppSettings::setWindowMainPosition(const QPoint oPos) {

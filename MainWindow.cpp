@@ -19,6 +19,9 @@ MainWindow::MainWindow(QWidget *pParent) :
 
 	this->pUi->setupUi(this);
 
+	connect(this->pAS, SIGNAL(debugMessage(QString)),
+			this, SLOT(onDebugMessage(QString)));
+
 	this->setGeometry(QRect(this->pAS->getWindowMainPosition(),
 							this->pAS->getWindowMainSize()));
 
@@ -128,6 +131,8 @@ void MainWindow::initSettings() {
 				this->pAS->get(AppSettings::sSettingGameStartLevel).toInt());
 
 	this->settingsUpdatePlayerColours();
+
+	this->settingsUpdatePlayerMouseAndRelative();
 
 } // initSettings
 
@@ -301,24 +306,28 @@ void MainWindow::on_cbFakeBonuses_stateChanged(int iState) {
 
 void MainWindow::on_cbRelative1_toggled(bool bChecked) {
 
+	this->onPlayerRelativeToggled(0u, bChecked);
 
 } // on_cbRelative1_toggled
 
 
 void MainWindow::on_cbRelative2_toggled(bool bChecked) {
 
+	this->onPlayerRelativeToggled(1u, bChecked);
 
 } // on_cbRelative2_toggled
 
 
 void MainWindow::on_cbRelative3_toggled(bool bChecked) {
 
+	this->onPlayerRelativeToggled(2u, bChecked);
 
 } // on_cbRelative3_toggled
 
 
 void MainWindow::on_cbRelative4_toggled(bool bChecked) {
 
+	this->onPlayerRelativeToggled(3u, bChecked);
 
 } // on_cbRelative4_toggled
 
@@ -332,24 +341,28 @@ void MainWindow::on_cbSound_stateChanged(int iState) {
 
 void MainWindow::on_cbUseMouse1_toggled(bool bChecked) {
 
+	this->onPlayerUseMouseToggled(0u, bChecked);
 
 } // on_cbUseMouse1_toggled
 
 
 void MainWindow::on_cbUseMouse2_toggled(bool bChecked) {
 
+	this->onPlayerUseMouseToggled(1u, bChecked);
 
 } // on_cbUseMouse2_toggled
 
 
 void MainWindow::on_cbUseMouse3_toggled(bool bChecked) {
 
+	this->onPlayerUseMouseToggled(2u, bChecked);
 
 } // on_cbUseMouse3_toggled
 
 
 void MainWindow::on_cbUseMouse4_toggled(bool bChecked) {
 
+	this->onPlayerUseMouseToggled(3u, bChecked);
 
 } // on_cbUseMouse4_toggled
 
@@ -461,6 +474,59 @@ void MainWindow::on_kseUp4_keySequenceChanged(const QKeySequence &oKeySequence) 
 } // on_kseUp4_keySequenceChanged
 
 
+void MainWindow::onPlayerColourChanged(const quint8 ubWorm, const quint8 ubIndex) {
+
+	quint8 ubIndexOld = this->pAS->getPlayerColour(ubWorm);
+	if (ubIndex == ubIndexOld) return;
+
+	// find out which worm has the new colour so we can give it
+	quint8 ubWormOldHolder = this->pAS->getPlayerByColour(ubIndex);
+
+	this->pAS->setPlayerColour(ubWorm, ubIndex);
+	this->pAS->setPlayerColour(ubWormOldHolder, ubIndexOld);
+
+	this->settingsUpdatePlayerColours();
+
+} // onPlayerColourChanged
+
+
+void MainWindow::onPlayerRelativeToggled(const quint8 ubWorm, const bool bChecked) {
+
+	bool bOld = this->pAS->getPlayerRelative(ubWorm);
+	if (bOld == bChecked) return;
+
+	this->pAS->setPlayerRelative(ubWorm, bChecked);
+
+} // onPlayerRelativeToggled
+
+
+void MainWindow::onPlayerUseMouseToggled(const quint8 ubWorm, const bool bChecked) {
+
+	bool bOld = this->pAS->getPlayerUseMouse(ubWorm);
+	if (bOld == bChecked) return;
+
+	if (bChecked) {
+		// checked -> uncheck any others
+		quint8 ubCount;
+		for (ubCount = 0u; ubCount < 4u; ++ubCount) {
+
+			if (ubCount == ubWorm) this->pAS->setPlayerUseMouse(ubWorm, bChecked);
+			else this->pAS->setPlayerUseMouse(ubCount, false);
+
+		} // loop
+
+	} else {
+
+		// unchecked -> just uncheck this one
+		this->pAS->setPlayerUseMouse(ubWorm, bChecked);
+
+	} // if checked or not
+
+	this->settingsUpdatePlayerMouseAndRelative();
+
+} // onPlayerUseMouseToggled
+
+
 void MainWindow::on_selectColour1_currentIndexChanged(int iIndex) {
 
 	this->onPlayerColourChanged(0u, quint8(iIndex));
@@ -542,22 +608,6 @@ void MainWindow::onStatusMessage(const QString &sMessage) const {
 } // onStatusMessage
 
 
-void MainWindow::onPlayerColourChanged(const quint8 ubWorm, const quint8 ubIndex) {
-
-	quint8 ubIndexOld = this->pAS->getPlayerColour(ubWorm);
-	if (ubIndex == ubIndexOld) return;
-
-	// find out which worm has the new colour so we can give it
-	quint8 ubWormOldHolder = this->pAS->getPlayerByColour(ubIndex);
-
-	this->pAS->setPlayerColour(ubWorm, ubIndex);
-	this->pAS->setPlayerColour(ubWormOldHolder, ubIndexOld);
-
-	this->settingsUpdatePlayerColours();
-
-} // onWormPlayerChanged
-
-
 void MainWindow::run() {
 
 	// init tab views
@@ -615,6 +665,21 @@ void MainWindow::settingsUpdatePlayerCount() {
 	this->pAS->setValue(AppSettings::sSettingGameCountHumans, ubHumans);
 
 } // settingsUpdatePlayerCount
+
+
+void MainWindow::settingsUpdatePlayerMouseAndRelative() {
+
+	this->pUi->cbUseMouse1->setChecked(this->pAS->getPlayerUseMouse(0u));
+	this->pUi->cbUseMouse2->setChecked(this->pAS->getPlayerUseMouse(1u));
+	this->pUi->cbUseMouse3->setChecked(this->pAS->getPlayerUseMouse(2u));
+	this->pUi->cbUseMouse4->setChecked(this->pAS->getPlayerUseMouse(3u));
+
+	this->pUi->cbRelative1->setChecked(this->pAS->getPlayerRelative(0u));
+	this->pUi->cbRelative2->setChecked(this->pAS->getPlayerRelative(1u));
+	this->pUi->cbRelative3->setChecked(this->pAS->getPlayerRelative(2u));
+	this->pUi->cbRelative4->setChecked(this->pAS->getPlayerRelative(3u));
+
+} // settingsUpdatePlayerMouseAndRelative
 
 
 
