@@ -297,6 +297,9 @@ void SurfaceBuilder::initBrushes() {
 	pCB->setCurrentIndex(this->pAS->get(
 							 AppSettings::sSettingBuilderLastBrushIndex).toInt());
 
+	// works, but needs to adapt to cell size
+	//this->setCursor(QCursor(this->currentBrushIcon().pixmap(32, 32)));
+
 } // initBrushes
 
 
@@ -772,6 +775,9 @@ void SurfaceBuilder::on_selectTool_currentIndexChanged(int iIndex) {
 	if (17 > this->pUi->selectTool->count()) return;
 
 	this->pAS->setValue(AppSettings::sSettingBuilderLastBrushIndex, iIndex);
+
+	// works, but needs to adapt to cell size
+	//this->setCursor(QCursor(this->currentBrushIcon().pixmap(32, 32)));
 
 } // on_selectTool_currentIndexChanged
 
