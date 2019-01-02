@@ -28,12 +28,35 @@ class MainWindow : public QMainWindow {
 private:
 	Ui::MainWindow *pUi;
 
+private slots:
+
+	void on_buttonHP0_clicked();
+	void on_buttonHP1_clicked();
+	void on_buttonHP2_clicked();
+	void on_buttonHP3_clicked();
+	void on_buttonHP4_clicked();
+	void on_buttonAP0_clicked();
+	void on_buttonAP1_clicked();
+	void on_buttonAP2_clicked();
+	void on_buttonAP3_clicked();
+	void on_buttonAP4_clicked();
+	void on_buttonAP5_clicked();
+	void on_buttonAP6_clicked();
+	void on_buttonAP7_clicked();
+	void on_buttonAP8_clicked();
+	void on_cbFakeBonuses_stateChanged(int iState);
+	void on_cbSound_stateChanged(int iState);
+	void on_selectSpeed_currentIndexChanged(int iIndex);
+	void on_selectStartLevel_currentIndexChanged(int iIndex);
+
 protected:
 	AppSettings *pAS;
 
 	void changeEvent(QEvent *pEvent);
 	void closeEvent(QCloseEvent *pEvent);
 	virtual void initBuilder();
+	virtual void initSettings();
+	virtual void settingsUpdatePlayerCount();
 
 public:
 	explicit MainWindow(QWidget *pParent = nullptr);
@@ -47,7 +70,6 @@ public slots:
 	void onStatusMessage(const QString &sMessage) const;
 
 	void run();
-
 }; // MainWindow
 
 

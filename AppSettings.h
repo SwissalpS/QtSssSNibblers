@@ -38,16 +38,30 @@ private:
 public:
 	static const QString sSettingBuilderLastBrushIndex;
 	static const QString sSettingBuilderLastLevel;
+	static const QString sSettingGameCountAIs;
+	static const QString sSettingGameCountHumans;
+	static const QString sSettingGameFakeBonuses;
+	static const QString sSettingGameSound;
+	static const QString sSettingGameSpeed;
+	static const QString sSettingGameStartLevel;
 	static const QString sSettingPowerUser;
-	static const QString sSettingTabMain;
+	static const QString sSettingTabMainIndex;
+	static const QString sSettingTabSettingIndex;
 	static const QString sSettingWindowMainPosition;
 	static const QString sSettingWindowMainSize;
 
 
 	static const quint8 ubSettingBuilderLastBrushIndexDefault;
 	static const quint8 ubSettingBuilderLastLevelDefault;
+	static const quint8 ubSettingGameCountAIsDefault;
+	static const quint8 ubSettingGameCountHumansDefault;
+	static const bool bSettingGameFakeBonusesDefault;
+	static const bool bSettingGameSoundDefault;
+	static const quint8 ubSettingGameStartLevelDefault;
+	static const qint8 iSettingGameSpeedDefault;
 	static const bool bSettingPowerUserDefault;
-	static const qint8 iSettingTabMainDefault;
+	static const qint8 iSettingTabMainIndexDefault;
+	static const qint8 iSettingTabSettingIndexDefault;
 	static const QPoint sSettingWindowMainPositionDefault;
 	static const QSize sSettingWindowMainSizeDefault;
 

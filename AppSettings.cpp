@@ -14,17 +14,31 @@ namespace SwissalpS { namespace QtNibblers {
 
 AppSettings *AppSettings::pSingelton = 0;
 
-const QString AppSettings::sSettingBuilderLastBrushIndex = "builderLastBrushIndex";
-const QString AppSettings::sSettingBuilderLastLevel = "builderLastLevel";
-const QString AppSettings::sSettingPowerUser = "PU";
-const QString AppSettings::sSettingTabMain = "mainTabIndex";
+const QString AppSettings::sSettingBuilderLastBrushIndex = "iBuilderLastBrushIndex";
+const QString AppSettings::sSettingBuilderLastLevel = "ubBuilderLastLevel";
+const QString AppSettings::sSettingGameCountAIs = "iGameCountAIs";
+const QString AppSettings::sSettingGameCountHumans = "iGameCountHumans";
+const QString AppSettings::sSettingGameFakeBonuses = "bGameFakeBonuses";
+const QString AppSettings::sSettingGameSound = "bGameSound";
+const QString AppSettings::sSettingGameSpeed = "iGameSpeed0-3";
+const QString AppSettings::sSettingGameStartLevel = "ubGameStartLevel0-255";
+const QString AppSettings::sSettingPowerUser = "bPU";
+const QString AppSettings::sSettingTabMainIndex = "iMainTabIndex";
+const QString AppSettings::sSettingTabSettingIndex = "iSettingTabIndex";
 const QString AppSettings::sSettingWindowMainPosition = "windowMainPosition";
 const QString AppSettings::sSettingWindowMainSize = "windowMainSize";
 
 const quint8 AppSettings::ubSettingBuilderLastBrushIndexDefault = 0x0u;
 const quint8 AppSettings::ubSettingBuilderLastLevelDefault = 0x0u;
+const quint8 AppSettings::ubSettingGameCountAIsDefault = 0x4u;
+const quint8 AppSettings::ubSettingGameCountHumansDefault = 0x0u;
+const bool AppSettings::bSettingGameFakeBonusesDefault = false;
+const bool AppSettings::bSettingGameSoundDefault = false;
+const qint8 AppSettings::iSettingGameSpeedDefault = 0u;
+const quint8 AppSettings::ubSettingGameStartLevelDefault = 0x1u;
 const bool AppSettings::bSettingPowerUserDefault = false;
-const qint8 AppSettings::iSettingTabMainDefault = 1u;
+const qint8 AppSettings::iSettingTabMainIndexDefault = 1u;
+const qint8 AppSettings::iSettingTabSettingIndexDefault = 0u;
 const QPoint AppSettings::sSettingWindowMainPositionDefault = QPoint(94, 94);
 const QSize AppSettings::sSettingWindowMainSizeDefault = QSize(800, 600);
 
@@ -50,7 +64,14 @@ AppSettings::AppSettings(QObject *parent) :
 
 	pS->setValue(sSettingBuilderLastBrushIndex, this->get(sSettingBuilderLastBrushIndex));
 	pS->setValue(sSettingBuilderLastLevel, this->get(sSettingBuilderLastLevel));
-	pS->setValue(sSettingTabMain, this->get(sSettingTabMain));
+	pS->setValue(sSettingGameCountAIs, this->get(sSettingGameCountAIs));
+	pS->setValue(sSettingGameCountHumans, this->get(sSettingGameCountHumans));
+	pS->setValue(sSettingGameFakeBonuses, this->get(sSettingGameFakeBonuses));
+	pS->setValue(sSettingGameSound, this->get(sSettingGameSound));
+	pS->setValue(sSettingGameSpeed, this->get(sSettingGameSpeed));
+	pS->setValue(sSettingGameStartLevel, this->get(sSettingGameStartLevel));
+	pS->setValue(sSettingTabMainIndex, this->get(sSettingTabMainIndex));
+	pS->setValue(sSettingTabSettingIndex, this->get(sSettingTabSettingIndex));
 	pS->setValue(sSettingWindowMainPosition, this->get(sSettingWindowMainPosition));
 	pS->setValue(sSettingWindowMainSize, this->get(sSettingWindowMainSize));
 
@@ -124,9 +145,37 @@ QVariant AppSettings::get(const QString sKey) const {
 
 		return this->pSettings->value(sKey, ubSettingBuilderLastLevelDefault);
 
-	} else if (sSettingTabMain == sKey) {
+	} else if (sSettingGameCountAIs == sKey) {
 
-		return this->pSettings->value(sKey, iSettingTabMainDefault);
+		return this->pSettings->value(sKey, ubSettingGameCountAIsDefault);
+
+	} else if (sSettingGameCountHumans == sKey) {
+
+		return this->pSettings->value(sKey, ubSettingGameCountHumansDefault);
+
+	} else if (sSettingGameFakeBonuses == sKey) {
+
+		return this->pSettings->value(sKey, bSettingGameFakeBonusesDefault);
+
+	} else if (sSettingGameSound == sKey) {
+
+		return this->pSettings->value(sKey, bSettingGameSoundDefault);
+
+	} else if (sSettingGameSpeed == sKey) {
+
+		return this->pSettings->value(sKey, iSettingGameSpeedDefault);
+
+	} else if (sSettingGameStartLevel == sKey) {
+
+		return this->pSettings->value(sKey, ubSettingGameStartLevelDefault);
+
+	} else if (sSettingTabMainIndex == sKey) {
+
+		return this->pSettings->value(sKey, iSettingTabMainIndexDefault);
+
+	} else if (sSettingTabSettingIndex == sKey) {
+
+		return this->pSettings->value(sKey, iSettingTabSettingIndexDefault);
 
 	} else if (sSettingWindowMainPosition == sKey) {
 
