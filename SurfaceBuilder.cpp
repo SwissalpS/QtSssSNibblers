@@ -531,6 +531,56 @@ void SurfaceBuilder::on_buttonSave_clicked() {
 
 	this->pDialogSave->setSelected(this->ubCurrentLevel);
 
+	QString sMessage;
+	// check for teleporter pairs
+	QList<quint8> aKeysEntrances = this->hTeleporterEntrances.keys();
+	QList<quint8> aKeysExits = this->hTeleporterExits.keys();
+	quint8 ubState;
+	quint8 ubMissing = 0u;
+	int iPos = 0;
+	for (; iPos < aKeysEntrances.length(); ++iPos) {
+
+		ubState = aKeysEntrances.at(iPos);
+		if (!aKeysExits.contains(ubState + 1u)) ubMissing++;
+
+	} // loop
+	if (ubMissing) {
+
+		sMessage += tr(" Warning: ") + QString::number(ubMissing)
+					+ tr(" teleporter entrances are missing their exits.");
+
+	} // if found missing exits
+
+	ubMissing = 0u;
+	iPos = 0;
+	for (; iPos < aKeysExits.length(); ++iPos) {
+
+		ubState = aKeysExits.at(iPos);
+		if (!aKeysEntrances.contains(ubState - 1u)) ubMissing++;
+
+	} // loop
+	if (ubMissing) {
+
+		sMessage += tr(" Warning: ") + QString::number(ubMissing)
+					+ tr(" teleporter exits are missing their entrances.");
+
+	} // if found missing entrances
+
+	// check for spawn points
+	int iDiff = SssS_Nibblers_Max_Players - this->aSpawnPoints.length();
+	if (0 < iDiff) {
+
+		sMessage += tr(" Warning: missing ") + QString::number(iDiff)
+					+ tr(" spawn-points. May not be playable!");
+
+	} else if (0 > iDiff) {
+
+		sMessage += tr("Notice: too many spawn-points set.");
+
+	} // if need to alert about spawn-points
+
+	this->pDialogSave->setWarning(sMessage);
+
 	this->pDialogSave->exec();
 
 } // on_buttonSave_clicked

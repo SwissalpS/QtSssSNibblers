@@ -71,5 +71,12 @@ void DialogSave::setSelected(const int iIndex) const {
 } // setSelected
 
 
+void DialogSave::setWarning(const QString sMessage) const {
+
+	this->pUi->warning->setText(sMessage);
+
+} // setWarning
+
+
 
 }	} // namespace SwissalpS::QtNibblers

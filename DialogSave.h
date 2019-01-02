@@ -39,6 +39,7 @@ public:
 
 	virtual int getSelected() const;
 	virtual void setSelected(const int iIndex) const;
+	virtual void setWarning(const QString sMessage) const;
 
 }; // DialogSave
 
