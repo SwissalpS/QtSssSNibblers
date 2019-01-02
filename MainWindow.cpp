@@ -127,6 +127,8 @@ void MainWindow::initSettings() {
 	pBox->setCurrentIndex(
 				this->pAS->get(AppSettings::sSettingGameStartLevel).toInt());
 
+	this->settingsUpdatePlayerColours();
+
 } // initSettings
 
 
@@ -297,11 +299,59 @@ void MainWindow::on_cbFakeBonuses_stateChanged(int iState) {
 } // on_cbFakeBonuses_stateChanged
 
 
+void MainWindow::on_cbRelative1_toggled(bool bChecked) {
+
+
+} // on_cbRelative1_toggled
+
+
+void MainWindow::on_cbRelative2_toggled(bool bChecked) {
+
+
+} // on_cbRelative2_toggled
+
+
+void MainWindow::on_cbRelative3_toggled(bool bChecked) {
+
+
+} // on_cbRelative3_toggled
+
+
+void MainWindow::on_cbRelative4_toggled(bool bChecked) {
+
+
+} // on_cbRelative4_toggled
+
+
 void MainWindow::on_cbSound_stateChanged(int iState) {
 
 	this->pAS->setValue(AppSettings::sSettingGameSound, 0 < iState);
 
 } // on_cbSound_stateChanged
+
+
+void MainWindow::on_cbUseMouse1_toggled(bool bChecked) {
+
+
+} // on_cbUseMouse1_toggled
+
+
+void MainWindow::on_cbUseMouse2_toggled(bool bChecked) {
+
+
+} // on_cbUseMouse2_toggled
+
+
+void MainWindow::on_cbUseMouse3_toggled(bool bChecked) {
+
+
+} // on_cbUseMouse3_toggled
+
+
+void MainWindow::on_cbUseMouse4_toggled(bool bChecked) {
+
+
+} // on_cbUseMouse4_toggled
 
 
 void MainWindow::onDebugMessage(const QString &sMessage) const {
@@ -313,6 +363,158 @@ void MainWindow::onDebugMessage(const QString &sMessage) const {
 	Q_EMIT this->debugMessage(sOut);
 
 } // onDebugMessage
+
+
+void MainWindow::on_kseDown1_keySequenceChanged(const QKeySequence &oKeySequence) {
+
+
+} // on_kseDown1_keySequenceChanged
+
+
+void MainWindow::on_kseDown2_keySequenceChanged(const QKeySequence &oKeySequence) {
+
+
+} // on_kseDown2_keySequenceChanged
+
+
+void MainWindow::on_kseDown3_keySequenceChanged(const QKeySequence &oKeySequence) {
+
+
+} // on_kseDown3_keySequenceChanged
+
+
+void MainWindow::on_kseDown4_keySequenceChanged(const QKeySequence &oKeySequence) {
+
+
+} // on_kseDown4_keySequenceChanged
+
+
+void MainWindow::on_kseLeft1_keySequenceChanged(const QKeySequence &oKeySequence) {
+
+
+} // on_kseLeft1_keySequenceChanged
+
+
+void MainWindow::on_kseLeft2_keySequenceChanged(const QKeySequence &oKeySequence) {
+
+
+} // on_kseLeft2_keySequenceChanged
+
+
+void MainWindow::on_kseLeft3_keySequenceChanged(const QKeySequence &oKeySequence) {
+
+
+} // on_kseLeft3_keySequenceChanged
+
+
+void MainWindow::on_kseLeft4_keySequenceChanged(const QKeySequence &oKeySequence) {
+
+
+} // on_kseLeft4_keySequenceChanged
+
+
+void MainWindow::on_kseRight1_keySequenceChanged(const QKeySequence &oKeySequence) {
+
+
+} // on_kseRight1_keySequenceChanged
+
+
+void MainWindow::on_kseRight2_keySequenceChanged(const QKeySequence &oKeySequence) {
+
+
+} // on_kseRight2_keySequenceChanged
+
+
+void MainWindow::on_kseRight3_keySequenceChanged(const QKeySequence &oKeySequence) {
+
+
+} // on_kseRight3_keySequenceChanged
+
+
+void MainWindow::on_kseRight4_keySequenceChanged(const QKeySequence &oKeySequence) {
+
+
+} // on_kseRight4_keySequenceChanged
+
+
+void MainWindow::on_kseUp1_keySequenceChanged(const QKeySequence &oKeySequence) {
+
+
+} // on_kseUp1_keySequenceChanged
+
+
+void MainWindow::on_kseUp2_keySequenceChanged(const QKeySequence &oKeySequence) {
+
+
+} // on_kseUp2_keySequenceChanged
+
+
+void MainWindow::on_kseUp3_keySequenceChanged(const QKeySequence &oKeySequence) {
+
+
+} // on_kseUp3_keySequenceChanged
+
+
+void MainWindow::on_kseUp4_keySequenceChanged(const QKeySequence &oKeySequence) {
+
+
+} // on_kseUp4_keySequenceChanged
+
+
+void MainWindow::on_selectColour1_currentIndexChanged(int iIndex) {
+
+	this->onPlayerColourChanged(0u, quint8(iIndex));
+
+} // on_selectColour1_currentIndexChanged
+
+
+void MainWindow::on_selectColour2_currentIndexChanged(int iIndex) {
+
+	this->onPlayerColourChanged(1u, quint8(iIndex));
+
+} // on_selectColour2_currentIndexChanged
+
+
+void MainWindow::on_selectColour3_currentIndexChanged(int iIndex) {
+
+	this->onPlayerColourChanged(2u, quint8(iIndex));
+
+} // on_selectColour3_currentIndexChanged
+
+
+void MainWindow::on_selectColour4_currentIndexChanged(int iIndex) {
+
+	this->onPlayerColourChanged(3u, quint8(iIndex));
+
+} // on_selectColour4_currentIndexChanged
+
+
+void MainWindow::on_selectColour5_currentIndexChanged(int iIndex) {
+
+	this->onPlayerColourChanged(4u, quint8(iIndex));
+
+} // on_selectColour5_currentIndexChanged
+
+
+void MainWindow::on_selectColour6_currentIndexChanged(int iIndex) {
+
+	this->onPlayerColourChanged(5u, quint8(iIndex));
+
+} // on_selectColour6_currentIndexChanged
+
+
+void MainWindow::on_selectColour7_currentIndexChanged(int iIndex) {
+
+	this->onPlayerColourChanged(6u, quint8(iIndex));
+
+} // on_selectColour7_currentIndexChanged
+
+
+void MainWindow::on_selectColour8_currentIndexChanged(int iIndex) {
+
+	this->onPlayerColourChanged(7u, quint8(iIndex));
+
+} // on_selectColour8_currentIndexChanged
 
 
 void MainWindow::on_selectSpeed_currentIndexChanged(int iIndex) {
@@ -340,6 +542,22 @@ void MainWindow::onStatusMessage(const QString &sMessage) const {
 } // onStatusMessage
 
 
+void MainWindow::onPlayerColourChanged(const quint8 ubWorm, const quint8 ubIndex) {
+
+	quint8 ubIndexOld = this->pAS->getPlayerColour(ubWorm);
+	if (ubIndex == ubIndexOld) return;
+
+	// find out which worm has the new colour so we can give it
+	quint8 ubWormOldHolder = this->pAS->getPlayerByColour(ubIndex);
+
+	this->pAS->setPlayerColour(ubWorm, ubIndex);
+	this->pAS->setPlayerColour(ubWormOldHolder, ubIndexOld);
+
+	this->settingsUpdatePlayerColours();
+
+} // onWormPlayerChanged
+
+
 void MainWindow::run() {
 
 	// init tab views
@@ -356,6 +574,20 @@ void MainWindow::run() {
 
 
 } // run
+
+
+void MainWindow::settingsUpdatePlayerColours() {
+
+	this->pUi->selectColour1->setCurrentIndex(this->pAS->getPlayerColour(0u));
+	this->pUi->selectColour2->setCurrentIndex(this->pAS->getPlayerColour(1u));
+	this->pUi->selectColour3->setCurrentIndex(this->pAS->getPlayerColour(2u));
+	this->pUi->selectColour4->setCurrentIndex(this->pAS->getPlayerColour(3u));
+	this->pUi->selectColour5->setCurrentIndex(this->pAS->getPlayerColour(4u));
+	this->pUi->selectColour6->setCurrentIndex(this->pAS->getPlayerColour(5u));
+	this->pUi->selectColour7->setCurrentIndex(this->pAS->getPlayerColour(6u));
+	this->pUi->selectColour8->setCurrentIndex(this->pAS->getPlayerColour(7u));
+
+} // settingsUpdatePlayerColours
 
 
 void MainWindow::settingsUpdatePlayerCount() {

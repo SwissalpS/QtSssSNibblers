@@ -38,6 +38,7 @@ private:
 public:
 	static const QString sSettingBuilderLastBrushIndex;
 	static const QString sSettingBuilderLastLevel;
+	static const QString sSettingGameColours;
 	static const QString sSettingGameCountAIs;
 	static const QString sSettingGameCountHumans;
 	static const QString sSettingGameFakeBonuses;
@@ -77,9 +78,12 @@ public:
 	QSettings *getSettings() const;
 	void setSettings(QSettings *pQSettings);
 
+	quint8 getPlayerColour(const quint8 ubWorm) const;
+	quint8 getPlayerByColour(const quint8 ubColour) const;
 	QPoint getWindowMainPosition() const;
 	QSize getWindowMainSize() const;
 
+	void setPlayerColour(const quint8 ubWorm, const quint8 ubColour);
 	void setWindowMainPosition(const QPoint oPos);
 	void setWindowMainSize(const QSize oSize);
 

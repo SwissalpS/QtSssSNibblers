@@ -16,6 +16,7 @@ AppSettings *AppSettings::pSingelton = 0;
 
 const QString AppSettings::sSettingBuilderLastBrushIndex = "iBuilderLastBrushIndex";
 const QString AppSettings::sSettingBuilderLastLevel = "ubBuilderLastLevel";
+const QString AppSettings::sSettingGameColours = "aGameColours";
 const QString AppSettings::sSettingGameCountAIs = "iGameCountAIs";
 const QString AppSettings::sSettingGameCountHumans = "iGameCountHumans";
 const QString AppSettings::sSettingGameFakeBonuses = "bGameFakeBonuses";
@@ -33,7 +34,7 @@ const quint8 AppSettings::ubSettingBuilderLastLevelDefault = 0x0u;
 const quint8 AppSettings::ubSettingGameCountAIsDefault = 0x4u;
 const quint8 AppSettings::ubSettingGameCountHumansDefault = 0x0u;
 const bool AppSettings::bSettingGameFakeBonusesDefault = false;
-const bool AppSettings::bSettingGameSoundDefault = false;
+const bool AppSettings::bSettingGameSoundDefault = true;
 const qint8 AppSettings::iSettingGameSpeedDefault = 0u;
 const quint8 AppSettings::ubSettingGameStartLevelDefault = 0x1u;
 const bool AppSettings::bSettingPowerUserDefault = false;
@@ -64,6 +65,21 @@ AppSettings::AppSettings(QObject *parent) :
 
 	pS->setValue(sSettingBuilderLastBrushIndex, this->get(sSettingBuilderLastBrushIndex));
 	pS->setValue(sSettingBuilderLastLevel, this->get(sSettingBuilderLastLevel));
+
+	// make sure we have a valid list of colours
+	QList<QVariant> aList = pS->value(sSettingGameColours).toList();
+
+	if (8 > aList.length()) {
+
+		aList.clear();
+
+		for (int iWorm = 0; iWorm < 8; ++iWorm)
+			aList.append(QVariant(iWorm));
+
+		pS->setValue(sSettingGameColours, aList);
+
+	} // if not valid length list returned, make a new one
+
 	pS->setValue(sSettingGameCountAIs, this->get(sSettingGameCountAIs));
 	pS->setValue(sSettingGameCountHumans, this->get(sSettingGameCountHumans));
 	pS->setValue(sSettingGameFakeBonuses, this->get(sSettingGameFakeBonuses));
@@ -145,6 +161,10 @@ QVariant AppSettings::get(const QString sKey) const {
 
 		return this->pSettings->value(sKey, ubSettingBuilderLastLevelDefault);
 
+	} else if (sSettingGameColours == sKey) {
+
+		return this->pSettings->value(sSettingGameColours);
+
 	} else if (sSettingGameCountAIs == sKey) {
 
 		return this->pSettings->value(sKey, ubSettingGameCountAIsDefault);
@@ -219,6 +239,35 @@ void AppSettings::setSettings(QSettings *pQSettings) {
 } // setSettings
 
 
+quint8 AppSettings::getPlayerColour(const quint8 ubWorm) const {
+
+	QList<QVariant> aList = this->get(sSettingGameColours).toList();
+
+	if (aList.length() <= ubWorm) return 0u;
+
+	return quint8(aList.at(ubWorm).toUInt());
+
+} // getPlayerColour
+
+
+quint8 AppSettings::getPlayerByColour(const quint8 ubColour) const {
+
+	QList<QVariant> aList = this->get(sSettingGameColours).toList();
+	quint8 ubColourTemp;
+
+	for (quint8 ubWorm = 0u; ubWorm < 8u; ++ubWorm) {
+
+		ubColourTemp = aList.at(ubWorm).toUInt();
+		if (ubColour == ubColourTemp) return ubWorm;
+
+	} // loop
+
+	// jic
+	return 0u;
+
+} // getPlayerByColour
+
+
 QPoint AppSettings::getWindowMainPosition() const {
 
 	return this->get(sSettingWindowMainPosition).toPoint();
@@ -231,6 +280,24 @@ QSize AppSettings::getWindowMainSize() const {
 	return this->get(sSettingWindowMainSize).toSize();
 
 } // getWindowMainSize
+
+
+void AppSettings::setPlayerColour(const quint8 ubWorm, const quint8 ubColour) {
+
+	QList<QVariant> aList = this->get(sSettingGameColours).toList();
+	QList<QVariant> aListNew;
+	quint8 ubColourOld;
+
+	for (int iWorm = 0; iWorm < 8; ++iWorm) {
+
+		ubColourOld = quint8(aList.at(iWorm).toUInt());
+		aListNew.append(QVariant((ubWorm == quint8(iWorm)) ? ubColour : ubColourOld));
+
+	} // loop
+
+	this->pSettings->setValue(sSettingGameColours, aListNew);
+
+} // setPlayerColour
 
 
 void AppSettings::setWindowMainPosition(const QPoint oPos) {
