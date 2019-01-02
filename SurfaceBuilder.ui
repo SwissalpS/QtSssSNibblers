@@ -79,13 +79,6 @@
         </property>
        </widget>
       </item>
-      <item>
-       <widget class="QPushButton" name="buttonSetStarts">
-        <property name="text">
-         <string>Set Start Positions</string>
-        </property>
-       </widget>
-      </item>
      </layout>
     </widget>
    </item>

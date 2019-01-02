@@ -22,7 +22,6 @@ SurfaceBuilder::SurfaceBuilder(QWidget *pParent) :
 	pDialogLoad(nullptr),
 	pDialogSave(nullptr),
 	ubCurrentLevel(0xFFu),
-	ubDrawMode(0x00u),
 	ubLastColumn(0xFFu),
 	ubLastRow(0xFFu) {
 
@@ -147,8 +146,8 @@ QIcon SurfaceBuilder::currentBrushIcon() const {
 
 quint8 SurfaceBuilder::currentBrushState() const {
 
-	QList<quint8> aEntranceKeys = this->hTeleporterEntrances.keys();
 	QList<quint8> aExitKeys = this->hTeleporterExits.keys();
+	QList<quint8> aEntranceKeys = this->hTeleporterEntrances.keys();
 
 	static QVector<quint8> aEntrances = IconEngine::statesTeleporterEntrances();
 	static QVector<quint8> aExits = IconEngine::statesTeleporterExits();
@@ -226,6 +225,7 @@ quint8 SurfaceBuilder::currentBrushState() const {
 				} // loop
 
 			} // if placing exit or entrance
+		break;
 
 		// floor
 		case 0:
@@ -234,6 +234,9 @@ quint8 SurfaceBuilder::currentBrushState() const {
 		break;
 
 	} // switch this->pUi->selectTool->currentIndex()
+
+	// just to silence compiler
+	return 0u;
 
 } // currentBrushState
 
@@ -533,48 +536,8 @@ void SurfaceBuilder::on_buttonSave_clicked() {
 } // on_buttonSave_clicked
 
 
-void SurfaceBuilder::on_buttonSetStarts_clicked() {
-
-	if (this->ubDrawMode) {
-
-		// currently setting start points -> cancel
-
-		this->ubDrawMode = 0u;
-		this->pUi->buttonSetStarts->setText(tr("Set Start Positions"));
-
-		Q_EMIT this->statusMessage(tr("Click on cells to toggle walls. Hold shift for lines."));
-
-	} else {
-
-		// start fresh
-		this->ubDrawMode = 10u;
-		this->pUi->buttonSetStarts->setText(tr("Cancel Setting Starts"));
-
-		Q_EMIT this->statusMessage(tr("Click on a free cell to set the head-point for player 1."));
-
-		// remove existing one
-		QVector<quint8> aStates;
-		aStates.append(this->ubDrawMode);
-		aStates.append(this->ubDrawMode + 1u);
-		aStates.append(this->ubDrawMode + 2u);
-		this->clearSurfaceOf(aStates);
-
-	} // if already in draw mode or starting
-
-} // on_buttonSetStarts_clicked
-
-
 void SurfaceBuilder::onCellClicked(const quint8 ubColumn, const quint8 ubRow,
 								   bool bShift, SurfaceCell *pCell) {
-
-	// are we setting start points?
-	if (this->ubDrawMode) {
-
-		this->onCellClickedForStartPoints(ubColumn, ubRow, pCell);
-
-		return;
-
-	} // if setting start points
 
 	// has a click already occured?
 	// or no shift held anyway?
@@ -593,7 +556,6 @@ void SurfaceBuilder::onCellClicked(const quint8 ubColumn, const quint8 ubRow,
 		return;
 
 	} // if first click
-
 
 	// Bresenham's line algorithm
 	// adopted from: https://rosettacode.org/wiki/Bitmap/Bresenham%27s_line_algorithm#C.2B.2B
@@ -653,144 +615,6 @@ void SurfaceBuilder::onCellClicked(const quint8 ubColumn, const quint8 ubRow,
 	this->ubLastRow = ubRow;
 
 } // onCellClicked
-
-
-void SurfaceBuilder::onCellClickedForStartPoints(const quint8 ubColumn,
-												 const quint8 ubRow,
-												 SurfaceCell *pCell) {
-
-	// if last bit is 1 -> we are setting a tail after having set head already
-	bool bTail = this->ubDrawMode & 1u;
-
-	// check if available (not wall and not other player)
-	// this also asures that tail is not placed on head
-	if (0u != pCell->getState()) {
-
-		Q_EMIT this->statusMessage(tr("Choose a free spot for the head."));
-
-		return;
-
-	} // if not free cell
-
-	if (bTail) {
-
-		// check if orthogonal
-
-		if ((ubColumn == this->ubLastColumn)
-				|| (ubRow == this->ubLastRow)) {
-
-			// ok, place it
-			this->setCellState(pCell, this->ubDrawMode);
-
-			// fill in the space in between
-			quint8 ubMidState = this->ubDrawMode + 1u;
-			if (0u == ubColumn - this->ubLastColumn) {
-
-				// same column -> vertical
-
-				// orient direction
-				quint8 ubY1 = qMin(ubRow, this->ubLastRow);
-				quint8 ubY2 = qMax(ubRow, this->ubLastRow);
-
-				// avoid the head
-				if (ubY1 == this->ubLastRow) ubY1++;
-				else if (0u != ubY2) ubY2--;
-
-				for (; ubY1 <= ubY2; ubY1++) {
-
-					this->setCellState(ubColumn, ubY1, ubMidState);
-
-				} // loop mid section
-
-			} else {
-
-				// same row -> horizontal
-
-				// orient direction
-				quint8 ubX1 = qMin(ubColumn, this->ubLastColumn);
-				quint8 ubX2 = qMax(ubColumn, this->ubLastColumn);
-
-				// avoid the head
-				if (ubX1 == this->ubLastColumn) ubX1++;
-				else if (0u != ubX2) ubX2--;
-
-				for (; ubX1 <= ubX2; ubX1++) {
-
-					this->setCellState(ubX1, ubRow, ubMidState);
-
-				} // loop mid section
-
-			} // if horizontal or vertical
-
-		} else {
-
-			// not orthogonal -> bad skip
-			Q_EMIT this->statusMessage(tr("Tail must be orthogonal to head. Try again to place tail."));
-
-			return;
-
-		} // if orthogonal or not
-
-	} else {
-
-		// TODO: check if there are any valid free cells adjacent
-
-		// ok, place it
-		this->setCellState(pCell, this->ubDrawMode);
-
-	} // if tail or head
-
-	// calculate next step
-
-	if (bTail) {
-
-		// next click is head of next player
-		this->ubDrawMode += 9u;
-
-		// are we done?
-		if (90u == this->ubDrawMode) {
-
-			this->ubDrawMode = 0u;
-
-			// reset button and status
-			this->pUi->buttonSetStarts->setText(tr("Set Start Positions"));
-			Q_EMIT this->statusMessage(tr("Click on walls or empty space to toggle walls. Hold Shift for lines."));
-
-			this->ubLastColumn = 0xFFu;
-			this->ubLastRow = 0xFFu;
-
-			return;
-
-		} // if done
-
-		// remove existing one
-		QVector<quint8> aStates;
-		aStates.append(this->ubDrawMode);
-		aStates.append(this->ubDrawMode + 1u);
-		aStates.append(this->ubDrawMode + 2u);
-		this->clearSurfaceOf(aStates);
-
-		Q_EMIT this->statusMessage(tr("Click on a free cell to set the head-point for player ")
-								   + QString::number(quint8(qreal(this->ubDrawMode) * 0.1f))
-								   + ".");
-
-
-	} else {
-
-		// set to tail of same player
-		this->ubDrawMode += 1u;
-
-		// update status
-		Q_EMIT this->statusMessage(tr("Click on a free cell to set the tail-point for player ")
-								   + QString::number(quint8(qreal(this->ubDrawMode) * 0.1f))
-								   + ". " + tr("The tail needs to be in the same column or row as the head."));
-
-	} // if tail or head
-
-	this->ubLastColumn = ubColumn;
-	this->ubLastRow = ubRow;
-
-} // onCellClickedForStartPoints
 
 
 void SurfaceBuilder::on_selectTool_currentIndexChanged(int iIndex) {
@@ -913,35 +737,6 @@ void SurfaceBuilder::setCellState(const quint8 ubColumn, const quint8 ubRow,
 	this->setCellState(pCell, ubState, bUpdate);
 
 } // setCellState
-
-
-// depricated: from first steps
-void SurfaceBuilder::toggleCell(SurfaceCell *pCell) {
-
-	quint8 ubState = pCell->getState();
-
-	if (0u == ubState) ubState = 200u;
-	else if (200u == ubState) ubState = 0u;
-	else return;
-
-	this->setCellState(pCell, ubState);
-
-} // toggleCell
-
-
-// depricated: from first steps
-void SurfaceBuilder::toggleCell(const quint8 ubColumn, const quint8 ubRow) {
-
-	// check limits
-	if (ubRow >= this->aRows.count()) return;
-	if (ubColumn >= this->aRows.first().count()) return;
-
-	QList<SurfaceCell *> aRow = this->aRows.at(ubRow);
-	SurfaceCell *pCell = aRow.at(ubColumn);
-
-	this->toggleCell(pCell);
-
-} // toggleCell
 
 
 

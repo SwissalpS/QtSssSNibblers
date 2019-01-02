@@ -35,7 +35,6 @@ private slots:
 	void on_buttonClear_clicked();
 	void on_buttonSave_clicked();
 	void on_buttonLoad_clicked();
-	void on_buttonSetStarts_clicked();
 	void on_selectTool_currentIndexChanged(int iIndex);
 
 protected:
@@ -47,7 +46,6 @@ protected:
 	DialogLoad *pDialogLoad;
 	DialogSave *pDialogSave;
 	quint8 ubCurrentLevel;
-	quint8 ubDrawMode;
 	quint8 ubLastColumn;
 	quint8 ubLastRow;
 
@@ -60,17 +58,12 @@ protected:
 	virtual void loadCurrentLevel();
 	virtual void setCellState(SurfaceCell *pCell, const quint8 ubState, const bool bUpdate = true);
 	virtual void setCellState(const quint8 ubColumn, const quint8 ubRow, const quint8 ubState, const bool bUpdate = true);
-	// depricated
-	virtual void toggleCell(SurfaceCell *pCell);
-	virtual void toggleCell(const quint8 ubColumn, const quint8 ubRow);
 
 protected slots:
 	virtual void dialogLoadFinished(const int iResult);
 	virtual void dialogSaveFinished(const int iResult);
 	virtual void initBrushes();
 	virtual void initCells();
-	virtual void onCellClickedForStartPoints(const quint8 ubColumn,
-											 const quint8 ubRow, SurfaceCell *pCell);
 
 public:
 	explicit SurfaceBuilder(QWidget *pParent = nullptr);
