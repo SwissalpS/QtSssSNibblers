@@ -1,8 +1,8 @@
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
+#include "SurfaceBuilder.h"
 
 #include <iostream>
-#include "SurfaceBuilder.h"
 #include <QStatusBar>
 
 
@@ -97,10 +97,18 @@ void MainWindow::onStatusMessage(const QString &sMessage) const {
 
 void MainWindow::run() {
 
+	// init tab views
+
+	//this->initSettings();
+
 	this->initBuilder();
 
+	//this->initScores();
+
+	// bring last used to front
 	this->pUi->tabWidget->setCurrentIndex(
 				this->pAS->get(AppSettings::sSettingTabMain).toInt());
+
 
 } // run
 
