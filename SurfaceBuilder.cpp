@@ -29,6 +29,9 @@ SurfaceBuilder::SurfaceBuilder(QWidget *pParent) :
 	this->pUi->setupUi(this);
 
 	this->aRows.clear();
+	this->aSpawnPoints.clear();
+	this->hTeleporterEntrances.clear();
+	this->hTeleporterExits.clear();
 
 	this->ubCurrentLevel = this->pAS->get(AppSettings::sSettingBuilderLastLevel).toUInt();
 
@@ -64,6 +67,10 @@ void SurfaceBuilder::changeEvent(QEvent *pEvent) {
 
 void SurfaceBuilder::clearSurface() {
 
+	this->aSpawnPoints.clear();
+	this->hTeleporterEntrances.clear();
+	this->hTeleporterExits.clear();
+
 	quint8 ubRows = this->aRows.count();
 	quint8 ubColumns = this->aRows.first().count();
 	quint8 ubX = 0u;
@@ -78,8 +85,7 @@ void SurfaceBuilder::clearSurface() {
 		for (ubX = 0u; ubX < ubColumns; ubX++) {
 
 			pCell = aRow.at(ubX);
-			pCell->setState(0u);
-			//pCell->update();
+			this->setCellState(pCell, 0u, false);
 
 		} // loop columns
 
@@ -119,8 +125,7 @@ void SurfaceBuilder::clearSurfaceOf(const QVector<quint8> aStates) {
 
 			if (aStates.contains(pCell->getState())) {
 
-				pCell->setState(0u);
-				//pCell->update();
+				this->setCellState(pCell, 0u, false);
 
 			} // if one to clear
 
@@ -142,7 +147,16 @@ QIcon SurfaceBuilder::currentBrushIcon() const {
 
 quint8 SurfaceBuilder::currentBrushState() const {
 
-	switch (this->pUi->selectTool->currentIndex()) {
+	QList<quint8> aEntranceKeys = this->hTeleporterEntrances.keys();
+	QList<quint8> aExitKeys = this->hTeleporterExits.keys();
+
+	static QVector<quint8> aEntrances = IconEngine::statesTeleporterEntrances();
+	static QVector<quint8> aExits = IconEngine::statesTeleporterExits();
+	quint8 ubState;
+
+	int iCurrent = this->pUi->selectTool->currentIndex();
+
+	switch (iCurrent) {
 
 		 // walls
 		case 1: return 205u;
@@ -152,21 +166,68 @@ quint8 SurfaceBuilder::currentBrushState() const {
 		case 5: return 210u;
 		case 6: return 201u;
 		case 7: return 207u;
-			// wall Ts
+		// wall Ts
 		case 8: return 206u;
 		case 9: return 209u;
 		case 10: return 208u;
 		case 11: return 200u;
-			// spawn points
-		case 12: return 90u;
-		case 13: return 91u;
-		case 14: return 92u;
-		case 15: return 93u;
-			// Teleporter
-			// TODO: detect which one
-		case 16: return 220u;
+		// spawn points
+		case 12:
+		case 13:
+		case 14:
+		case 15:
 
-			// floor
+			if (SssS_Nibblers_Max_Players <= this->aSpawnPoints.length()) {
+
+				Q_EMIT this->statusMessage(tr("Maximum amount of spawn-points reached. Click on one to remove it."));
+
+				return 0u;
+
+			} // if already full
+
+			Q_EMIT this->statusMessage(tr("Click on a cell to set spawn-point."));
+
+			return quint8(iCurrent) + 78u;
+
+		// Teleporter
+		case 16:
+
+			if (aEntranceKeys.length() > aExitKeys.length()) {
+				// placing an exit
+
+				for (int iPos = 0; iPos < aExits.length(); ++iPos) {
+
+					ubState = aExits.at(iPos);
+					if (aExitKeys.contains(ubState)) continue;
+
+					Q_EMIT this->statusMessage(tr("Click on a cell to place teleporter exit."));
+					return ubState;
+
+				} // loop
+
+			} else {
+
+				// placing an entrance or full?
+				if (SssS_Nibblers_Max_Teleporters <= aEntranceKeys.length()) {
+
+					Q_EMIT this->statusMessage(tr("Maximum number of teleporters reached. Click on an existing one to remove it and it's partner."));
+					return 0u;
+
+				} // if max reached
+
+				for (int iPos = 0; iPos < aEntrances.length(); ++iPos) {
+
+					ubState = aEntrances.at(iPos);
+					if (aEntranceKeys.contains(ubState)) continue;
+
+					Q_EMIT this->statusMessage(tr("Click on a cell to place a teleporter Entrance."));
+					return ubState;
+
+				} // loop
+
+			} // if placing exit or entrance
+
+		// floor
 		case 0:
 		default:
 			return 0u;
@@ -337,8 +398,6 @@ void SurfaceBuilder::initCells() {
 
 	} // loop rows
 
-	Q_EMIT this->statusMessage(tr("Click on walls or empty space to toggle walls. Hold Shift for lines."));
-
 } // initCells
 
 
@@ -407,58 +466,25 @@ void SurfaceBuilder::loadCurrentLevel() {
 void SurfaceBuilder::on_buttonClear_clicked() {
 
 	QVector<quint8> aStates;
-	quint8 ubCount;
 
 	switch (this->pUi->selectClear->currentIndex()) {
 
 		case 1: // Walls
-			for (ubCount = 200u; ubCount < 211u; ++ubCount)
-				aStates.append(ubCount);
-
-			this->clearSurfaceOf(aStates);
+			this->clearSurfaceOf(IconEngine::statesWalls());
 		break;
 
 		case 2: // Spawns
-			for (ubCount = 90u; ubCount < 94u; ++ubCount)
-				aStates.append(ubCount);
-
-			this->clearSurfaceOf(aStates);
+			this->clearSurfaceOf(IconEngine::statesSpawns());
 		break;
 
 		case 3: // Teleporters
-			for (ubCount = 220u; ubCount < 240u; ++ubCount)
-				aStates.append(ubCount);
-
+			aStates = IconEngine::statesTeleporterEntrances();
+			aStates.append(IconEngine::statesTeleporterExits());
 			this->clearSurfaceOf(aStates);
 		break;
 
 		case 4: // Snakes
-			aStates.append(10u);
-			aStates.append(11u);
-			aStates.append(12u);
-			aStates.append(20u);
-			aStates.append(21u);
-			aStates.append(22u);
-			aStates.append(30u);
-			aStates.append(31u);
-			aStates.append(32u);
-			aStates.append(40u);
-			aStates.append(41u);
-			aStates.append(42u);
-			aStates.append(50u);
-			aStates.append(51u);
-			aStates.append(52u);
-			aStates.append(60u);
-			aStates.append(61u);
-			aStates.append(62u);
-			aStates.append(70u);
-			aStates.append(71u);
-			aStates.append(72u);
-			aStates.append(80u);
-			aStates.append(81u);
-			aStates.append(82u);
-
-			this->clearSurfaceOf(aStates);
+			this->clearSurfaceOf(IconEngine::statesSnakes());
 		break;
 
 		case 0:
@@ -560,7 +586,6 @@ void SurfaceBuilder::onCellClicked(const quint8 ubColumn, const quint8 ubRow,
 		// no shift, first click or non-line-tool active
 
 		this->setCellState(pCell, this->currentBrushState());
-		//this->toggleCell(pCell);
 
 		this->ubLastColumn = ubColumn;
 		this->ubLastRow = ubRow;
@@ -607,12 +632,10 @@ void SurfaceBuilder::onCellClicked(const quint8 ubColumn, const quint8 ubRow,
 		if (bSteep) {
 
 			this->setCellState(iY, iX, this->currentBrushState());
-			//this->toggleCell(iY, iX);
 
 		} else {
 
 			this->setCellState(iX, iY, this->currentBrushState());
-			//this->toggleCell(iX, iY);
 
 		} // if steep
 
@@ -772,8 +795,21 @@ void SurfaceBuilder::onCellClickedForStartPoints(const quint8 ubColumn,
 
 void SurfaceBuilder::on_selectTool_currentIndexChanged(int iIndex) {
 
+	// avoid while adding elements on init
 	if (17 > this->pUi->selectTool->count()) return;
 
+	// update status message
+	if (0 == iIndex) {
+
+		Q_EMIT this->statusMessage(tr("Click on cells to replace them with floor-tiles. Hold Shift for lines."));
+
+	} else if (12 > iIndex) {
+
+		Q_EMIT this->statusMessage(tr("Click on cells to replace them with walls. Hold Shift for lines."));
+
+	} else this->currentBrushState();
+
+	// save for next session
 	this->pAS->setValue(AppSettings::sSettingBuilderLastBrushIndex, iIndex);
 
 	// works, but needs to adapt to cell size
@@ -782,16 +818,90 @@ void SurfaceBuilder::on_selectTool_currentIndexChanged(int iIndex) {
 } // on_selectTool_currentIndexChanged
 
 
-void SurfaceBuilder::setCellState(SurfaceCell *pCell, const quint8 ubState) {
+void SurfaceBuilder::setCellState(SurfaceCell *pCell, const quint8 ubState,
+								  const bool bUpdate) {
+
+	quint8 ubStateOld = pCell->getState();
+
+	// nothing to do?
+	if (ubStateOld == ubState) return;
+
+	static QVector<quint8> aStatesSpawns = IconEngine::statesSpawns();
+	static QVector<quint8> aStatesTeleporterEntrances = IconEngine::statesTeleporterEntrances();
+	static QVector<quint8> aStatesTeleporterExits = IconEngine::statesTeleporterExits();
+
+	// check old state first
+	bool bUpdateStatus = false;
+	SurfaceCell *pCell2;
+	quint8 ubStatePartner;
+
+	if (aStatesSpawns.contains(ubStateOld)) {
+
+		if (this->aSpawnPoints.contains(pCell)) this->aSpawnPoints.removeOne(pCell);
+		bUpdateStatus = true;
+
+	} else if (aStatesTeleporterEntrances.contains(ubStateOld)) {
+
+		// overwriting an entrance -> delete the exit too
+		if (this->hTeleporterEntrances.contains(ubStateOld)) {
+			this->hTeleporterEntrances.remove(ubStateOld);
+		}
+		ubStatePartner = ubStateOld + 1u;
+		if (this->hTeleporterExits.contains(ubStatePartner)) {
+			pCell2 = this->hTeleporterExits.value(ubStatePartner);
+			pCell2->setState(0u);
+			if (bUpdate) pCell2->update();
+			this->hTeleporterExits.remove(ubStatePartner);
+		}
+		bUpdateStatus = true;
+
+	} else if (aStatesTeleporterExits.contains(ubStateOld)) {
+
+		// overwriting an exit -> delete the entrance too
+		if (this->hTeleporterExits.contains(ubStateOld)) {
+			this->hTeleporterExits.remove(ubStateOld);
+		}
+		ubStatePartner = ubStateOld - 1u;
+		if (this->hTeleporterEntrances.contains(ubStatePartner)) {
+			pCell2 = this->hTeleporterEntrances.value(ubStatePartner);
+			pCell2->setState(0u);
+			if (bUpdate) pCell2->update();
+			this->hTeleporterEntrances.remove(ubStatePartner);
+		}
+		bUpdateStatus = true;
+
+	} // if special state we need to keep track of (old state)
+
+	// now keep track of new one
+
+	if (aStatesSpawns.contains(ubState)) {
+
+		this->aSpawnPoints.append(pCell);
+		bUpdateStatus = true;
+
+	} else if (aStatesTeleporterEntrances.contains(ubState)) {
+
+		this->hTeleporterEntrances.insert(ubState, pCell);
+		bUpdateStatus = true;
+
+	} else if (aStatesTeleporterExits.contains(ubState)) {
+
+		this->hTeleporterExits.insert(ubState, pCell);
+		bUpdateStatus = true;
+
+	} // if special state we need to keep track of (new state)
+
+	// finally change the cell's state and update if requested
 
 	pCell->setState(ubState);
-	pCell->update();
+	if (bUpdate) pCell->update();
+	if (bUpdateStatus) this->currentBrushState();
 
 } // setCellState
 
 
 void SurfaceBuilder::setCellState(const quint8 ubColumn, const quint8 ubRow,
-								  const quint8 ubState) {
+								  const quint8 ubState, const bool bUpdate) {
 
 	// check limits
 	if (ubRow >= this->aRows.count()) return;
@@ -800,11 +910,12 @@ void SurfaceBuilder::setCellState(const quint8 ubColumn, const quint8 ubRow,
 	QList<SurfaceCell *> aRow = this->aRows.at(ubRow);
 	SurfaceCell *pCell = aRow.at(ubColumn);
 
-	this->setCellState(pCell, ubState);
+	this->setCellState(pCell, ubState, bUpdate);
 
 } // setCellState
 
 
+// depricated: from first steps
 void SurfaceBuilder::toggleCell(SurfaceCell *pCell) {
 
 	quint8 ubState = pCell->getState();
@@ -813,12 +924,12 @@ void SurfaceBuilder::toggleCell(SurfaceCell *pCell) {
 	else if (200u == ubState) ubState = 0u;
 	else return;
 
-	pCell->setState(ubState);
-	pCell->update();
+	this->setCellState(pCell, ubState);
 
 } // toggleCell
 
 
+// depricated: from first steps
 void SurfaceBuilder::toggleCell(const quint8 ubColumn, const quint8 ubRow) {
 
 	// check limits

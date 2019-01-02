@@ -40,6 +40,9 @@ private slots:
 
 protected:
 	QList<QList<SurfaceCell*>> aRows;
+	QVector<SurfaceCell*> aSpawnPoints;
+	QHash<quint8, SurfaceCell*> hTeleporterEntrances;
+	QHash<quint8, SurfaceCell*> hTeleporterExits;
 	AppSettings *pAS;
 	DialogLoad *pDialogLoad;
 	DialogSave *pDialogSave;
@@ -55,8 +58,9 @@ protected:
 	virtual QIcon currentBrushIcon() const;
 	virtual quint8 currentBrushState() const;
 	virtual void loadCurrentLevel();
-	virtual void setCellState(SurfaceCell *pCell, const quint8 ubState);
-	virtual void setCellState(const quint8 ubColumn, const quint8 ubRow, const quint8 ubState);
+	virtual void setCellState(SurfaceCell *pCell, const quint8 ubState, const bool bUpdate = true);
+	virtual void setCellState(const quint8 ubColumn, const quint8 ubRow, const quint8 ubState, const bool bUpdate = true);
+	// depricated
 	virtual void toggleCell(SurfaceCell *pCell);
 	virtual void toggleCell(const quint8 ubColumn, const quint8 ubRow);
 
@@ -72,7 +76,6 @@ public:
 	explicit SurfaceBuilder(QWidget *pParent = nullptr);
 	~SurfaceBuilder();
 	virtual void init();
-	//virtual SurfaceCell* getCell(const quint8 ubColumn, const quint8 ubRow);
 
 signals:
 	void cellClicked(const quint8 ubColumn, const quint8 ubRow,

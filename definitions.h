@@ -9,4 +9,7 @@
 #define SssS_Nibblers_Surface_Height quint8(66u)
 #define SssS_Nibblers_Surface_Width quint8(92u)
 
+#define SssS_Nibblers_Max_Players quint8(8u)
+#define SssS_Nibblers_Max_Teleporters quint8(10u)
+
 #endif // DEFINITIONS_H

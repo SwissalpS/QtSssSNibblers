@@ -48,6 +48,13 @@ public:
 	// public access to singelton instance
 	static IconEngine *pIconEngine();
 	virtual void removeCacheOfLevel(const quint8 ubLevel);
+
+	static QVector<quint8> statesTeleporterEntrances();
+	static QVector<quint8> statesTeleporterExits();
+	static QVector<quint8> statesSpawns();
+	static QVector<quint8> statesSnakes();
+	static QVector<quint8> statesWalls();
+
 	virtual ~IconEngine();
 
 signals:

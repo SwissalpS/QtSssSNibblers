@@ -526,6 +526,107 @@ void IconEngine::removeCacheOfLevel(const quint8 ubLevel) {
 } // removeCacheOfLevel
 
 
+// static
+QVector<quint8> IconEngine::statesTeleporterEntrances() {
+
+	static QVector<quint8> aStates;
+
+	if (!aStates.empty()) return aStates;
+
+	quint8 ubCount;
+	for (ubCount = 220u; ubCount < 240u; ubCount += 2u)
+		aStates.append(ubCount);
+
+	return aStates;
+
+} // statesTeleporterEntrances
+
+
+// static
+QVector<quint8> IconEngine::statesTeleporterExits() {
+
+	static QVector<quint8> aStates;
+
+	if (!aStates.empty()) return aStates;
+
+	quint8 ubCount;
+	for (ubCount = 221u; ubCount < 240u; ubCount += 2u)
+		aStates.append(ubCount);
+
+	return aStates;
+
+} // statesTeleporterExits
+
+
+// static
+QVector<quint8> IconEngine::statesSpawns() {
+
+	static QVector<quint8> aStates;
+
+	if (!aStates.empty()) return aStates;
+
+	quint8 ubCount;
+	for (ubCount = 90u; ubCount < 94u; ++ubCount)
+		aStates.append(ubCount);
+
+	return aStates;
+
+} // statesSpawns
+
+
+// static
+QVector<quint8> IconEngine::statesSnakes() {
+
+	static QVector<quint8> aStates;
+
+	if (!aStates.empty()) return aStates;
+
+	aStates.append(10u);
+	aStates.append(11u);
+	aStates.append(12u);
+	aStates.append(20u);
+	aStates.append(21u);
+	aStates.append(22u);
+	aStates.append(30u);
+	aStates.append(31u);
+	aStates.append(32u);
+	aStates.append(40u);
+	aStates.append(41u);
+	aStates.append(42u);
+	aStates.append(50u);
+	aStates.append(51u);
+	aStates.append(52u);
+	aStates.append(60u);
+	aStates.append(61u);
+	aStates.append(62u);
+	aStates.append(70u);
+	aStates.append(71u);
+	aStates.append(72u);
+	aStates.append(80u);
+	aStates.append(81u);
+	aStates.append(82u);
+
+	return aStates;
+
+} // statesSnakes
+
+
+// static
+QVector<quint8> IconEngine::statesWalls() {
+
+	static QVector<quint8> aStates;
+
+	if (!aStates.empty()) return aStates;
+
+	quint8 ubCount;
+	for (ubCount = 200u; ubCount < 211u; ++ubCount)
+		aStates.append(ubCount);
+
+	return aStates;
+
+} // statesWalls
+
+
 
 }	} // namespace SwissalpS::QtNibblers
 
