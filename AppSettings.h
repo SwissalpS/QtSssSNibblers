@@ -36,6 +36,7 @@ private:
 	//AppSettings& operator=(const AppSettings &other);
 
 public:
+	static const QString sSettingBuilderLastBrushIndex;
 	static const QString sSettingBuilderLastLevel;
 	static const QString sSettingPowerUser;
 	static const QString sSettingTabMain;
@@ -43,6 +44,7 @@ public:
 	static const QString sSettingWindowMainSize;
 
 
+	static const quint8 ubSettingBuilderLastBrushIndexDefault;
 	static const quint8 ubSettingBuilderLastLevelDefault;
 	static const bool bSettingPowerUserDefault;
 	static const qint8 iSettingTabMainDefault;

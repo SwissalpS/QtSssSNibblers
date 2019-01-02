@@ -5,7 +5,6 @@
 #include <QDir>
 #include <QMutex>
 #include <QStandardPaths>
-#include <QJsonObject>
 
 
 
@@ -15,12 +14,14 @@ namespace SwissalpS { namespace QtNibblers {
 
 AppSettings *AppSettings::pSingelton = 0;
 
+const QString AppSettings::sSettingBuilderLastBrushIndex = "builderLastBrushIndex";
 const QString AppSettings::sSettingBuilderLastLevel = "builderLastLevel";
 const QString AppSettings::sSettingPowerUser = "PU";
 const QString AppSettings::sSettingTabMain = "mainTabIndex";
 const QString AppSettings::sSettingWindowMainPosition = "windowMainPosition";
 const QString AppSettings::sSettingWindowMainSize = "windowMainSize";
 
+const quint8 AppSettings::ubSettingBuilderLastBrushIndexDefault = 0x0u;
 const quint8 AppSettings::ubSettingBuilderLastLevelDefault = 0x0u;
 const bool AppSettings::bSettingPowerUserDefault = false;
 const qint8 AppSettings::iSettingTabMainDefault = 1u;
@@ -47,6 +48,7 @@ AppSettings::AppSettings(QObject *parent) :
 
 	QSettings *pS = this->pSettings;
 
+	pS->setValue(sSettingBuilderLastBrushIndex, this->get(sSettingBuilderLastBrushIndex));
 	pS->setValue(sSettingBuilderLastLevel, this->get(sSettingBuilderLastLevel));
 	pS->setValue(sSettingTabMain, this->get(sSettingTabMain));
 	pS->setValue(sSettingWindowMainPosition, this->get(sSettingWindowMainPosition));
@@ -114,7 +116,11 @@ void AppSettings::drop() {
 
 QVariant AppSettings::get(const QString sKey) const {
 
-	if (sSettingBuilderLastLevel == sKey) {
+	if (sSettingBuilderLastBrushIndex == sKey) {
+
+		return this->pSettings->value(sKey, ubSettingBuilderLastBrushIndexDefault);
+
+	} else if (sSettingBuilderLastLevel == sKey) {
 
 		return this->pSettings->value(sKey, ubSettingBuilderLastLevelDefault);
 
@@ -126,7 +132,7 @@ QVariant AppSettings::get(const QString sKey) const {
 
 		this->onDebugMessage("@Coder: You may want to use getWindowMainPosition()");
 
-		return this->pSettings->value(sKey, "{}");
+		return this->pSettings->value(sKey, sSettingWindowMainPositionDefault);
 
 	} else if (sSettingWindowMainSize == sKey) {
 
@@ -166,52 +172,28 @@ void AppSettings::setSettings(QSettings *pQSettings) {
 
 QPoint AppSettings::getWindowMainPosition() const {
 
-	const QJsonObject oJo = this->pSettings->value(
-						  sSettingWindowMainPosition, "{}").toJsonObject();
-
-	const int x = oJo.value("x").toDouble(sSettingWindowMainPositionDefault.x());
-	const int y = oJo.value("y").toDouble(sSettingWindowMainPositionDefault.y());
-
-	return QPoint(x, y);
+	return this->get(sSettingWindowMainPosition).toPoint();
 
 } // getWindowMainPosition
 
 
 QSize AppSettings::getWindowMainSize() const {
 
-	const QJsonObject oJo = this->pSettings->value(
-						  sSettingWindowMainSize, "{}").toJsonObject();
-
-	const int w = oJo.value("w").toDouble(sSettingWindowMainSizeDefault.width());
-	const int h = oJo.value("h").toDouble(sSettingWindowMainSizeDefault.height());
-
-	return QSize(w, h);
+	return this->get(sSettingWindowMainSize).toSize();
 
 } // getWindowMainSize
 
 
 void AppSettings::setWindowMainPosition(const QPoint oPos) {
 
-	QJsonObject oJo = this->pSettings->value(
-						  sSettingWindowMainPosition, "{}").toJsonObject();
-
-	oJo.insert("x", oPos.x());
-	oJo.insert("y", oPos.y());
-
-	this->pSettings->setValue(sSettingWindowMainPosition, oJo);
+	this->pSettings->setValue(sSettingWindowMainPosition, oPos);
 
 } // setWindowMainPosition
 
 
 void AppSettings::setWindowMainSize(const QSize oSize) {
 
-	QJsonObject oJo = this->pSettings->value(
-						  sSettingWindowMainSize, "{}").toJsonObject();
-
-	oJo.insert("w", oSize.width());
-	oJo.insert("h", oSize.height());
-
-	this->pSettings->setValue(sSettingWindowMainSize, oJo);
+	this->pSettings->setValue(sSettingWindowMainSize, oSize);
 
 } // setWindowMainSize
 

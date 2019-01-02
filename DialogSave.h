@@ -27,6 +27,9 @@ class DialogSave : public QDialog {
 private:
 	Ui::DialogSave *pUi;
 
+private slots:
+	void on_comboBox_currentIndexChanged(int iIndex);
+
 protected:
 	void changeEvent(QEvent *pEvent);
 

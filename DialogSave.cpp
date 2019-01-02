@@ -1,5 +1,6 @@
 #include "DialogSave.h"
 #include "ui_DialogSave.h"
+#include "IconEngine.h"
 
 
 
@@ -16,7 +17,7 @@ DialogSave::DialogSave(QWidget *pParent) :
 	QComboBox *pBox = this->pUi->comboBox;
 	for (int i = 0; i < 256; ++i) {
 
-		pBox->addItem(QString::number(i));
+		pBox->addItem(IconEngine::level(i), QString::number(i));
 
 	} // loop
 
@@ -28,20 +29,6 @@ DialogSave::~DialogSave() {
 	delete this->pUi;
 
 } // dealloc
-
-
-int DialogSave::getSelected() const {
-
-	return this->pUi->comboBox->currentIndex();
-
-} // getSelected
-
-
-void DialogSave::setSelected(const int iIndex) const {
-
-	this->pUi->comboBox->setCurrentIndex(iIndex);
-
-} // setSelected
 
 
 void DialogSave::changeEvent(QEvent *pEvent) {
@@ -60,6 +47,28 @@ void DialogSave::changeEvent(QEvent *pEvent) {
 	} // switch
 
 } // changeEvent
+
+
+int DialogSave::getSelected() const {
+
+	return this->pUi->comboBox->currentIndex();
+
+} // getSelected
+
+
+void DialogSave::on_comboBox_currentIndexChanged(int iIndex) {
+
+	QLabel *pPreview = this->pUi->preview;
+	pPreview->setPixmap(IconEngine::level(iIndex).pixmap(pPreview->size()));
+
+} // on_comboBox_currentIndexChanged
+
+
+void DialogSave::setSelected(const int iIndex) const {
+
+	this->pUi->comboBox->setCurrentIndex(iIndex);
+
+} // setSelected
 
 
 

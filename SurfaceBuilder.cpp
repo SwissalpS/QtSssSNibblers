@@ -2,6 +2,7 @@
 #include "ui_SurfaceBuilder.h"
 
 #include "definitions.h"
+#include "IconEngine.h"
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
@@ -132,6 +133,50 @@ void SurfaceBuilder::clearSurfaceOf(const QVector<quint8> aStates) {
 } // clearSurfaceOf(vector)
 
 
+QIcon SurfaceBuilder::currentBrushIcon() const {
+
+	return IconEngine::cell(this->currentBrushState(), true);
+
+} // currentBrushIcon
+
+
+quint8 SurfaceBuilder::currentBrushState() const {
+
+	switch (this->pUi->selectTool->currentIndex()) {
+
+		 // walls
+		case 1: return 205u;
+		case 2: return 204u;
+		case 3: return 203u;
+		case 4: return 202u;
+		case 5: return 210u;
+		case 6: return 201u;
+		case 7: return 207u;
+			// wall Ts
+		case 8: return 206u;
+		case 9: return 209u;
+		case 10: return 208u;
+		case 11: return 200u;
+			// spawn points
+		case 12: return 90u;
+		case 13: return 91u;
+		case 14: return 92u;
+		case 15: return 93u;
+			// Teleporter
+			// TODO: detect which one
+		case 16: return 220u;
+
+			// floor
+		case 0:
+		default:
+			return 0u;
+		break;
+
+	} // switch this->pUi->selectTool->currentIndex()
+
+} // currentBrushState
+
+
 void SurfaceBuilder::dialogLoadFinished(const int iResult) {
 
 	// canceled
@@ -141,66 +186,7 @@ void SurfaceBuilder::dialogLoadFinished(const int iResult) {
 	this->pAS->setValue(AppSettings::sSettingBuilderLastLevel,
 						this->ubCurrentLevel);
 
-	QString sPath = this->pAS->getDataPath() + "Level_"
-					+ QString::number(this->ubCurrentLevel);
-
-	QFileInfo oFI = QFileInfo(sPath);
-	if (oFI.exists() && oFI.isFile()) {
-
-		QFile oFile(sPath);
-		if (!oFile.open(QFile::ReadOnly)) {
-
-			this->onDebugMessage("KO: failed to open: " + sPath);
-
-			this->clearSurface();
-
-			return;
-
-		} // if failed to open
-
-		QByteArray aFile = oFile.readAll();
-
-		if ((SssS_Nibblers_Surface_Height * SssS_Nibblers_Surface_Width)
-				> aFile.length()) {
-
-			this->onDebugMessage("invalid length (too short)");
-
-			this->clearSurface();
-
-			return;
-
-		} // if invalid length
-
-		int iPos = 0u;
-		quint8 ubColumns = 0u;
-		quint8 ubRows = 0u;
-		QList<SurfaceCell*> aRow;
-		SurfaceCell *pCell;
-		quint8 ubState = 0u;
-
-		for (; ubRows < SssS_Nibblers_Surface_Height; ++ubRows) {
-
-			aRow = this->aRows.at(ubRows);
-
-			for (ubColumns = 0u; ubColumns < SssS_Nibblers_Surface_Width; ++ubColumns) {
-
-				pCell = aRow.at(ubColumns);
-
-				ubState = quint8(aFile.at(iPos));
-
-				this->setCellState(pCell, ubState);
-
-				iPos++;
-
-			} // loop columns
-
-		} // loop rows
-
-	} else {
-
-		this->clearSurface();
-
-	} // if file exists or not
+	this->loadCurrentLevel();
 
 } // dialogLoadFinished
 
@@ -258,7 +244,11 @@ void SurfaceBuilder::dialogSaveFinished(const int iResult) {
 			this->onDebugMessage("KO: failed to write all. Only: "
 								 + QString::number(iLen));
 
-		} // if didn't write all
+		} else {
+
+			IconEngine::pIconEngine()->removeCacheOfLevel(this->ubCurrentLevel);
+
+		} // if didn't write all or OK
 
 	} else {
 
@@ -267,6 +257,47 @@ void SurfaceBuilder::dialogSaveFinished(const int iResult) {
 	} // if opened or not
 
 } // dialogSaveFinished
+
+
+void SurfaceBuilder::init() {
+
+	this->initBrushes();
+
+	this->initCells();
+
+	this->loadCurrentLevel();
+
+} // init
+
+
+void SurfaceBuilder::initBrushes() {
+
+	QComboBox *pCB = this->pUi->selectTool;
+
+	pCB->addItem(IconEngine::cell(0u, true), tr("Floor / Eraser"));
+	pCB->addItem(IconEngine::cell(205u, true), tr("Wall corner NE"));
+	pCB->addItem(IconEngine::cell(204u, true), tr("Wall corner NW"));
+	pCB->addItem(IconEngine::cell(203u, true), tr("Wall corner SE"));
+	pCB->addItem(IconEngine::cell(202u, true), tr("Wall corner SW"));
+	pCB->addItem(IconEngine::cell(210u, true), tr("Wall cross"));
+	pCB->addItem(IconEngine::cell(201u, true), tr("Wall horizontal"));
+	pCB->addItem(IconEngine::cell(207u, true), tr("Wall T east"));
+	pCB->addItem(IconEngine::cell(206u, true), tr("Wall T north"));
+	pCB->addItem(IconEngine::cell(209u, true), tr("Wall T south"));
+	pCB->addItem(IconEngine::cell(208u, true), tr("Wall T west"));
+	pCB->addItem(IconEngine::cell(200u, true), tr("Wall vertical"));
+
+	pCB->addItem(IconEngine::cell(90u, true), tr("Spawn heading north"));
+	pCB->addItem(IconEngine::cell(91u, true), tr("Spawn heading west"));
+	pCB->addItem(IconEngine::cell(92u, true), tr("Spawn south"));
+	pCB->addItem(IconEngine::cell(93u, true), tr("Spawn east"));
+
+	pCB->addItem(IconEngine::makeTeleporter(""), tr("Teleporter"));
+
+	pCB->setCurrentIndex(this->pAS->get(
+							 AppSettings::sSettingBuilderLastBrushIndex).toInt());
+
+} // initBrushes
 
 
 void SurfaceBuilder::initCells() {
@@ -308,9 +339,131 @@ void SurfaceBuilder::initCells() {
 } // initCells
 
 
-void SurfaceBuilder::on_buttonClear_clicked() {
+void SurfaceBuilder::loadCurrentLevel() {
+
+	QString sPath = this->pAS->getDataPath() + "Level_"
+					+ QString::number(this->ubCurrentLevel);
 
 	this->clearSurface();
+
+	QFileInfo oFI = QFileInfo(sPath);
+	if (!(oFI.exists() && oFI.isFile())) {
+
+		this->onDebugMessage("KO: failed to find: " + sPath);
+		return;
+
+	} // if file does not exist
+
+	QFile oFile(sPath);
+	if (!oFile.open(QFile::ReadOnly)) {
+
+		this->onDebugMessage("KO: failed to open: " + sPath);
+		return;
+
+	} // if failed to open
+
+	QByteArray aFile = oFile.readAll();
+	oFile.close();
+
+	if ((SssS_Nibblers_Surface_Height * SssS_Nibblers_Surface_Width)
+			> aFile.length()) {
+
+		this->onDebugMessage("invalid length (too short)");
+		return;
+
+	} // if invalid length
+
+	int iPos = 0u;
+	quint8 ubColumns = 0u;
+	quint8 ubRows = 0u;
+	QList<SurfaceCell*> aRow;
+	SurfaceCell *pCell;
+	quint8 ubState = 0u;
+
+	for (; ubRows < SssS_Nibblers_Surface_Height; ++ubRows) {
+
+		aRow = this->aRows.at(ubRows);
+
+		for (ubColumns = 0u; ubColumns < SssS_Nibblers_Surface_Width; ++ubColumns) {
+
+			pCell = aRow.at(ubColumns);
+
+			ubState = quint8(aFile.at(iPos));
+
+			this->setCellState(pCell, ubState);
+
+			iPos++;
+
+		} // loop columns
+
+	} // loop rows
+
+} // loadCurrentLevel
+
+
+void SurfaceBuilder::on_buttonClear_clicked() {
+
+	QVector<quint8> aStates;
+	quint8 ubCount;
+
+	switch (this->pUi->selectClear->currentIndex()) {
+
+		case 1: // Walls
+			for (ubCount = 200u; ubCount < 211u; ++ubCount)
+				aStates.append(ubCount);
+
+			this->clearSurfaceOf(aStates);
+		break;
+
+		case 2: // Spawns
+			for (ubCount = 90u; ubCount < 94u; ++ubCount)
+				aStates.append(ubCount);
+
+			this->clearSurfaceOf(aStates);
+		break;
+
+		case 3: // Teleporters
+			for (ubCount = 220u; ubCount < 240u; ++ubCount)
+				aStates.append(ubCount);
+
+			this->clearSurfaceOf(aStates);
+		break;
+
+		case 4: // Snakes
+			aStates.append(10u);
+			aStates.append(11u);
+			aStates.append(12u);
+			aStates.append(20u);
+			aStates.append(21u);
+			aStates.append(22u);
+			aStates.append(30u);
+			aStates.append(31u);
+			aStates.append(32u);
+			aStates.append(40u);
+			aStates.append(41u);
+			aStates.append(42u);
+			aStates.append(50u);
+			aStates.append(51u);
+			aStates.append(52u);
+			aStates.append(60u);
+			aStates.append(61u);
+			aStates.append(62u);
+			aStates.append(70u);
+			aStates.append(71u);
+			aStates.append(72u);
+			aStates.append(80u);
+			aStates.append(81u);
+			aStates.append(82u);
+
+			this->clearSurfaceOf(aStates);
+		break;
+
+		case 0:
+		default:
+			this->clearSurface();
+		break;
+
+	} // switch what to clear
 
 } // on_buttonClear_clicked
 
@@ -396,11 +549,15 @@ void SurfaceBuilder::onCellClicked(const quint8 ubColumn, const quint8 ubRow,
 
 	// has a click already occured?
 	// or no shift held anyway?
-	if ((0xFFu == this->ubLastColumn) || (!bShift)) {
+	// or non-line-tool active?
+	if ((0xFFu == this->ubLastColumn)
+			|| (!bShift)
+			|| (11 < this->pUi->selectTool->currentIndex())) {
 
-		// no, first click
+		// no shift, first click or non-line-tool active
 
-		this->toggleCell(pCell);
+		this->setCellState(pCell, this->currentBrushState());
+		//this->toggleCell(pCell);
 
 		this->ubLastColumn = ubColumn;
 		this->ubLastRow = ubRow;
@@ -446,11 +603,13 @@ void SurfaceBuilder::onCellClicked(const quint8 ubColumn, const quint8 ubRow,
 
 		if (bSteep) {
 
-			this->toggleCell(iY, iX);
+			this->setCellState(iY, iX, this->currentBrushState());
+			//this->toggleCell(iY, iX);
 
 		} else {
 
-			this->toggleCell(iX, iY);
+			this->setCellState(iX, iY, this->currentBrushState());
+			//this->toggleCell(iX, iY);
 
 		} // if steep
 
@@ -606,6 +765,15 @@ void SurfaceBuilder::onCellClickedForStartPoints(const quint8 ubColumn,
 	this->ubLastRow = ubRow;
 
 } // onCellClickedForStartPoints
+
+
+void SurfaceBuilder::on_selectTool_currentIndexChanged(int iIndex) {
+
+	if (17 > this->pUi->selectTool->count()) return;
+
+	this->pAS->setValue(AppSettings::sSettingBuilderLastBrushIndex, iIndex);
+
+} // on_selectTool_currentIndexChanged
 
 
 void SurfaceBuilder::setCellState(SurfaceCell *pCell, const quint8 ubState) {

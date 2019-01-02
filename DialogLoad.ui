@@ -31,6 +31,19 @@
     <widget class="QComboBox" name="comboBox"/>
    </item>
    <item>
+    <widget class="QLabel" name="preview">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap resource="QtSssSNibblers.qrc">:/Images/bonus4.svg</pixmap>
+     </property>
+     <property name="scaledContents">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -42,7 +55,9 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="QtSssSNibblers.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>buttonBox</sender>

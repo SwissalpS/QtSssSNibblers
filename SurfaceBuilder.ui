@@ -34,6 +34,38 @@
        </widget>
       </item>
       <item>
+       <widget class="QComboBox" name="selectClear">
+        <item>
+         <property name="text">
+          <string>All</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Walls</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Spawns</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Teleporters</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Snakes</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="selectTool"/>
+      </item>
+      <item>
        <widget class="QPushButton" name="buttonLoad">
         <property name="text">
          <string>Load</string>

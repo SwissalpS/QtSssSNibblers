@@ -27,6 +27,9 @@ class DialogLoad : public QDialog {
 private:
 	Ui::DialogLoad *pUi;
 
+private slots:
+	void on_comboBox_currentIndexChanged(int iIndex);
+
 protected:
 	void changeEvent(QEvent *pEvent);
 

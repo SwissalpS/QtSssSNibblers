@@ -18,6 +18,9 @@ MainWindow::MainWindow(QWidget *pParent) :
 
 	this->pUi->setupUi(this);
 
+	this->setGeometry(QRect(this->pAS->getWindowMainPosition(),
+							this->pAS->getWindowMainSize()));
+
 } // construct
 
 
@@ -68,7 +71,7 @@ void MainWindow::initBuilder() {
 	connect(pBuilder, SIGNAL(statusMessage(QString)),
 			this, SLOT(onStatusMessage(QString)));
 
-	pBuilder->initCells();
+	pBuilder->init();
 
 } // initBuilder
 
@@ -95,6 +98,9 @@ void MainWindow::onStatusMessage(const QString &sMessage) const {
 void MainWindow::run() {
 
 	this->initBuilder();
+
+	this->pUi->tabWidget->setCurrentIndex(
+				this->pAS->get(AppSettings::sSettingTabMain).toInt());
 
 } // run
 

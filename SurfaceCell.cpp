@@ -4,6 +4,7 @@
 #include <QMouseEvent>
 #include <QPaintEvent>
 #include <QPainter>
+#include "IconEngine.h"
 
 
 
@@ -50,7 +51,9 @@ void SurfaceCell::changeEvent(QEvent *pEvent) {
 		break;
 
 		default:
-			this->onDebugMessage(" " + QString::number(this->ubColumn) + " : " + QString::number(this->ubRow) + " " + QString::number(pEvent->type()));
+			this->onDebugMessage(" " + QString::number(this->ubColumn)
+								 + " : " + QString::number(this->ubRow)
+								 + " " + QString::number(pEvent->type()));
 
 		break;
 
@@ -64,22 +67,41 @@ QColor SurfaceCell::colour() const {
 	switch (this->ubState) {
 
 		// most common -> empty space
-		case 0u: return QColor(Qt::transparent); // black
+		case 0u:
+		// spawn points
+		case 90u: // headed north
+		case 91u: // headed west
+		case 92u: // headed south
+		case 93u: // headed east
+		// teleporter exits
+		case 221: // exit A
+		case 223: // exit B
+		case 225: // exit C
+		case 227: // exit D
+		case 229: // exit E
+		case 231: // exit F
+		case 233: // exit G
+		case 235: // exit H
+		case 237: // exit I
+		case 239: // exit J
+			return QColor(Qt::transparent); // black
 		break;
 
 		// also common -> walls
-		case 200u:
-		case 201u:
-		case 202u:
-		case 203u:
-		case 204u:
-		case 205u:
-		case 206u:
-		case 207u:
-		case 208u:
-		case 209u: return QColor(Qt::white); break;
+		case 200u: // vertical
+		case 201u: // horizontal
+		case 202u: // corner sw
+		case 203u: // corner se
+		case 204u: // corner nw
+		case 205u: // corner ne
+		case 206u: // T north
+		case 207u: // T east
+		case 208u: // T west
+		case 209u: // T south
+		case 210u: // cross
+			return QColor(Qt::white); break;
 
-			// players
+		// players
 		case 10u:
 		case 11u:
 		case 12u: return QColor(Qt::green);	break;
@@ -112,8 +134,21 @@ QColor SurfaceCell::colour() const {
 		case 81u:
 		case 82u: return QColor(Qt::darkYellow); break;
 
-			// bonuses
-			// apples -> add length and advance level
+		// teleporter entrances
+		case 220: // entrance A
+		case 222: // entrance B
+		case 224: // entrance C
+		case 226: // entrance D
+		case 228: // entrance E
+		case 230: // entrance F
+		case 232: // entrance G
+		case 234: // entrance H
+		case 236: // entrance I
+		case 238: // entrance J
+			return QColor(Qt::darkGray); break;
+
+		// bonuses
+		// apples -> add length and advance level
 		case 100u:
 		case 101u:
 		case 102u:
@@ -146,8 +181,6 @@ QColor SurfaceCell::colour() const {
 	/*
 		color0,
 		color1,
-		darkGray,
-		lightGray,
 
 		transparent
 		green,
@@ -165,6 +198,8 @@ QColor SurfaceCell::colour() const {
 		magenta,
 		cyan,
 		darkCyan,
+		lightGray,
+		darkGray,
 
 */
 
@@ -189,11 +224,29 @@ void SurfaceCell::paintEvent(QPaintEvent *pEvent) {
 
 	QPainter oP(this);
 
-	//oP.fillRect(this->rect(), this->colour());
+	QIcon oIcon = IconEngine::cell(this->ubState, this->bBuilder);
 
-	oP.setBrush(this->colour());
-	oP.drawRoundedRect(this->rect(), this->width() * 0.32,
-					   this->height() * 0.32);
+	if (oIcon.isNull()) {
+
+		if (this->bBuilder) {
+
+			oP.setBrush(this->colour());
+			oP.drawRoundedRect(this->rect(), this->width() * 0.32,
+							   this->height() * 0.32);
+
+		} else {
+
+			oP.fillRect(this->rect(), this->colour());
+
+		} // if builder mode or not
+
+	} else {
+
+		oP.drawPixmap(this->rect(), oIcon.pixmap(this->size()));
+
+	} // if empty icon returned
+
+	return;
 
 } // paintEvent
 

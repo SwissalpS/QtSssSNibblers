@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT		+= core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -27,6 +27,7 @@ SOURCES += \
 	AppSettings.cpp \
 	DialogLoad.cpp \
 	DialogSave.cpp \
+	IconEngine.cpp \
 	main.cpp \
 	MainWindow.cpp \
 	SurfaceBuilder.cpp \
@@ -37,6 +38,7 @@ HEADERS += \
 	definitions.h \
 	DialogLoad.h \
 	DialogSave.h \
+	IconEngine.h \
 	MainWindow.h \
 	SurfaceBuilder.h \
 	SurfaceCell.h
@@ -47,3 +49,6 @@ FORMS += \
 	MainWindow.ui \
 	SurfaceBuilder.ui \
 	SurfaceCell.ui
+
+RESOURCES += \
+	QtSssSNibblers.qrc
