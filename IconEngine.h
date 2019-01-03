@@ -40,10 +40,11 @@ protected:
 	virtual QIcon getLevel(const quint8 ubLevel);
 
 public:
-	static QIcon level(const quint8 ubLevel);
 	static QIcon cell(const quint8 ubState, const bool bForBuilder = false);
 	// destroy singelton
 	static void drop();
+	static QIcon level(const quint8 ubLevel);
+	static QIcon makeFloor();
 	static QIcon makeTeleporter(const QString sChar);
 	// public access to singelton instance
 	static IconEngine *pIconEngine();

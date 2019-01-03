@@ -339,22 +339,22 @@ void SurfaceBuilder::initBrushes() {
 	QComboBox *pCB = this->pUi->selectTool;
 
 	pCB->addItem(IconEngine::cell(0u, true), tr("Floor / Eraser"));
-	pCB->addItem(IconEngine::cell(205u, true), tr("Wall corner NE"));
-	pCB->addItem(IconEngine::cell(204u, true), tr("Wall corner NW"));
-	pCB->addItem(IconEngine::cell(203u, true), tr("Wall corner SE"));
-	pCB->addItem(IconEngine::cell(202u, true), tr("Wall corner SW"));
-	pCB->addItem(IconEngine::cell(210u, true), tr("Wall cross"));
-	pCB->addItem(IconEngine::cell(201u, true), tr("Wall horizontal"));
-	pCB->addItem(IconEngine::cell(207u, true), tr("Wall T east"));
-	pCB->addItem(IconEngine::cell(206u, true), tr("Wall T north"));
-	pCB->addItem(IconEngine::cell(209u, true), tr("Wall T south"));
-	pCB->addItem(IconEngine::cell(208u, true), tr("Wall T west"));
-	pCB->addItem(IconEngine::cell(200u, true), tr("Wall vertical"));
+	pCB->addItem(IconEngine::cell(205u, true), tr("Wall Corner NE"));
+	pCB->addItem(IconEngine::cell(204u, true), tr("Wall Corner NW"));
+	pCB->addItem(IconEngine::cell(203u, true), tr("Wall Corner SE"));
+	pCB->addItem(IconEngine::cell(202u, true), tr("Wall Corner SW"));
+	pCB->addItem(IconEngine::cell(210u, true), tr("Wall Cross"));
+	pCB->addItem(IconEngine::cell(201u, true), tr("Wall Horizontal"));
+	pCB->addItem(IconEngine::cell(207u, true), tr("Wall T East (Right)"));
+	pCB->addItem(IconEngine::cell(206u, true), tr("Wall T North (Up)"));
+	pCB->addItem(IconEngine::cell(209u, true), tr("Wall T South (Down)"));
+	pCB->addItem(IconEngine::cell(208u, true), tr("Wall T West (Left)"));
+	pCB->addItem(IconEngine::cell(200u, true), tr("Wall Vertical"));
 
 	pCB->addItem(IconEngine::cell(90u, true), tr("Spawn heading north"));
 	pCB->addItem(IconEngine::cell(91u, true), tr("Spawn heading west"));
-	pCB->addItem(IconEngine::cell(92u, true), tr("Spawn south"));
-	pCB->addItem(IconEngine::cell(93u, true), tr("Spawn east"));
+	pCB->addItem(IconEngine::cell(92u, true), tr("Spawn heading south"));
+	pCB->addItem(IconEngine::cell(93u, true), tr("Spawn heading east"));
 
 	pCB->addItem(IconEngine::makeTeleporter(""), tr("Teleporter"));
 

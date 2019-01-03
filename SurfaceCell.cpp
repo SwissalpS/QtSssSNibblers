@@ -230,7 +230,8 @@ void SurfaceCell::paintEvent(QPaintEvent *pEvent) {
 
 		if (this->bBuilder) {
 
-			oP.setBrush(this->colour());
+			oP.setBrush(Qt::lightGray);
+			oP.setPen(Qt::darkGray);
 			oP.drawRoundedRect(this->rect(), this->width() * 0.32,
 							   this->height() * 0.32);
 

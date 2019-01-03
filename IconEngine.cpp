@@ -257,7 +257,7 @@ QIcon IconEngine::getCellForBuilder(const quint8 ubState) {
 	switch (ubState) {
 
 		// most common -> empty space
-		case 0u: oIcon = QIcon(); break;
+		case 0u: oIcon = IconEngine::makeFloor(); break;
 
 		// spawn points
 		case 90u: // headed north
@@ -490,10 +490,30 @@ QIcon IconEngine::level(const quint8 ubLevel) {
 
 
 // static
+QIcon IconEngine::makeFloor() {
+
+	QPixmap oPixmap(64, 64);
+	QPainter oP(&oPixmap);
+	QRect oRect = oPixmap.rect();
+
+	oP.setBackground(Qt::black);
+
+	oP.setBrush(Qt::lightGray);
+	oP.setPen(Qt::darkGray);
+	oP.drawRoundedRect(oRect, oRect.width() * 0.32,
+					   oRect.height() * 0.32);
+
+	return QIcon(oPixmap);
+
+} // makeFloor
+
+
+// static
 QIcon IconEngine::makeTeleporter(const QString sChar) {
 
 	QPixmap oPixmap(64, 64);
 	QPainter oP(&oPixmap);
+	QRect oRect = oPixmap.rect();
 
 	QFont oFont = oP.font();
 	oFont.setPixelSize(44);
@@ -503,13 +523,13 @@ QIcon IconEngine::makeTeleporter(const QString sChar) {
 	oP.setBackground(Qt::black);
 
 	oP.setBrush(Qt::lightGray);
-	oP.drawRect(oPixmap.rect().adjusted(3, 3, -3, -3));
+	oP.drawRect(oRect.adjusted(3, 3, -3, -3));
 
 	oP.setBrush(Qt::blue);
-	oP.drawRect(oPixmap.rect().adjusted(7, 7, -7, -7));
+	oP.drawRect(oRect.adjusted(7, 7, -7, -7));
 
 	oP.setBrush(Qt::lightGray);
-	oP.drawRect(oPixmap.rect().adjusted(9, 9, -9, -9));
+	oP.drawRect(oRect.adjusted(9, 9, -9, -9));
 
 	oP.drawText(oPixmap.rect().adjusted(10, 10, -10, -10),
 				Qt::AlignCenter, sChar);
