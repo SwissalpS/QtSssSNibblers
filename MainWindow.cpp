@@ -2,6 +2,7 @@
 #include "ui_MainWindow.h"
 #include "IconEngine.h"
 #include "SurfaceBuilder.h"
+#include "SurfaceGame.h"
 
 #include <iostream>
 #include <QStatusBar>
@@ -80,6 +81,22 @@ void MainWindow::initBuilder() {
 	pBuilder->init();
 
 } // initBuilder
+
+
+void MainWindow::initGame() {
+
+	SurfaceGame *pGame = new SurfaceGame();
+	this->pUi->tabPlay->layout()->addWidget(pGame);
+
+	connect(pGame, SIGNAL(debugMessage(QString)),
+			this, SLOT(onDebugMessage(QString)));
+
+	connect(pGame, SIGNAL(statusMessage(QString)),
+			this, SLOT(onStatusMessage(QString)));
+
+	pGame->init();
+
+} // initGame
 
 
 void MainWindow::initSettings() {
@@ -685,6 +702,8 @@ void MainWindow::run() {
 	this->initSettings();
 
 	this->initBuilder();
+
+	this->initGame();
 
 	//this->initScores();
 

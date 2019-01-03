@@ -31,7 +31,9 @@ SOURCES += \
 	main.cpp \
 	MainWindow.cpp \
 	SurfaceBuilder.cpp \
-	SurfaceCell.cpp
+	SurfaceCell.cpp \
+	SurfaceGame.cpp \
+	Worm.cpp
 
 HEADERS += \
 	AppSettings.h \
@@ -41,14 +43,17 @@ HEADERS += \
 	IconEngine.h \
 	MainWindow.h \
 	SurfaceBuilder.h \
-	SurfaceCell.h
+	SurfaceCell.h \
+	SurfaceGame.h \
+	Worm.h
 
 FORMS += \
 	DialogLoad.ui \
 	DialogSave.ui \
 	MainWindow.ui \
 	SurfaceBuilder.ui \
-	SurfaceCell.ui
+	SurfaceCell.ui \
+	SurfaceGame.ui
 
 RESOURCES += \
 	QtSssSNibblers.qrc

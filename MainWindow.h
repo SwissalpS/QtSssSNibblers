@@ -29,7 +29,6 @@ private:
 	Ui::MainWindow *pUi;
 
 private slots:
-
 	void on_buttonHP0_clicked();
 	void on_buttonHP1_clicked();
 	void on_buttonHP2_clicked();
@@ -87,6 +86,7 @@ protected:
 	void changeEvent(QEvent *pEvent);
 	void closeEvent(QCloseEvent *pEvent);
 	virtual void initBuilder();
+	virtual void initGame();
 	virtual void initSettings();
 	virtual void onPlayerColourChanged(const quint8 ubWorm, const quint8 ubIndex);
 	virtual void onPlayerKeyDownChanged(const quint8 ubWorm, const QKeySequence &oKeySequence);

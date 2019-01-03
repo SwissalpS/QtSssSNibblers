@@ -74,8 +74,8 @@ signals:
 	void cellClicked(const quint8 ubColumn, const quint8 ubRow,
 					 bool bShift) const;
 
-	void statusMessage(const QString &sMessage) const;
 	void debugMessage(const QString &sMessage) const;
+	void statusMessage(const QString &sMessage) const;
 
 public slots:
 	void onCellClicked(const quint8 ubColumn, const quint8 ubRow,
@@ -83,6 +83,7 @@ public slots:
 
 	inline void onDebugMessage(const QString &sMessage) const {
 		Q_EMIT this->debugMessage("SurfaceBuilder:" + sMessage); }
+
 }; // SurfaceBuilder
 
 

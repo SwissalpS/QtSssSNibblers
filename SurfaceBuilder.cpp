@@ -40,6 +40,9 @@ SurfaceBuilder::SurfaceBuilder(QWidget *pParent) :
 SurfaceBuilder::~SurfaceBuilder() {
 
 	this->aRows.clear();
+	this->aSpawnPoints.clear();
+	this->hTeleporterEntrances.clear();
+	this->hTeleporterExits.clear();
 
 	delete this->pUi;
 
