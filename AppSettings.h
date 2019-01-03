@@ -41,6 +41,10 @@ public:
 	static const QString sSettingGameColours;
 	static const QString sSettingGameCountAIs;
 	static const QString sSettingGameCountHumans;
+	static const QString sSettingGameKeyDown;
+	static const QString sSettingGameKeyLeft;
+	static const QString sSettingGameKeyRight;
+	static const QString sSettingGameKeyUp;
 	static const QString sSettingGameFakeBonuses;
 	static const QString sSettingGameRelative;
 	static const QString sSettingGameSound;
@@ -82,12 +86,20 @@ public:
 
 	quint8 getPlayerColour(const quint8 ubWorm) const;
 	quint8 getPlayerByColour(const quint8 ubColour) const;
+	QString getPlayerKeyDown(const quint8 ubWorm) const;
+	QString getPlayerKeyLeft(const quint8 ubWorm) const;
+	QString getPlayerKeyRight(const quint8 ubWorm) const;
+	QString getPlayerKeyUp(const quint8 ubWorm) const;
 	bool getPlayerRelative(const quint8 ubWorm) const;
 	bool getPlayerUseMouse(const quint8 ubWorm) const;
 	QPoint getWindowMainPosition() const;
 	QSize getWindowMainSize() const;
 
 	void setPlayerColour(const quint8 ubWorm, const quint8 ubColour);
+	void setPlayerKeyDown(const quint8 ubWorm, const QString sKey) const;
+	void setPlayerKeyLeft(const quint8 ubWorm, const QString sKey) const;
+	void setPlayerKeyRight(const quint8 ubWorm, const QString sKey) const;
+	void setPlayerKeyUp(const quint8 ubWorm, const QString sKey) const;
 	void setPlayerRelative(const quint8 ubWorm, const bool bChecked) const;
 	void setPlayerUseMouse(const quint8 ubWorm, const bool bChecked) const;
 	void setWindowMainPosition(const QPoint oPos);

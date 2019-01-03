@@ -19,6 +19,10 @@ const QString AppSettings::sSettingBuilderLastLevel = "ubBuilderLastLevel";
 const QString AppSettings::sSettingGameColours = "aGameColours";
 const QString AppSettings::sSettingGameCountAIs = "iGameCountAIs";
 const QString AppSettings::sSettingGameCountHumans = "iGameCountHumans";
+const QString AppSettings::sSettingGameKeyDown = "aGameKeyDown";
+const QString AppSettings::sSettingGameKeyLeft = "aGameKeyLeft";
+const QString AppSettings::sSettingGameKeyRight = "aGameKeyRight";
+const QString AppSettings::sSettingGameKeyUp = "aGameKeyUp";
 const QString AppSettings::sSettingGameFakeBonuses = "bGameFakeBonuses";
 const QString AppSettings::sSettingGameRelative = "aGameRelative";
 const QString AppSettings::sSettingGameSound = "bGameSound";
@@ -84,6 +88,59 @@ AppSettings::AppSettings(QObject *parent) :
 	pS->setValue(sSettingGameCountAIs, this->get(sSettingGameCountAIs));
 	pS->setValue(sSettingGameCountHumans, this->get(sSettingGameCountHumans));
 	pS->setValue(sSettingGameFakeBonuses, this->get(sSettingGameFakeBonuses));
+
+	// make sure key-binding arrays exist
+	// Down
+	aList = pS->value(sSettingGameKeyDown).toList();
+	if (4 > aList.length()) {
+		aList.clear();
+		aList.append(QVariant("Down"));
+		aList.append(QVariant("S"));
+		aList.append(QVariant("K"));
+		aList.append(QVariant("5"));
+
+		pS->setValue(sSettingGameKeyDown, aList);
+
+	} // if not valid length
+
+	// Left
+	aList = pS->value(sSettingGameKeyLeft).toList();
+	if (4 > aList.length()) {
+		aList.clear();
+		aList.append(QVariant("Left"));
+		aList.append(QVariant("A"));
+		aList.append(QVariant("J"));
+		aList.append(QVariant("4"));
+
+		pS->setValue(sSettingGameKeyLeft, aList);
+
+	} // if not valid length
+
+	// Right
+	aList = pS->value(sSettingGameKeyRight).toList();
+	if (4 > aList.length()) {
+		aList.clear();
+		aList.append(QVariant("Right"));
+		aList.append(QVariant("D"));
+		aList.append(QVariant("L"));
+		aList.append(QVariant("6"));
+
+		pS->setValue(sSettingGameKeyRight, aList);
+
+	} // if not valid length
+
+	// Up
+	aList = pS->value(sSettingGameKeyUp).toList();
+	if (4 > aList.length()) {
+		aList.clear();
+		aList.append(QVariant("Up"));
+		aList.append(QVariant("W"));
+		aList.append(QVariant("I"));
+		aList.append(QVariant("8"));
+
+		pS->setValue(sSettingGameKeyUp, aList);
+
+	} // if not valid length
 
 	// make sure the list of relative steering is long enough
 	aList = pS->value(sSettingGameRelative).toList();
@@ -301,6 +358,50 @@ quint8 AppSettings::getPlayerByColour(const quint8 ubColour) const {
 } // getPlayerByColour
 
 
+QString AppSettings::getPlayerKeyDown(const quint8 ubWorm) const {
+
+	QList<QVariant> aList = this->get(sSettingGameKeyDown).toList();
+
+	if (aList.length() <= ubWorm) return "Down";
+
+	return aList.at(ubWorm).toString();
+
+} // getPlayerKeyDown
+
+
+QString AppSettings::getPlayerKeyLeft(const quint8 ubWorm) const {
+
+	QList<QVariant> aList = this->get(sSettingGameKeyLeft).toList();
+
+	if (aList.length() <= ubWorm) return "Left";
+
+	return aList.at(ubWorm).toString();
+
+} // getPlayerKeyLeft
+
+
+QString AppSettings::getPlayerKeyRight(const quint8 ubWorm) const {
+
+	QList<QVariant> aList = this->get(sSettingGameKeyRight).toList();
+
+	if (aList.length() <= ubWorm) return "Right";
+
+	return aList.at(ubWorm).toString();
+
+} // getPlayerKeyRight
+
+
+QString AppSettings::getPlayerKeyUp(const quint8 ubWorm) const {
+
+	QList<QVariant> aList = this->get(sSettingGameKeyUp).toList();
+
+	if (aList.length() <= ubWorm) return "Up";
+
+	return aList.at(ubWorm).toString();
+
+} // getPlayerKeyUp
+
+
 bool AppSettings::getPlayerRelative(const quint8 ubWorm) const {
 
 	QList<QVariant> aList = this->get(sSettingGameRelative).toList();
@@ -353,6 +454,82 @@ void AppSettings::setPlayerColour(const quint8 ubWorm, const quint8 ubColour) {
 	this->pSettings->setValue(sSettingGameColours, aListNew);
 
 } // setPlayerColour
+
+
+void AppSettings::setPlayerKeyDown(const quint8 ubWorm, const QString sKey) const {
+
+	this->onDebugMessage(sKey);
+	QList<QVariant> aList = this->get(sSettingGameKeyDown).toList();
+	QList<QVariant> aListNew;
+	QString sOld;
+
+	for (int iWorm = 0; iWorm < 4; ++iWorm) {
+
+		sOld = aList.at(iWorm).toString();
+		aListNew.append(QVariant((ubWorm == quint8(iWorm)) ? sKey : sOld));
+
+	} // loop
+
+	this->pSettings->setValue(sSettingGameKeyDown, aListNew);
+
+} // setPlayerKeyDown
+
+
+void AppSettings::setPlayerKeyLeft(const quint8 ubWorm, const QString sKey) const {
+
+	this->onDebugMessage(sKey);
+	QList<QVariant> aList = this->get(sSettingGameKeyLeft).toList();
+	QList<QVariant> aListNew;
+	QString sOld;
+
+	for (int iWorm = 0; iWorm < 4; ++iWorm) {
+
+		sOld = aList.at(iWorm).toString();
+		aListNew.append(QVariant((ubWorm == quint8(iWorm)) ? sKey : sOld));
+
+	} // loop
+
+	this->pSettings->setValue(sSettingGameKeyLeft, aListNew);
+
+} // setPlayerKeyLeft
+
+
+void AppSettings::setPlayerKeyRight(const quint8 ubWorm, const QString sKey) const {
+
+	this->onDebugMessage(sKey);
+	QList<QVariant> aList = this->get(sSettingGameKeyRight).toList();
+	QList<QVariant> aListNew;
+	QString sOld;
+
+	for (int iWorm = 0; iWorm < 4; ++iWorm) {
+
+		sOld = aList.at(iWorm).toString();
+		aListNew.append(QVariant((ubWorm == quint8(iWorm)) ? sKey : sOld));
+
+	} // loop
+
+	this->pSettings->setValue(sSettingGameKeyRight, aListNew);
+
+} // setPlayerKeyRight
+
+
+void AppSettings::setPlayerKeyUp(const quint8 ubWorm, const QString sKey) const {
+
+	this->onDebugMessage(sKey);
+	QList<QVariant> aList = this->get(sSettingGameKeyUp).toList();
+	QList<QVariant> aListNew;
+	QString sOld;
+
+	for (int iWorm = 0; iWorm < 4; ++iWorm) {
+
+		sOld = aList.at(iWorm).toString();
+		aListNew.append(QVariant((ubWorm == quint8(iWorm)) ? sKey : sOld));
+
+	} // loop
+
+	this->pSettings->setValue(sSettingGameKeyUp, aListNew);
+
+} // setPlayerKeyUp
 
 
 void AppSettings::setPlayerRelative(const quint8 ubWorm, const bool bChecked) const {

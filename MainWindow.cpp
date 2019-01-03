@@ -134,6 +134,8 @@ void MainWindow::initSettings() {
 
 	this->settingsUpdatePlayerMouseAndRelative();
 
+	this->settingsUpdatePlayerKeys();
+
 } // initSettings
 
 
@@ -380,96 +382,112 @@ void MainWindow::onDebugMessage(const QString &sMessage) const {
 
 void MainWindow::on_kseDown1_keySequenceChanged(const QKeySequence &oKeySequence) {
 
+	this->onPlayerKeyDownChanged(0u, oKeySequence);
 
 } // on_kseDown1_keySequenceChanged
 
 
 void MainWindow::on_kseDown2_keySequenceChanged(const QKeySequence &oKeySequence) {
 
+	this->onPlayerKeyDownChanged(1u, oKeySequence);
 
 } // on_kseDown2_keySequenceChanged
 
 
 void MainWindow::on_kseDown3_keySequenceChanged(const QKeySequence &oKeySequence) {
 
+	this->onPlayerKeyDownChanged(2u, oKeySequence);
 
 } // on_kseDown3_keySequenceChanged
 
 
 void MainWindow::on_kseDown4_keySequenceChanged(const QKeySequence &oKeySequence) {
 
+	this->onPlayerKeyDownChanged(3u, oKeySequence);
 
 } // on_kseDown4_keySequenceChanged
 
 
 void MainWindow::on_kseLeft1_keySequenceChanged(const QKeySequence &oKeySequence) {
 
+	this->onPlayerKeyLeftChanged(0u, oKeySequence);
 
 } // on_kseLeft1_keySequenceChanged
 
 
 void MainWindow::on_kseLeft2_keySequenceChanged(const QKeySequence &oKeySequence) {
 
+	this->onPlayerKeyLeftChanged(1u, oKeySequence);
 
 } // on_kseLeft2_keySequenceChanged
 
 
 void MainWindow::on_kseLeft3_keySequenceChanged(const QKeySequence &oKeySequence) {
 
+	this->onPlayerKeyLeftChanged(2u, oKeySequence);
 
 } // on_kseLeft3_keySequenceChanged
 
 
 void MainWindow::on_kseLeft4_keySequenceChanged(const QKeySequence &oKeySequence) {
 
+	this->onPlayerKeyLeftChanged(3u, oKeySequence);
 
 } // on_kseLeft4_keySequenceChanged
 
 
 void MainWindow::on_kseRight1_keySequenceChanged(const QKeySequence &oKeySequence) {
 
+	this->onPlayerKeyRightChanged(0u, oKeySequence);
 
 } // on_kseRight1_keySequenceChanged
 
 
 void MainWindow::on_kseRight2_keySequenceChanged(const QKeySequence &oKeySequence) {
 
+	this->onPlayerKeyRightChanged(1u, oKeySequence);
 
 } // on_kseRight2_keySequenceChanged
 
 
 void MainWindow::on_kseRight3_keySequenceChanged(const QKeySequence &oKeySequence) {
 
+	this->onPlayerKeyRightChanged(2u, oKeySequence);
 
 } // on_kseRight3_keySequenceChanged
 
 
 void MainWindow::on_kseRight4_keySequenceChanged(const QKeySequence &oKeySequence) {
 
+	this->onPlayerKeyRightChanged(3u, oKeySequence);
 
 } // on_kseRight4_keySequenceChanged
 
 
 void MainWindow::on_kseUp1_keySequenceChanged(const QKeySequence &oKeySequence) {
 
+	this->onPlayerKeyUpChanged(0u, oKeySequence);
 
 } // on_kseUp1_keySequenceChanged
 
 
 void MainWindow::on_kseUp2_keySequenceChanged(const QKeySequence &oKeySequence) {
 
+	this->onPlayerKeyUpChanged(1u, oKeySequence);
 
 } // on_kseUp2_keySequenceChanged
 
 
 void MainWindow::on_kseUp3_keySequenceChanged(const QKeySequence &oKeySequence) {
 
+	this->onPlayerKeyUpChanged(2u, oKeySequence);
 
 } // on_kseUp3_keySequenceChanged
 
 
 void MainWindow::on_kseUp4_keySequenceChanged(const QKeySequence &oKeySequence) {
 
+	this->onPlayerKeyUpChanged(3u, oKeySequence);
 
 } // on_kseUp4_keySequenceChanged
 
@@ -488,6 +506,58 @@ void MainWindow::onPlayerColourChanged(const quint8 ubWorm, const quint8 ubIndex
 	this->settingsUpdatePlayerColours();
 
 } // onPlayerColourChanged
+
+
+void MainWindow::onPlayerKeyDownChanged(const quint8 ubWorm,
+										const QKeySequence &oKeySequence) {
+
+	QString sOld = this->pAS->getPlayerKeyDown(ubWorm);
+	if (0 == sOld.compare(oKeySequence.toString())) return;
+
+	// TODO: check for conflicts
+
+	this->pAS->setPlayerKeyDown(ubWorm, oKeySequence.toString());
+
+} // onPlayerDownChanged
+
+
+void MainWindow::onPlayerKeyLeftChanged(const quint8 ubWorm,
+										const QKeySequence &oKeySequence) {
+
+	QString sOld = this->pAS->getPlayerKeyLeft(ubWorm);
+	if (0 == sOld.compare(oKeySequence.toString())) return;
+
+	// TODO: check for conflicts
+
+	this->pAS->setPlayerKeyLeft(ubWorm, oKeySequence.toString());
+
+} // onPlayerLeftChanged
+
+
+void MainWindow::onPlayerKeyRightChanged(const quint8 ubWorm,
+										 const QKeySequence &oKeySequence) {
+
+	QString sOld = this->pAS->getPlayerKeyRight(ubWorm);
+	if (0 == sOld.compare(oKeySequence.toString())) return;
+
+	// TODO: check for conflicts
+
+	this->pAS->setPlayerKeyRight(ubWorm, oKeySequence.toString());
+
+} // onPlayerRightChanged
+
+
+void MainWindow::onPlayerKeyUpChanged(const quint8 ubWorm,
+									  const QKeySequence &oKeySequence) {
+
+	QString sOld = this->pAS->getPlayerKeyUp(ubWorm);
+	if (0 == sOld.compare(oKeySequence.toString())) return;
+
+	// TODO: check for conflicts
+
+	this->pAS->setPlayerKeyUp(ubWorm, oKeySequence.toString());
+
+} // onPlayerUpChanged
 
 
 void MainWindow::onPlayerRelativeToggled(const quint8 ubWorm, const bool bChecked) {
@@ -665,6 +735,63 @@ void MainWindow::settingsUpdatePlayerCount() {
 	this->pAS->setValue(AppSettings::sSettingGameCountHumans, ubHumans);
 
 } // settingsUpdatePlayerCount
+
+
+void MainWindow::settingsUpdatePlayerKeys() {
+
+	this->pUi->kseDown1->setKeySequence(QKeySequence(
+											this->pAS->getPlayerKeyDown(0u),
+											QKeySequence::PortableText));
+	this->pUi->kseDown2->setKeySequence(QKeySequence(
+											this->pAS->getPlayerKeyDown(1u),
+											QKeySequence::PortableText));
+	this->pUi->kseDown3->setKeySequence(QKeySequence(
+											this->pAS->getPlayerKeyDown(2u),
+											QKeySequence::PortableText));
+	this->pUi->kseDown4->setKeySequence(QKeySequence(
+											this->pAS->getPlayerKeyDown(3u),
+											QKeySequence::PortableText));
+
+	this->pUi->kseLeft1->setKeySequence(QKeySequence(
+											this->pAS->getPlayerKeyLeft(0u),
+											QKeySequence::PortableText));
+	this->pUi->kseLeft2->setKeySequence(QKeySequence(
+											this->pAS->getPlayerKeyLeft(1u),
+											QKeySequence::PortableText));
+	this->pUi->kseLeft3->setKeySequence(QKeySequence(
+											this->pAS->getPlayerKeyLeft(2u),
+											QKeySequence::PortableText));
+	this->pUi->kseLeft4->setKeySequence(QKeySequence(
+											this->pAS->getPlayerKeyLeft(3u),
+											QKeySequence::PortableText));
+
+	this->pUi->kseRight1->setKeySequence(QKeySequence(
+											this->pAS->getPlayerKeyRight(0u),
+											QKeySequence::PortableText));
+	this->pUi->kseRight2->setKeySequence(QKeySequence(
+											this->pAS->getPlayerKeyRight(1u),
+											QKeySequence::PortableText));
+	this->pUi->kseRight3->setKeySequence(QKeySequence(
+											this->pAS->getPlayerKeyRight(2u),
+											QKeySequence::PortableText));
+	this->pUi->kseRight4->setKeySequence(QKeySequence(
+											this->pAS->getPlayerKeyRight(3u),
+											QKeySequence::PortableText));
+
+	this->pUi->kseUp1->setKeySequence(QKeySequence(
+											this->pAS->getPlayerKeyUp(0u),
+											QKeySequence::PortableText));
+	this->pUi->kseUp2->setKeySequence(QKeySequence(
+											this->pAS->getPlayerKeyUp(1u),
+											QKeySequence::PortableText));
+	this->pUi->kseUp3->setKeySequence(QKeySequence(
+											this->pAS->getPlayerKeyUp(2u),
+											QKeySequence::PortableText));
+	this->pUi->kseUp4->setKeySequence(QKeySequence(
+											this->pAS->getPlayerKeyUp(3u),
+											QKeySequence::PortableText));
+
+} // settingsUpdatePlayerKeys
 
 
 void MainWindow::settingsUpdatePlayerMouseAndRelative() {

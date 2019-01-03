@@ -89,10 +89,15 @@ protected:
 	virtual void initBuilder();
 	virtual void initSettings();
 	virtual void onPlayerColourChanged(const quint8 ubWorm, const quint8 ubIndex);
+	virtual void onPlayerKeyDownChanged(const quint8 ubWorm, const QKeySequence &oKeySequence);
+	virtual void onPlayerKeyLeftChanged(const quint8 ubWorm, const QKeySequence &oKeySequence);
+	virtual void onPlayerKeyRightChanged(const quint8 ubWorm, const QKeySequence &oKeySequence);
+	virtual void onPlayerKeyUpChanged(const quint8 ubWorm, const QKeySequence &oKeySequence);
 	virtual void onPlayerRelativeToggled(const quint8 ubWorm, const bool bChecked);
 	virtual void onPlayerUseMouseToggled(const quint8 ubWorm, const bool bChecked);
 	virtual void settingsUpdatePlayerColours();
 	virtual void settingsUpdatePlayerCount();
+	virtual void settingsUpdatePlayerKeys();
 	virtual void settingsUpdatePlayerMouseAndRelative();
 
 public:
