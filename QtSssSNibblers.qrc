@@ -1,5 +1,6 @@
 <RCC>
 	<qresource prefix="/">
+		<file>bin/gnomeNibblesLevelsToNibbersLevels.phps</file>
 		<file>Images/arrow.png</file>
 		<file>Images/arrow.svg</file>
 		<file>Images/bonus1.png</file>
