@@ -272,11 +272,12 @@ void SurfaceBuilder::dialogSaveFinished(const int iResult) {
 	if (!oDir.mkpath(sPath)) {
 
 		this->onDebugMessage("KO: failed to create path: " + sPath);
+		Q_EMIT this->statusMessage(tr("KO: failed to create path: ") + sPath);
 		return;
 
 	} // if failed to create path or path not existing
 
-	sPath += "Level_" + QString::number(this->ubCurrentLevel);
+	sPath = this->pAS->getDataPathLevelFile(this->ubCurrentLevel);
 
 	QByteArray aOut;
 	quint8 ubColumns = 0u;
@@ -409,8 +410,7 @@ void SurfaceBuilder::initCells() {
 
 void SurfaceBuilder::loadCurrentLevel() {
 
-	QString sPath = this->pAS->getDataPath() + "Level_"
-					+ QString::number(this->ubCurrentLevel);
+	QString sPath = this->pAS->getDataPathLevelFile(this->ubCurrentLevel);
 
 	this->clearSurface();
 

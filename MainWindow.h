@@ -80,6 +80,7 @@ private slots:
 	void on_selectSpeed_currentIndexChanged(int iIndex);
 	void on_selectStartLevel_currentIndexChanged(int iIndex);
 	void on_selectStartLives_currentIndexChanged(int iIndex);
+	void on_tabWidgetMain_currentChanged(int iIndex);
 
 protected:
 	AppSettings *pAS;

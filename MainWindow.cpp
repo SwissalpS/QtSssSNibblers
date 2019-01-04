@@ -62,7 +62,7 @@ void MainWindow::closeEvent(QCloseEvent *pEvent) {
 	this->pAS->setWindowMainPosition(this->pos());
 	this->pAS->setWindowMainSize(this->size());
 	this->pAS->setValue(AppSettings::sSettingTabMainIndex,
-						this->pUi->tabWidget->currentIndex());
+						this->pUi->tabWidgetMain->currentIndex());
 	this->pAS->setValue(AppSettings::sSettingTabSettingIndex,
 						this->pUi->tabSettingsInner->currentIndex());
 
@@ -751,6 +751,26 @@ void MainWindow::onStatusMessage(const QString &sMessage) const {
 } // onStatusMessage
 
 
+void MainWindow::on_tabWidgetMain_currentChanged(int iIndex) {
+
+	QString sMessage;
+	switch (iIndex) {
+
+		case 0: sMessage = tr("Settings: Set movement keys and more."); break;
+		case 1: sMessage = tr("Builder: Edit levels and make your own."); break;
+		case 2: sMessage = tr("Click on the buttons at the top to Start/Resume/Stop/Restart the game"); break;
+		case 3: sMessage = tr("Scores: Remember that time..."); break;
+
+		default:
+		break;
+
+	} // switch iIndex
+
+	this->onStatusMessage(sMessage);
+
+} // on_tabWidgetMain_currentChanged
+
+
 void MainWindow::run() {
 
 	// init tab views
@@ -764,7 +784,7 @@ void MainWindow::run() {
 	//this->initScores();
 
 	// bring last used to front
-	this->pUi->tabWidget->setCurrentIndex(
+	this->pUi->tabWidgetMain->setCurrentIndex(
 				this->pAS->get(AppSettings::sSettingTabMainIndex).toInt());
 
 

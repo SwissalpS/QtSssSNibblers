@@ -222,6 +222,63 @@ AppSettings *AppSettings::pAppSettings() {
 } // singelton access
 
 
+void AppSettings::copyResources(QString sPathSource, QString sPathTarget) {
+
+	QDir oPath = QDir("/");
+	// first make sure target path exists
+	if (!oPath.mkpath(sPathTarget)) {
+
+		this->onDebugMessage(tr("Can not make path: ") + sPathTarget +
+							 "\n"
+							 + tr("Without it, I can not predict what will happen."));
+		return;
+
+	} // if path does not exist and can not be made
+
+	// ensure a trailing slash
+	if (!sPathTarget.endsWith("/")) sPathTarget += "/";
+	if (!sPathSource.endsWith("/")) sPathSource += "/";
+	if (!sPathSource.startsWith(":/")) {
+
+		if (sPathSource.startsWith("/")) {
+
+			sPathSource = ":" + sPathSource;
+
+		} else sPathSource = ":/" + sPathSource;
+
+	} // if not a full source path
+
+	QString sResource;
+	QString sPathFileSource, sPathFileTarget;
+	foreach (sResource, QDir(sPathSource).entryList()) {
+
+		sPathFileSource = sPathSource + sResource;
+		sPathFileTarget = sPathTarget + sResource;
+
+		if (QFileInfo(sPathFileSource).isDir()) {
+
+			this->copyResources(sPathFileSource, sPathFileTarget);
+
+			continue;
+
+		} // if dir encountered
+
+		if (!QFileInfo(sPathFileTarget).exists()) {
+
+			QFile::copy(sPathFileSource, sPathFileTarget);
+
+			// set correct permissions
+			QFile(sPathFileTarget).setPermissions(
+						QFile::ReadOther | QFile::ReadGroup | QFile::ReadOwner |
+						QFile::WriteGroup | QFile::WriteOwner);
+
+		} // if resource file does not exist in target directory
+
+	} // loop all resources source directory
+
+} // copyResources
+
+
 void AppSettings::drop() {
 
 	static QMutex oMutex;

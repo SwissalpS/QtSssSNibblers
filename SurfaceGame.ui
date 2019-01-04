@@ -24,12 +24,35 @@
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
+       <widget class="QPushButton" name="buttonSR">
+        <property name="text">
+         <string>Stop / Restart</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="labelLevel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Level #</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="buttonPP">
         <property name="enabled">
          <bool>true</bool>
         </property>
         <property name="text">
-         <string>Play</string>
+         <string> Play / Pause</string>
         </property>
         <property name="checkable">
          <bool>true</bool>

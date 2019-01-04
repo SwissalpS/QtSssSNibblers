@@ -33,6 +33,8 @@ private:
 private slots:
 	void on_buttonPP_toggled(bool bChecked);
 
+	void on_buttonSR_clicked();
+
 protected:
 	QList<QList<SurfaceCell *> > aopRows;
 	QVector<SurfaceCell *> apSpawnPoints;

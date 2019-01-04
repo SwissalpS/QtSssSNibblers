@@ -412,8 +412,7 @@ QIcon IconEngine::getLevel(const quint8 ubLevel) {
 	oP.fillRect(oPixmap.rect(), Qt::black);
 	oP.setPen(Qt::white);
 
-	QString sPath = AppSettings::pAppSettings()->getDataPath() + "Level_"
-					+ QString::number(ubLevel);
+	QString sPath = AppSettings::pAppSettings()->getDataPathLevelFile(ubLevel);
 
 	QFileInfo oFI = QFileInfo(sPath);
 	if (!(oFI.exists() && oFI.isFile())) {
@@ -472,6 +471,7 @@ QIcon IconEngine::getLevel(const quint8 ubLevel) {
 } // getLevel
 
 
+// static
 QIcon IconEngine::level(const quint8 ubLevel) {
 
 	static IconEngine *pIE = IconEngine::pIconEngine();
@@ -503,8 +503,6 @@ QIcon IconEngine::makeFloor() {
 // static
 QIcon IconEngine::makeQuart(QIcon oIcon, const quint8 ubQuart) {
 
-
-
 	QPixmap oPixmap(64, 64);
 	QPainter oP(&oPixmap);
 	QRect oRect = oPixmap.rect();
@@ -517,24 +515,20 @@ QIcon IconEngine::makeQuart(QIcon oIcon, const quint8 ubQuart) {
 	if (0u == ubQuart) {
 		// nw
 		oP.drawPixmap(oRect, oIcon.pixmap(oSize), QRect(0, 0, iW, iH));
+
 	} else if (1u == ubQuart) {
 		// ne
 		oP.drawPixmap(oRect, oIcon.pixmap(oSize), QRect(iW, 0, iW, iH));
+
 	} else if (2u == ubQuart) {
 		// se
 		oP.drawPixmap(oRect, oIcon.pixmap(oSize), QRect(iW, iH, iW, iH));
+
 	} else {
 		// sw
 		oP.drawPixmap(oRect, oIcon.pixmap(oSize), QRect(0, iH, iW, iH));
-	}
 
-
-	return QIcon(oPixmap);
-
-	oP.setBrush(Qt::lightGray);
-	oP.setPen(Qt::darkGray);
-	oP.drawRoundedRect(oRect, oRect.width() * 0.32,
-					   oRect.height() * 0.32);
+	} // switch corner
 
 	return QIcon(oPixmap);
 

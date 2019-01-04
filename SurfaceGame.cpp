@@ -162,7 +162,9 @@ void SurfaceGame::countdownTick() {
 
 	if (0 < iTick) {
 
-		this->pUi->buttonPP->setText(QString::number(iTick));
+		QString sMessage = QString::number(iTick);
+		this->pUi->buttonPP->setText(sMessage);
+		Q_EMIT this->statusMessage(sMessage);
 
 		QTimer::singleShot(1000, this, SLOT(countdownTick()));
 
@@ -172,7 +174,9 @@ void SurfaceGame::countdownTick() {
 
 	this->pUi->buttonPP->setChecked(true);
 	this->pUi->buttonPP->setEnabled(true);
+	this->pUi->buttonSR->setEnabled(true);
 	this->pUi->buttonPP->setText(tr("Pause"));
+	Q_EMIT this->statusMessage(tr("Go, Go, Goooooh!"));
 
 	Q_EMIT this->pauseResumeToggled();
 
@@ -319,8 +323,9 @@ void SurfaceGame::initWorms() {
 
 void SurfaceGame::loadCurrentLevel() {
 
-	QString sPath = this->pAS->getDataPath() + "Level_"
-					+ QString::number(this->ubCurrentLevel);
+	QString sPath = this->pAS->getDataPathLevelFile(this->ubCurrentLevel);
+
+	this->pUi->labelLevel->setText(tr("Level ") + QString::number(this->ubCurrentLevel));
 
 	this->clearSurface();
 
@@ -409,6 +414,11 @@ void SurfaceGame::on_buttonPP_toggled(bool bChecked) {
 } // on_buttonPP_toggled
 
 
+void SurfaceGame::on_buttonSR_clicked() {
+
+} // on_buttonSR_clicked
+
+
 void SurfaceGame::onDoLevelStartCountdown() {
 
 	this->onMove();
@@ -419,7 +429,9 @@ void SurfaceGame::onDoLevelStartCountdown() {
 
 	this->pUi->buttonPP->setText("3");
 	this->pUi->buttonPP->setEnabled(false);
+	this->pUi->buttonSR->setEnabled(false);
 	QTimer::singleShot(1000, this, SLOT(countdownTick()));
+	Q_EMIT this->statusMessage(tr("Get Ready: 3..."));
 
 } // onDoLevelStartCountdown
 

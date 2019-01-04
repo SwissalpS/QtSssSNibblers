@@ -75,6 +75,7 @@ public:
 	static const QSize sSettingWindowMainSizeDefault;
 
 
+	void copyResources(QString sPathSource, QString sPathTarget);
 	// destroy singelton
 	static void drop();
 	// public access to singelton instance
@@ -83,6 +84,10 @@ public:
 
 	QVariant get(const QString sKey) const;
 	QString getDataPath() const;
+	inline virtual QString getDataPathLevelFile(const quint8 ubLevel) {
+		static bool bFirst = true; if (bFirst) this->copyResources(":/Levels", this->sPathDataBase);
+		return this->getDataPath() + "Level_" + QString::number(ubLevel); }
+
 	QSettings *getSettings() const;
 	void setSettings(QSettings *pQSettings);
 
