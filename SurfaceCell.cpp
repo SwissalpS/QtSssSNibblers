@@ -1,10 +1,12 @@
 #include "SurfaceCell.h"
 #include "ui_SurfaceCell.h"
 
+#include "definitions.h"
+#include "IconEngine.h"
+
 #include <QMouseEvent>
 #include <QPaintEvent>
 #include <QPainter>
-#include "IconEngine.h"
 
 
 
@@ -12,9 +14,20 @@ namespace SwissalpS { namespace QtNibblers {
 
 
 
+SurfaceCell::SurfaceCell(QWidget *pParent) :
+	QFrame(pParent),
+	pUi(nullptr),
+	bBuilder(false),
+	ubState(0xFFu),
+	ubColumn(0xFFu),
+	ubRow(0xFFu) {
+
+} // construct null-cell
+
+
 SurfaceCell::SurfaceCell(bool bBuilder, quint8 ubState, quint8 ubColumn,
-						 quint8 ubRow, QWidget *parent) :
-	QFrame(parent),
+						 quint8 ubRow, QWidget *pParent) :
+	QFrame(pParent),
 	pUi(new Ui::SurfaceCell),
 	bBuilder(bBuilder),
 	ubState(ubState),
@@ -102,37 +115,37 @@ QColor SurfaceCell::colour() const {
 			return QColor(Qt::white); break;
 
 		// players
-		case 10u:
-		case 11u:
-		case 12u: return QColor(Qt::green);	break;
+		case 10u: case 11u: case 12u: case 13u: case 14u:
+		case 15u: case 16u: case 17u: case 18u: case 19u:
+			return QColor(SssS_Nibblers_Colour_0); break;
 
-		case 20u:
-		case 21u:
-		case 22u: return QColor(Qt::red); break;
+		case 20u: case 21u: case 22u: case 23u: case 24u:
+		case 25u: case 26u: case 27u: case 28u: case 29u:
+			return QColor(SssS_Nibblers_Colour_1); break;
 
-		case 30u:
-		case 31u:
-		case 32u: return QColor(Qt::blue); break;
+		case 30u: case 31u: case 32u: case 33u: case 34u:
+		case 35u: case 36u: case 37u: case 38u: case 39u:
+			return QColor(SssS_Nibblers_Colour_2); break;
 
-		case 40u:
-		case 41u:
-		case 42u: return QColor(Qt::yellow); break;
+		case 40u: case 41u: case 42u: case 43u: case 44u:
+		case 45u: case 46u: case 47u: case 48u: case 49u:
+			return QColor(SssS_Nibblers_Colour_3); break;
 
-		case 50u:
-		case 51u:
-		case 52u: return QColor(Qt::darkGreen); break;
+		case 50u: case 51u: case 52u: case 53u: case 54u:
+		case 55u: case 56u: case 57u: case 58u: case 59u:
+			return QColor(SssS_Nibblers_Colour_4); break;
 
-		case 60u:
-		case 61u:
-		case 62u: return QColor(Qt::darkRed); break;
+		case 60u: case 61u: case 62u: case 63u: case 64u:
+		case 65u: case 66u: case 67u: case 68u: case 69u:
+			return QColor(SssS_Nibblers_Colour_5); break;
 
-		case 70u:
-		case 71u:
-		case 72u: return QColor(Qt::darkBlue); break;
+		case 70u: case 71u: case 72u: case 73u: case 74u:
+		case 75u: case 76u: case 77u: case 78u: case 79u:
+			return QColor(SssS_Nibblers_Colour_6); break;
 
-		case 80u:
-		case 81u:
-		case 82u: return QColor(Qt::darkYellow); break;
+		case 80u: case 81u: case 82u: case 83u: case 84u:
+		case 85u: case 86u: case 87u: case 88u: case 89u:
+			return QColor(SssS_Nibblers_Colour_7); break;
 
 		// teleporter entrances
 		case 220: // entrance A
@@ -220,6 +233,8 @@ void SurfaceCell::mouseReleaseEvent(QMouseEvent *pEvent) {
 
 void SurfaceCell::paintEvent(QPaintEvent *pEvent) {
 
+	static QVector<quint8> aubSnakes = IconEngine::statesSnakes();
+
 	QFrame::paintEvent(pEvent);
 
 	QPainter oP(this);
@@ -232,6 +247,13 @@ void SurfaceCell::paintEvent(QPaintEvent *pEvent) {
 
 			oP.setBrush(Qt::lightGray);
 			oP.setPen(Qt::darkGray);
+			oP.drawRoundedRect(this->rect(), this->width() * 0.32,
+							   this->height() * 0.32);
+
+		} else if (aubSnakes.contains(this->ubState)) {
+
+			oP.setBrush(this->colour());
+			oP.setPen(Qt::black);
 			oP.drawRoundedRect(this->rect(), this->width() * 0.32,
 							   this->height() * 0.32);
 
@@ -249,7 +271,7 @@ void SurfaceCell::paintEvent(QPaintEvent *pEvent) {
 
 	return;
 
-} // paintEvent
+}  // paintEvent
 
 
 

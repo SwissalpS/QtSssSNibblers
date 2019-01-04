@@ -28,6 +28,7 @@ const QString AppSettings::sSettingGameRelative = "aGameRelative";
 const QString AppSettings::sSettingGameSound = "bGameSound";
 const QString AppSettings::sSettingGameSpeed = "iGameSpeed0-3";
 const QString AppSettings::sSettingGameStartLevel = "ubGameStartLevel0-255";
+const QString AppSettings::sSettingGameStartLives = "ubGameStartLives0-255";
 const QString AppSettings::sSettingGameUseMouse = "aGameUseMouse";
 const QString AppSettings::sSettingPowerUser = "bPU";
 const QString AppSettings::sSettingTabMainIndex = "iMainTabIndex";
@@ -43,6 +44,7 @@ const bool AppSettings::bSettingGameFakeBonusesDefault = false;
 const bool AppSettings::bSettingGameSoundDefault = true;
 const qint8 AppSettings::iSettingGameSpeedDefault = 0u;
 const quint8 AppSettings::ubSettingGameStartLevelDefault = 0x1u;
+const quint8 AppSettings::ubSettingGameStartLivesDefault = 0x7u;
 const bool AppSettings::bSettingPowerUserDefault = false;
 const qint8 AppSettings::iSettingTabMainIndexDefault = 1u;
 const qint8 AppSettings::iSettingTabSettingIndexDefault = 0u;
@@ -156,6 +158,7 @@ AppSettings::AppSettings(QObject *parent) :
 	pS->setValue(sSettingGameSound, this->get(sSettingGameSound));
 	pS->setValue(sSettingGameSpeed, this->get(sSettingGameSpeed));
 	pS->setValue(sSettingGameStartLevel, this->get(sSettingGameStartLevel));
+	pS->setValue(sSettingGameStartLives, this->get(sSettingGameStartLives));
 
 	// make sure the list of mouse steering is long enough
 	aList = pS->value(sSettingGameUseMouse).toList();
@@ -274,6 +277,10 @@ QVariant AppSettings::get(const QString sKey) const {
 	} else if (sSettingGameStartLevel == sKey) {
 
 		return this->pSettings->value(sKey, ubSettingGameStartLevelDefault);
+
+	} else if (sSettingGameStartLives == sKey) {
+
+		return this->pSettings->value(sKey, ubSettingGameStartLivesDefault);
 
 	} else if (sSettingGameUseMouse == sKey) {
 

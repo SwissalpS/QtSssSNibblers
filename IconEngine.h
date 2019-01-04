@@ -45,6 +45,7 @@ public:
 	static void drop();
 	static QIcon level(const quint8 ubLevel);
 	static QIcon makeFloor();
+	static QIcon makeQuart(QIcon oIcon, const quint8 ubQuart);
 	static QIcon makeTeleporter(const QString sChar);
 	// public access to singelton instance
 	static IconEngine *pIconEngine();
@@ -53,6 +54,7 @@ public:
 	static QVector<quint8> statesTeleporterEntrances();
 	static QVector<quint8> statesTeleporterExits();
 	static QVector<quint8> statesSpawns();
+	static QVector<quint8> statesSnake(const quint8 ubSnake);
 	static QVector<quint8> statesSnakes();
 	static QVector<quint8> statesWalls();
 

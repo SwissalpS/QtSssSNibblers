@@ -1,5 +1,7 @@
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
+
+#include "Game.h"
 #include "IconEngine.h"
 #include "SurfaceBuilder.h"
 #include "SurfaceGame.h"
@@ -85,8 +87,16 @@ void MainWindow::initBuilder() {
 
 void MainWindow::initGame() {
 
-	SurfaceGame *pGame = new SurfaceGame();
-	this->pUi->tabPlay->layout()->addWidget(pGame);
+	SurfaceGame *pSurface = new SurfaceGame();
+	this->pUi->tabPlay->layout()->addWidget(pSurface);
+
+	connect(pSurface, SIGNAL(debugMessage(QString)),
+			this, SLOT(onDebugMessage(QString)));
+
+	connect(pSurface, SIGNAL(statusMessage(QString)),
+			this, SLOT(onStatusMessage(QString)));
+
+	Game *pGame = new Game(this);
 
 	connect(pGame, SIGNAL(debugMessage(QString)),
 			this, SLOT(onDebugMessage(QString)));
@@ -94,7 +104,37 @@ void MainWindow::initGame() {
 	connect(pGame, SIGNAL(statusMessage(QString)),
 			this, SLOT(onStatusMessage(QString)));
 
+
+	connect(pGame, SIGNAL(doLevelStartCountdown()),
+			pSurface, SLOT(onDoLevelStartCountdown()));
+
+	connect(pGame, SIGNAL(move()),
+			pSurface, SLOT(onMove()));
+
+	connect(pGame, SIGNAL(nextLevel()),
+			pSurface, SLOT(onNextLevel()));
+
+	connect(pGame, SIGNAL(placeBonus(quint8)),
+			pSurface, SLOT(onPlaceBonus(quint8)));
+
+	connect(pGame, SIGNAL(spawnWorm(Worm*)),
+			pSurface, SLOT(onSpawnWorm(Worm*)));
+
+
+	connect(pSurface, SIGNAL(pauseResumeToggled()),
+			pGame, SLOT(onPauseResumeToggled()));
+
+	connect(pSurface, SIGNAL(wormCreated(Worm*)),
+			pGame, SLOT(onWormCreated(Worm*)));
+
+	connect(pSurface, SIGNAL(wormAteBonus(Worm*,quint8)),
+			pGame, SLOT(onWormAteBonus(Worm*,quint8)));
+
+	connect(pSurface, SIGNAL(wormCrashed(Worm*)),
+			pGame, SLOT(onWormCrashed(Worm*)));
+
 	pGame->init();
+	pSurface->init();
 
 } // initGame
 
@@ -139,13 +179,19 @@ void MainWindow::initSettings() {
 				this->pAS->get(AppSettings::sSettingGameSpeed).toInt());
 
 	QComboBox *pBox = this->pUi->selectStartLevel;
+	QComboBox *pBoxLives = this->pUi->selectStartLives;
 	for (int i = 0; i < 256; ++i) {
 
 		pBox->addItem(IconEngine::level(i), QString::number(i));
+		pBoxLives->addItem(QString::number(i));
 
 	} // loop
 	pBox->setCurrentIndex(
 				this->pAS->get(AppSettings::sSettingGameStartLevel).toInt());
+
+	pBoxLives->setCurrentIndex(
+				this->pAS->get(AppSettings::sSettingGameStartLives).toInt());
+
 
 	this->settingsUpdatePlayerColours();
 
@@ -685,6 +731,16 @@ void MainWindow::on_selectStartLevel_currentIndexChanged(int iIndex) {
 	this->pAS->setValue(AppSettings::sSettingGameStartLevel, iIndex);
 
 } // on_selectStartLevel_currentIndexChanged
+
+
+void MainWindow::on_selectStartLives_currentIndexChanged(int iIndex) {
+
+	// avoid while items are being added
+	if (256 > this->pUi->selectStartLives->count()) return;
+
+	this->pAS->setValue(AppSettings::sSettingGameStartLives, iIndex);
+
+} // on_selectStartLives_currentIndexChanged
 
 
 void MainWindow::onStatusMessage(const QString &sMessage) const {

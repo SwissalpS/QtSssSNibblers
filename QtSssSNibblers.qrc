@@ -1,13 +1,22 @@
 <RCC>
 	<qresource prefix="/">
+		<file>Images/arrow.png</file>
 		<file>Images/arrow.svg</file>
+		<file>Images/bonus1.png</file>
 		<file>Images/bonus1.svg</file>
+		<file>Images/bonus2.png</file>
 		<file>Images/bonus2.svg</file>
+		<file>Images/bonus3.png</file>
 		<file>Images/bonus3.svg</file>
+		<file>Images/bonus4.png</file>
 		<file>Images/bonus4.svg</file>
+		<file>Images/bonus5.png</file>
 		<file>Images/bonus5.svg</file>
+		<file>Images/diamond.png</file>
 		<file>Images/diamond.svg</file>
+		<file>Images/life.png</file>
 		<file>Images/life.svg</file>
+		<file>Images/questionmark.png</file>
 		<file>Images/questionmark.svg</file>
 		<file>Images/scoreboard_life.svg</file>
 		<file>Images/wall_corner_ne.svg</file>

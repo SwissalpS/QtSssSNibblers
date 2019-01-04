@@ -179,42 +179,34 @@ QIcon IconEngine::getCell(const quint8 ubState) {
 
 		// bonuses
 		// apples -> add length and advance level
-		case 100u:
-		case 101u:
-		case 102u:
-		case 103u:
-			oIcon = QIcon(":/Images/bonus1.svg"); break;
+		case 100u: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus1.png"), 0u); break;
+		case 101u: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus1.png"), 1u); break;
+		case 102u: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus1.png"), 2u); break;
+		case 103u: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus1.png"), 3u); break;
+
 		// cherries -> shorten
-		case 110u:
-		case 111u:
-		case 112u:
-		case 113u:
-			oIcon = QIcon(":/Images/bonus2.svg");
-		break;
+		case 110u: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus2.png"), 0u); break;
+		case 111u: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus2.png"), 1u); break;
+		case 112u: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus2.png"), 2u); break;
+		case 113u: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus2.png"), 3u); break;
 
 		// bananas -> add length
-		case 120u:
-		case 121u:
-		case 122u:
-		case 123u:
-			oIcon = QIcon(":/Images/bonus3.svg");
-		break;
+		case 120u: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus3.png"), 0u); break;
+		case 121u: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus3.png"), 1u); break;
+		case 122u: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus3.png"), 2u); break;
+		case 123u: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus3.png"), 3u); break;
 
 		// hearts -> add life
-		case 130u:
-		case 131u:
-		case 132u:
-		case 133u:
-			oIcon = QIcon(":/Images/life.svg");
-		break;
+		case 130u: oIcon = IconEngine::makeQuart(QIcon(":/Images/life.png"), 0u); break;
+		case 131u: oIcon = IconEngine::makeQuart(QIcon(":/Images/life.png"), 1u); break;
+		case 132u: oIcon = IconEngine::makeQuart(QIcon(":/Images/life.png"), 2u); break;
+		case 133u: oIcon = IconEngine::makeQuart(QIcon(":/Images/life.png"), 3u); break;
 
 		// diamonds -> reverse direction
-		case 140u:
-		case 141u:
-		case 142u:
-		case 143u:
-			oIcon = QIcon(":/Images/diamond.svg");
-		break;
+		case 140u: oIcon = IconEngine::makeQuart(QIcon(":/Images/diamond.png"), 0u); break;
+		case 141u: oIcon = IconEngine::makeQuart(QIcon(":/Images/diamond.png"), 1u); break;
+		case 142u: oIcon = IconEngine::makeQuart(QIcon(":/Images/diamond.png"), 2u); break;
+		case 143u: oIcon = IconEngine::makeQuart(QIcon(":/Images/diamond.png"), 3u); break;
 
 		// most common -> empty space
 		case 0u:
@@ -261,13 +253,13 @@ QIcon IconEngine::getCellForBuilder(const quint8 ubState) {
 
 		// spawn points
 		case 90u: // headed north
-			oIcon = QIcon(":/Images/arrow.svg"); break;
+			oIcon = QIcon(":/Images/arrow.png"); break;
 		case 91u: // headed west
-			oIcon = QIcon(":/Images/arrow.svg").pixmap(32, 32).transformed(QTransform().rotate(-90.0)); break;
+			oIcon = QIcon(":/Images/arrow.png").pixmap(32, 32).transformed(QTransform().rotate(-90.0)); break;
 		case 92u: // headed south
-			oIcon = QIcon(":/Images/arrow.svg").pixmap(32, 32).transformed(QTransform().rotate(180.0)); break;
+			oIcon = QIcon(":/Images/arrow.png").pixmap(32, 32).transformed(QTransform().rotate(180.0)); break;
 		case 93u: // headed east
-			oIcon = QIcon(":/Images/arrow.svg").pixmap(64, 64).transformed(QTransform().rotate(90.0)); break;
+			oIcon = QIcon(":/Images/arrow.png").pixmap(64, 64).transformed(QTransform().rotate(90.0)); break;
 
 
 		// also common -> walls
@@ -509,6 +501,47 @@ QIcon IconEngine::makeFloor() {
 
 
 // static
+QIcon IconEngine::makeQuart(QIcon oIcon, const quint8 ubQuart) {
+
+
+
+	QPixmap oPixmap(64, 64);
+	QPainter oP(&oPixmap);
+	QRect oRect = oPixmap.rect();
+	QSize oSize = oIcon.actualSize(QSize(64, 64));
+	int iW = oSize.width() * 0.5;
+	int iH = oSize.height() * 0.5;
+
+	oP.setBackground(Qt::transparent);
+
+	if (0u == ubQuart) {
+		// nw
+		oP.drawPixmap(oRect, oIcon.pixmap(oSize), QRect(0, 0, iW, iH));
+	} else if (1u == ubQuart) {
+		// ne
+		oP.drawPixmap(oRect, oIcon.pixmap(oSize), QRect(iW, 0, iW, iH));
+	} else if (2u == ubQuart) {
+		// se
+		oP.drawPixmap(oRect, oIcon.pixmap(oSize), QRect(iW, iH, iW, iH));
+	} else {
+		// sw
+		oP.drawPixmap(oRect, oIcon.pixmap(oSize), QRect(0, iH, iW, iH));
+	}
+
+
+	return QIcon(oPixmap);
+
+	oP.setBrush(Qt::lightGray);
+	oP.setPen(Qt::darkGray);
+	oP.drawRoundedRect(oRect, oRect.width() * 0.32,
+					   oRect.height() * 0.32);
+
+	return QIcon(oPixmap);
+
+} // makeQuart
+
+
+// static
 QIcon IconEngine::makeTeleporter(const QString sChar) {
 
 	QPixmap oPixmap(64, 64);
@@ -595,36 +628,32 @@ QVector<quint8> IconEngine::statesSpawns() {
 
 
 // static
+QVector<quint8> IconEngine::statesSnake(const quint8 ubSnake) {
+
+	quint8 ubState = 10u + (10u * ubSnake);
+	quint8 ubLast = ubState + 9u;
+	QVector<quint8> aStates;
+
+	for (; ubState <= ubLast; ++ubState)
+		aStates.append(ubState);
+
+	return aStates;
+
+} // statesSnake
+
+
+// static
 QVector<quint8> IconEngine::statesSnakes() {
 
 	static QVector<quint8> aStates;
 
 	if (!aStates.empty()) return aStates;
 
-	aStates.append(10u);
-	aStates.append(11u);
-	aStates.append(12u);
-	aStates.append(20u);
-	aStates.append(21u);
-	aStates.append(22u);
-	aStates.append(30u);
-	aStates.append(31u);
-	aStates.append(32u);
-	aStates.append(40u);
-	aStates.append(41u);
-	aStates.append(42u);
-	aStates.append(50u);
-	aStates.append(51u);
-	aStates.append(52u);
-	aStates.append(60u);
-	aStates.append(61u);
-	aStates.append(62u);
-	aStates.append(70u);
-	aStates.append(71u);
-	aStates.append(72u);
-	aStates.append(80u);
-	aStates.append(81u);
-	aStates.append(82u);
+	quint8 ubState = 10u;
+	quint8 ubLast = 89u;
+
+	for (; ubState <= ubLast; ++ubState)
+		aStates.append(ubState);
 
 	return aStates;
 

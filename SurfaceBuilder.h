@@ -38,10 +38,10 @@ private slots:
 	void on_selectTool_currentIndexChanged(int iIndex);
 
 protected:
-	QList<QList<SurfaceCell*>> aRows;
-	QVector<SurfaceCell*> aSpawnPoints;
-	QHash<quint8, SurfaceCell*> hTeleporterEntrances;
-	QHash<quint8, SurfaceCell*> hTeleporterExits;
+	QList<QList<SurfaceCell*>> aopRows;
+	QVector<SurfaceCell*> apSpawnPoints;
+	QHash<quint8, SurfaceCell*> hpTeleporterEntrances;
+	QHash<quint8, SurfaceCell*> hpTeleporterExits;
 	AppSettings *pAS;
 	DialogLoad *pDialogLoad;
 	DialogSave *pDialogSave;

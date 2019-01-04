@@ -30,6 +30,7 @@ private:
 protected:
 	bool bBuilder;
 	quint8 ubState; // 0 = empty; 1-99 = player 1-99; 100-199 = bonuses and teleporters; 200-255 = walls
+	quint8 ubStateFrozen;
 	quint8 ubColumn;
 	quint8 ubRow;
 
@@ -40,12 +41,17 @@ protected:
 
 
 public:
+	explicit SurfaceCell(QWidget *pParent = 0);
 	explicit SurfaceCell(bool bBuilder, quint8 ubState,
-						 quint8 ubColumn, quint8 ubRow, QWidget *parent = 0);
+						 quint8 ubColumn, quint8 ubRow, QWidget *pParent = 0);
 	~SurfaceCell();
+	inline virtual void defrostState() { this->ubState = this->ubStateFrozen; this->update(); }
+	inline virtual void freezeState() { this->ubStateFrozen = this->ubState; }
 	inline virtual quint8 getColumn() { return this->ubColumn; }
 	inline virtual quint8 getRow() { return this->ubRow; }
 	inline virtual quint8 getState() { return this->ubState; }
+	inline virtual quint8 getStateFrozen() { return this->ubStateFrozen; }
+	inline virtual bool isNull() { return nullptr == this->pUi; }
 
 	inline virtual void setState(const quint8 ubState) { this->ubState = ubState; }
 

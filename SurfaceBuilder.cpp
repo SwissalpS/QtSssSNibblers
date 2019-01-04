@@ -27,10 +27,10 @@ SurfaceBuilder::SurfaceBuilder(QWidget *pParent) :
 
 	this->pUi->setupUi(this);
 
-	this->aRows.clear();
-	this->aSpawnPoints.clear();
-	this->hTeleporterEntrances.clear();
-	this->hTeleporterExits.clear();
+	this->aopRows.clear();
+	this->apSpawnPoints.clear();
+	this->hpTeleporterEntrances.clear();
+	this->hpTeleporterExits.clear();
 
 	this->ubCurrentLevel = this->pAS->get(AppSettings::sSettingBuilderLastLevel).toUInt();
 
@@ -39,10 +39,10 @@ SurfaceBuilder::SurfaceBuilder(QWidget *pParent) :
 
 SurfaceBuilder::~SurfaceBuilder() {
 
-	this->aRows.clear();
-	this->aSpawnPoints.clear();
-	this->hTeleporterEntrances.clear();
-	this->hTeleporterExits.clear();
+	this->aopRows.clear();
+	this->apSpawnPoints.clear();
+	this->hpTeleporterEntrances.clear();
+	this->hpTeleporterExits.clear();
 
 	delete this->pUi;
 
@@ -69,12 +69,12 @@ void SurfaceBuilder::changeEvent(QEvent *pEvent) {
 
 void SurfaceBuilder::clearSurface() {
 
-	this->aSpawnPoints.clear();
-	this->hTeleporterEntrances.clear();
-	this->hTeleporterExits.clear();
+	this->apSpawnPoints.clear();
+	this->hpTeleporterEntrances.clear();
+	this->hpTeleporterExits.clear();
 
-	quint8 ubRows = this->aRows.count();
-	quint8 ubColumns = this->aRows.first().count();
+	quint8 ubRows = this->aopRows.count();
+	quint8 ubColumns = this->aopRows.first().count();
 	quint8 ubX = 0u;
 	quint8 ubY = 0u;
 	QList<SurfaceCell*> aRow;
@@ -82,7 +82,7 @@ void SurfaceBuilder::clearSurface() {
 
 	for (ubY = 0u; ubY < ubRows; ubY++) {
 
-		aRow = this->aRows.at(ubY);
+		aRow = this->aopRows.at(ubY);
 
 		for (ubX = 0u; ubX < ubColumns; ubX++) {
 
@@ -110,8 +110,8 @@ void SurfaceBuilder::clearSurfaceOf(const quint8 ubState) {
 
 void SurfaceBuilder::clearSurfaceOf(const QVector<quint8> aStates) {
 
-	quint8 ubRows = this->aRows.count();
-	quint8 ubColumns = this->aRows.first().count();
+	quint8 ubRows = this->aopRows.count();
+	quint8 ubColumns = this->aopRows.first().count();
 	quint8 ubX = 0u;
 	quint8 ubY = 0u;
 	QList<SurfaceCell*> aRow;
@@ -119,7 +119,7 @@ void SurfaceBuilder::clearSurfaceOf(const QVector<quint8> aStates) {
 
 	for (ubY = 0u; ubY < ubRows; ubY++) {
 
-		aRow = this->aRows.at(ubY);
+		aRow = this->aopRows.at(ubY);
 
 		for (ubX = 0u; ubX < ubColumns; ubX++) {
 
@@ -149,8 +149,8 @@ QIcon SurfaceBuilder::currentBrushIcon() const {
 
 quint8 SurfaceBuilder::currentBrushState() const {
 
-	QList<quint8> aExitKeys = this->hTeleporterExits.keys();
-	QList<quint8> aEntranceKeys = this->hTeleporterEntrances.keys();
+	QList<quint8> aExitKeys = this->hpTeleporterExits.keys();
+	QList<quint8> aEntranceKeys = this->hpTeleporterEntrances.keys();
 
 	static QVector<quint8> aEntrances = IconEngine::statesTeleporterEntrances();
 	static QVector<quint8> aExits = IconEngine::statesTeleporterExits();
@@ -179,7 +179,7 @@ quint8 SurfaceBuilder::currentBrushState() const {
 		case 14:
 		case 15:
 
-			if (SssS_Nibblers_Max_Players <= this->aSpawnPoints.length()) {
+			if (SssS_Nibblers_Max_Players <= this->apSpawnPoints.length()) {
 
 				Q_EMIT this->statusMessage(tr("Maximum amount of spawn-points reached. Click on one to remove it."));
 
@@ -287,7 +287,7 @@ void SurfaceBuilder::dialogSaveFinished(const int iResult) {
 
 	for (; ubRows < SssS_Nibblers_Surface_Height; ++ubRows) {
 
-		aRow = this->aRows.at(ubRows);
+		aRow = this->aopRows.at(ubRows);
 
 		for (ubColumns = 0u; ubColumns < SssS_Nibblers_Surface_Width; ++ubColumns) {
 
@@ -399,7 +399,7 @@ void SurfaceBuilder::initCells() {
 
 		} // loop columns
 
-		this->aRows.append(aRow);
+		this->aopRows.append(aRow);
 		this->pUi->surfaceRows->addItem(pHBox);
 
 	} // loop rows
@@ -450,7 +450,7 @@ void SurfaceBuilder::loadCurrentLevel() {
 
 	for (; ubRows < SssS_Nibblers_Surface_Height; ++ubRows) {
 
-		aRow = this->aRows.at(ubRows);
+		aRow = this->aopRows.at(ubRows);
 
 		for (ubColumns = 0u; ubColumns < SssS_Nibblers_Surface_Width; ++ubColumns) {
 
@@ -536,8 +536,8 @@ void SurfaceBuilder::on_buttonSave_clicked() {
 
 	QString sMessage;
 	// check for teleporter pairs
-	QList<quint8> aKeysEntrances = this->hTeleporterEntrances.keys();
-	QList<quint8> aKeysExits = this->hTeleporterExits.keys();
+	QList<quint8> aKeysEntrances = this->hpTeleporterEntrances.keys();
+	QList<quint8> aKeysExits = this->hpTeleporterExits.keys();
 	quint8 ubState;
 	quint8 ubMissing = 0u;
 	int iPos = 0;
@@ -570,7 +570,7 @@ void SurfaceBuilder::on_buttonSave_clicked() {
 	} // if found missing entrances
 
 	// check for spawn points
-	int iDiff = SssS_Nibblers_Max_Players - this->aSpawnPoints.length();
+	int iDiff = SssS_Nibblers_Max_Players - this->apSpawnPoints.length();
 	if (0 < iDiff) {
 
 		sMessage += tr(" Warning: missing ") + QString::number(iDiff)
@@ -714,36 +714,36 @@ void SurfaceBuilder::setCellState(SurfaceCell *pCell, const quint8 ubState,
 
 	if (aStatesSpawns.contains(ubStateOld)) {
 
-		if (this->aSpawnPoints.contains(pCell)) this->aSpawnPoints.removeOne(pCell);
+		if (this->apSpawnPoints.contains(pCell)) this->apSpawnPoints.removeOne(pCell);
 		bUpdateStatus = true;
 
 	} else if (aStatesTeleporterEntrances.contains(ubStateOld)) {
 
 		// overwriting an entrance -> delete the exit too
-		if (this->hTeleporterEntrances.contains(ubStateOld)) {
-			this->hTeleporterEntrances.remove(ubStateOld);
+		if (this->hpTeleporterEntrances.contains(ubStateOld)) {
+			this->hpTeleporterEntrances.remove(ubStateOld);
 		}
 		ubStatePartner = ubStateOld + 1u;
-		if (this->hTeleporterExits.contains(ubStatePartner)) {
-			pCell2 = this->hTeleporterExits.value(ubStatePartner);
+		if (this->hpTeleporterExits.contains(ubStatePartner)) {
+			pCell2 = this->hpTeleporterExits.value(ubStatePartner);
 			pCell2->setState(0u);
 			if (bUpdate) pCell2->update();
-			this->hTeleporterExits.remove(ubStatePartner);
+			this->hpTeleporterExits.remove(ubStatePartner);
 		}
 		bUpdateStatus = true;
 
 	} else if (aStatesTeleporterExits.contains(ubStateOld)) {
 
 		// overwriting an exit -> delete the entrance too
-		if (this->hTeleporterExits.contains(ubStateOld)) {
-			this->hTeleporterExits.remove(ubStateOld);
+		if (this->hpTeleporterExits.contains(ubStateOld)) {
+			this->hpTeleporterExits.remove(ubStateOld);
 		}
 		ubStatePartner = ubStateOld - 1u;
-		if (this->hTeleporterEntrances.contains(ubStatePartner)) {
-			pCell2 = this->hTeleporterEntrances.value(ubStatePartner);
+		if (this->hpTeleporterEntrances.contains(ubStatePartner)) {
+			pCell2 = this->hpTeleporterEntrances.value(ubStatePartner);
 			pCell2->setState(0u);
 			if (bUpdate) pCell2->update();
-			this->hTeleporterEntrances.remove(ubStatePartner);
+			this->hpTeleporterEntrances.remove(ubStatePartner);
 		}
 		bUpdateStatus = true;
 
@@ -753,17 +753,17 @@ void SurfaceBuilder::setCellState(SurfaceCell *pCell, const quint8 ubState,
 
 	if (aStatesSpawns.contains(ubState)) {
 
-		this->aSpawnPoints.append(pCell);
+		this->apSpawnPoints.append(pCell);
 		bUpdateStatus = true;
 
 	} else if (aStatesTeleporterEntrances.contains(ubState)) {
 
-		this->hTeleporterEntrances.insert(ubState, pCell);
+		this->hpTeleporterEntrances.insert(ubState, pCell);
 		bUpdateStatus = true;
 
 	} else if (aStatesTeleporterExits.contains(ubState)) {
 
-		this->hTeleporterExits.insert(ubState, pCell);
+		this->hpTeleporterExits.insert(ubState, pCell);
 		bUpdateStatus = true;
 
 	} // if special state we need to keep track of (new state)
@@ -781,10 +781,10 @@ void SurfaceBuilder::setCellState(const quint8 ubColumn, const quint8 ubRow,
 								  const quint8 ubState, const bool bUpdate) {
 
 	// check limits
-	if (ubRow >= this->aRows.count()) return;
-	if (ubColumn >= this->aRows.first().count()) return;
+	if (ubRow >= this->aopRows.count()) return;
+	if (ubColumn >= this->aopRows.first().count()) return;
 
-	QList<SurfaceCell *> aRow = this->aRows.at(ubRow);
+	QList<SurfaceCell *> aRow = this->aopRows.at(ubRow);
 	SurfaceCell *pCell = aRow.at(ubColumn);
 
 	this->setCellState(pCell, ubState, bUpdate);

@@ -11,5 +11,24 @@
 
 #define SssS_Nibblers_Max_Players quint8(8u)
 #define SssS_Nibblers_Max_Teleporters quint8(10u)
+#define SssS_Nibblers_Max_Lives_Per_Row quint8(8u)
+
+#define SssS_Nibblers_Colour_0 Qt::blue
+#define SssS_Nibblers_Colour_1 Qt::cyan
+#define SssS_Nibblers_Colour_2 Qt::darkCyan
+#define SssS_Nibblers_Colour_3 Qt::green
+#define SssS_Nibblers_Colour_4 Qt::magenta
+#define SssS_Nibblers_Colour_5 Qt::red
+#define SssS_Nibblers_Colour_6 Qt::yellow
+#define SssS_Nibblers_Colour_7 Qt::darkYellow
+
+#define SssS_Nibblers_Colour_Text_0 Qt::white
+#define SssS_Nibblers_Colour_Text_1 Qt::black
+#define SssS_Nibblers_Colour_Text_2 Qt::white
+#define SssS_Nibblers_Colour_Text_3 Qt::black
+#define SssS_Nibblers_Colour_Text_4 Qt::white
+#define SssS_Nibblers_Colour_Text_5 Qt::white
+#define SssS_Nibblers_Colour_Text_6 Qt::black
+#define SssS_Nibblers_Colour_Text_7 Qt::white
 
 #endif // DEFINITIONS_H

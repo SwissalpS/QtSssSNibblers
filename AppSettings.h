@@ -50,6 +50,7 @@ public:
 	static const QString sSettingGameSound;
 	static const QString sSettingGameSpeed;
 	static const QString sSettingGameStartLevel;
+	static const QString sSettingGameStartLives;
 	static const QString sSettingGameUseMouse;
 	static const QString sSettingPowerUser;
 	static const QString sSettingTabMainIndex;
@@ -65,6 +66,7 @@ public:
 	static const bool bSettingGameFakeBonusesDefault;
 	static const bool bSettingGameSoundDefault;
 	static const quint8 ubSettingGameStartLevelDefault;
+	static const quint8 ubSettingGameStartLivesDefault;
 	static const qint8 iSettingGameSpeedDefault;
 	static const bool bSettingPowerUserDefault;
 	static const qint8 iSettingTabMainIndexDefault;

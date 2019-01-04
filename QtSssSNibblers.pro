@@ -27,9 +27,11 @@ SOURCES += \
 	AppSettings.cpp \
 	DialogLoad.cpp \
 	DialogSave.cpp \
+	Game.cpp \
 	IconEngine.cpp \
 	main.cpp \
 	MainWindow.cpp \
+	ScoreBoard.cpp \
 	SurfaceBuilder.cpp \
 	SurfaceCell.cpp \
 	SurfaceGame.cpp \
@@ -40,8 +42,10 @@ HEADERS += \
 	definitions.h \
 	DialogLoad.h \
 	DialogSave.h \
+	Game.h \
 	IconEngine.h \
 	MainWindow.h \
+	ScoreBoard.h \
 	SurfaceBuilder.h \
 	SurfaceCell.h \
 	SurfaceGame.h \
@@ -51,6 +55,7 @@ FORMS += \
 	DialogLoad.ui \
 	DialogSave.ui \
 	MainWindow.ui \
+	ScoreBoard.ui \
 	SurfaceBuilder.ui \
 	SurfaceCell.ui \
 	SurfaceGame.ui
