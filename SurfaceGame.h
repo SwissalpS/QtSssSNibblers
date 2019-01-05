@@ -44,6 +44,7 @@ protected:
 	QHash<quint8, SurfaceCell *> hpTeleporterExits;
 	AppSettings *pAS;
 	quint8 ubCurrentLevel;
+	mutable int iLastHeight;
 
 	void changeEvent(QEvent *pEvent);
 	virtual void clearSurface();
@@ -54,6 +55,7 @@ protected:
 	virtual SurfaceCell* getCell(const QPoint oPoint);
 	virtual SurfaceCell* getCell(const quint8 ubColumn, const quint8 ubRow);
 	virtual void loadCurrentLevel();
+	void resizeEvent(QResizeEvent *pEvent);
 	virtual void setCellState(SurfaceCell *pCell, const quint8 ubState, const bool bUpdate = true);
 	virtual void setCellState(const quint8 ubColumn, const quint8 ubRow, const quint8 ubState, const bool bUpdate = true);
 
@@ -66,6 +68,7 @@ public:
 	explicit SurfaceGame(QWidget *pParent = 0);
 	~SurfaceGame();
 	virtual void init();
+	virtual QSize sizeHint() const;
 
 signals:
 	void wormAteBonus(Worm *pWorm, const quint8 ubBonus) const;

@@ -24,6 +24,7 @@ SurfaceGame::SurfaceGame(QWidget *pParent) :
 
 	this->pUi->setupUi(this);
 
+	this->iLastHeight = height();
 	this->aopRows.clear();
 	this->apScoreBoards.clear();
 	this->apWorms.clear();
@@ -561,6 +562,15 @@ void SurfaceGame::onSpawnWorms() {
 } // onSpawnWorms
 
 
+void SurfaceGame::resizeEvent(QResizeEvent *pEvent) {
+
+	QFrame::resizeEvent(pEvent);
+
+	if (height() != this->iLastHeight) this->updateGeometry();
+
+} // resizeEvent
+
+
 void SurfaceGame::setCellState(SurfaceCell *pCell, const quint8 ubState,
 								  const bool bUpdate) {
 
@@ -590,6 +600,22 @@ void SurfaceGame::setCellState(const quint8 ubColumn, const quint8 ubRow,
 	this->setCellState(pCell, ubState, bUpdate);
 
 } // setCellState
+
+
+QSize SurfaceGame::sizeHint() const {
+
+	QSize oS(size());
+
+	this->iLastHeight = oS.height();
+
+	oS.setWidth((oS.height() * SssS_Nibblers_Surface_Width)
+				/ SssS_Nibblers_Surface_Height);
+
+	oS.setHeight(QFrame::sizeHint().height());
+
+	return oS;
+
+} // sizeHint
 
 
 
