@@ -90,6 +90,13 @@ void MainWindow::initGame() {
 	SurfaceGame *pSurface = new SurfaceGame();
 	this->pUi->tabPlay->layout()->addWidget(pSurface);
 
+	connect(this, SIGNAL(settingsPlayerKeyChanged(quint8,QKeySequence,L::Heading)),
+			pSurface, SLOT(onPlayerKeyChanged(quint8,QKeySequence,L::Heading)));
+
+	connect(this, SIGNAL(settingsRelativeChanged(quint8,bool)),
+			pSurface, SLOT(onPlayerRelativeChanged(quint8,bool)));
+
+
 	connect(pSurface, SIGNAL(debugMessage(QString)),
 			this, SLOT(onDebugMessage(QString)));
 
@@ -97,6 +104,10 @@ void MainWindow::initGame() {
 			this, SLOT(onStatusMessage(QString)));
 
 	Game *pGame = new Game(this);
+
+	connect(this, SIGNAL(settingsSpeedChanged(int)),
+			pGame, SLOT(onSpeedChanged(int)));
+
 
 	connect(pGame, SIGNAL(debugMessage(QString)),
 			this, SLOT(onDebugMessage(QString)));
@@ -581,6 +592,8 @@ void MainWindow::onPlayerKeyDownChanged(const quint8 ubWorm,
 
 	this->pAS->setPlayerKeyDown(ubWorm, oKeySequence.toString());
 
+	Q_EMIT this->settingsPlayerKeyChanged(ubWorm, oKeySequence, L::Down);
+
 } // onPlayerDownChanged
 
 
@@ -593,6 +606,8 @@ void MainWindow::onPlayerKeyLeftChanged(const quint8 ubWorm,
 	// TODO: check for conflicts
 
 	this->pAS->setPlayerKeyLeft(ubWorm, oKeySequence.toString());
+
+	Q_EMIT this->settingsPlayerKeyChanged(ubWorm, oKeySequence, L::Left);
 
 } // onPlayerLeftChanged
 
@@ -607,6 +622,8 @@ void MainWindow::onPlayerKeyRightChanged(const quint8 ubWorm,
 
 	this->pAS->setPlayerKeyRight(ubWorm, oKeySequence.toString());
 
+	Q_EMIT this->settingsPlayerKeyChanged(ubWorm, oKeySequence, L::Right);
+
 } // onPlayerRightChanged
 
 
@@ -620,6 +637,8 @@ void MainWindow::onPlayerKeyUpChanged(const quint8 ubWorm,
 
 	this->pAS->setPlayerKeyUp(ubWorm, oKeySequence.toString());
 
+	Q_EMIT this->settingsPlayerKeyChanged(ubWorm, oKeySequence, L::Up);
+
 } // onPlayerUpChanged
 
 
@@ -629,6 +648,8 @@ void MainWindow::onPlayerRelativeToggled(const quint8 ubWorm, const bool bChecke
 	if (bOld == bChecked) return;
 
 	this->pAS->setPlayerRelative(ubWorm, bChecked);
+
+	Q_EMIT this->settingsRelativeChanged(ubWorm, bChecked);
 
 } // onPlayerRelativeToggled
 
@@ -719,6 +740,8 @@ void MainWindow::on_selectColour8_currentIndexChanged(int iIndex) {
 void MainWindow::on_selectSpeed_currentIndexChanged(int iIndex) {
 
 	this->pAS->setValue(AppSettings::sSettingGameSpeed, iIndex);
+
+	Q_EMIT this->settingsSpeedChanged(iIndex);
 
 } // on_selectSpeed_currentIndexChanged
 

@@ -12,6 +12,7 @@
 #define SssS_Nibblers_Max_Players quint8(8u)
 #define SssS_Nibblers_Max_Teleporters quint8(10u)
 #define SssS_Nibblers_Max_Lives_Per_Row quint8(8u)
+#define SssS_Nibblers_Max_Key_Cache quint8(64u)
 
 #define SssS_Nibblers_Colour_0 Qt::blue
 #define SssS_Nibblers_Colour_1 Qt::cyan

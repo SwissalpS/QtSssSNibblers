@@ -26,6 +26,11 @@ SurfaceGame::SurfaceGame(QWidget *pParent) :
 	this->pUi->setupUi(this);
 
 	this->iLastHeight = height();
+
+	// for key events
+	setFocusPolicy(Qt::StrongFocus);
+
+	this->ahKeys.clear();
 	this->aopRows.clear();
 	this->apScoreBoards.clear();
 	this->apWorms.clear();
@@ -217,6 +222,8 @@ void SurfaceGame::init() {
 
 	this->initWorms();
 
+	this->initKeys();
+
 	this->pUi->buttonPP->setChecked(false);
 	this->pUi->buttonPP->setEnabled(true);
 	this->pUi->buttonPP->setText(tr("Start"));
@@ -256,6 +263,37 @@ void SurfaceGame::initCells() {
 	} // loop rows
 
 } // initCells
+
+
+void SurfaceGame::initKeys() {
+
+	this->ahKeys.clear();
+
+	QHash<QKeySequence, L::Heading> hKeys;
+	QKeySequence oKS;
+	quint8 ubTotalHumans = this->pAS->get(AppSettings::sSettingGameCountHumans).toUInt();
+
+	for (quint8 ubWorm = 0u; ubWorm < ubTotalHumans; ++ubWorm) {
+
+		hKeys.clear();
+		oKS = QKeySequence(this->pAS->getPlayerKeyDown(ubWorm),
+						   QKeySequence::PortableText);
+		hKeys.insert(oKS, L::Down);
+		oKS = QKeySequence(this->pAS->getPlayerKeyLeft(ubWorm),
+						   QKeySequence::PortableText);
+		hKeys.insert(oKS, L::Left);
+		oKS = QKeySequence(this->pAS->getPlayerKeyRight(ubWorm),
+						   QKeySequence::PortableText);
+		hKeys.insert(oKS, L::Right);
+		oKS = QKeySequence(this->pAS->getPlayerKeyUp(ubWorm),
+						   QKeySequence::PortableText);
+		hKeys.insert(oKS, L::Up);
+
+		this->ahKeys.append(hKeys);
+
+	} // loop
+
+} // initKeys
 
 
 void SurfaceGame::initWorms() {
@@ -324,6 +362,34 @@ void SurfaceGame::initWorms() {
 	} // loop worms
 
 } // initWorms
+
+
+void SurfaceGame::keyPressEvent(QKeyEvent *pEvent) {
+
+	QKeySequence oKSin(pEvent->key());
+//	QKeySequence oKey2("K");
+
+//	if (oKSin == oKey2) this->onDebugMessage("Matched K");
+//	else this->onDebugMessage(QString::number(pEvent->key()));
+
+	quint8 ubWorm;
+	QHash<QKeySequence, L::Heading> hKeys;
+	bool bNoMatchFound = true;
+
+	for (ubWorm = 0u; ubWorm < this->ahKeys.length(); ++ubWorm) {
+
+		hKeys = this->ahKeys.at(ubWorm);
+		if (!hKeys.contains(oKSin)) continue;
+
+		bNoMatchFound = false;
+
+		this->apWorms.at(ubWorm)->onTurn(hKeys.value(oKSin));
+
+	} // loop each set of keys
+
+	if (bNoMatchFound) QFrame::keyPressEvent(pEvent);
+
+} // keyPressEvent
 
 
 void SurfaceGame::loadCurrentLevel() {
@@ -548,19 +614,35 @@ void SurfaceGame::onSpawnWorm(const quint8 ubWorm) {
 } // onSpawnWorm
 
 
+void SurfaceGame::onPlayerKeyChanged(const quint8 ubWorm,
+										   const QKeySequence &oKeySequence,
+										   const L::Heading eHeading) {
+	Q_UNUSED(ubWorm)
+	Q_UNUSED(oKeySequence)
+	Q_UNUSED(eHeading)
 void SurfaceGame::onSpawnWorm(Worm *pWorm) {
 
+	this->initKeys();
 	pWorm->startSpawning();
 
+} // onPlayerKeyChanged
 
 	return;
 	this->onDebugMessage("spawn wormmmm");
 
+void SurfaceGame::onPlayerRelativeChanged(const quint8 ubWorm,
+										  const bool bRelative) {
 	// go 5 steps in original direction
 	SurfaceCell *pCellNext;
 	for (quint8 ubCount = 0u; ubCount < 5u; ++ubCount) {
 
+	if (this->apWorms.length() <= ubWorm) return;
 		pCellNext = this->getCell(pWorm->nextPoint());
+
+	this->apWorms.at(ubWorm)->setUseRelativeControls(bRelative);
+
+} // onPlayerRelativeChanged
+
 
 	} // loop
 

@@ -2,6 +2,7 @@
 #define SURFACEGAME_H
 
 #include <QFrame>
+#include <QKeyEvent>
 #include "AppSettings.h"
 #include "FrameStartCountdown.h"
 #include "ScoreBoard.h"
@@ -43,6 +44,7 @@ protected:
 	QVector<Worm *> apWorms;
 	QHash<quint8, SurfaceCell *> hpTeleporterEntrances;
 	QHash<quint8, SurfaceCell *> hpTeleporterExits;
+	QVector<QHash<QKeySequence, L::Heading>> ahKeys;
 	AppSettings *pAS;
 	FrameStartCountdown *pStartCountDownFrame;
 	quint8 ubCurrentLevel;
@@ -56,6 +58,7 @@ protected:
 	virtual void clearSurfaceOfWorms();
 	virtual SurfaceCell* getCell(const QPoint oPoint);
 	virtual SurfaceCell* getCell(const quint8 ubColumn, const quint8 ubRow);
+	virtual void keyPressEvent(QKeyEvent *pEvent) override;
 	virtual void loadCurrentLevel();
 	void resizeEvent(QResizeEvent *pEvent);
 	virtual void setCellState(SurfaceCell *pCell, const quint8 ubState, const bool bUpdate = true);
@@ -63,6 +66,7 @@ protected:
 
 protected slots:
 	void countdownTick();
+	void initKeys();
 	void initCells();
 	void initWorms();
 
@@ -88,6 +92,10 @@ public slots:
 	void onNextLevel();
 	void onPlaceBonus(const quint8 ubBonus);
 	virtual void onSpawnWorm(const quint8 ubWorm);
+	void onPlayerKeyChanged(const quint8 ubWorm,
+						  const QKeySequence &oKeySequence,
+						  const L::Heading eHeading);
+	void onPlayerRelativeChanged(const quint8 ubWorm, const bool bRelative);
 	virtual void onSpawnWorm(Worm *pWorm);
 	virtual void onSpawnWorms();
 

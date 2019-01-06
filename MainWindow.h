@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "AppSettings.h"
+#include "Lingo.h"
 
 
 
@@ -108,6 +109,12 @@ public:
 
 signals:
 	void debugMessage(const QString &sMessage) const;
+	void settingsPlayerKeyChanged(const quint8 ubWorm,
+						  const QKeySequence &oKeySequence,
+						  const L::Heading eHeading) const;
+	void settingsSpeedChanged(const int iIndex) const;
+	void settingsRelativeChanged(const quint8 ubWorm, const bool bRelative) const;
+
 
 public slots:
 	void onDebugMessage(const QString &sMessage) const;
