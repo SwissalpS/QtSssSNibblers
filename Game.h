@@ -21,6 +21,8 @@ private:
 protected:
 	bool bLevelStarted;
 	bool bPaused;
+	quint8 ubCountDead;
+	quint8 ubCountLevels;
 	AppSettings *pAS;
 	QVector<Worm *> apWorms;
 	QTimer *pTimer;
@@ -33,9 +35,11 @@ public:
 	virtual ~Game();
 
 	void init();
+	inline virtual bool isGameOver() { return this->ubCountDead >= this->apWorms.length(); }
 	inline virtual bool isPaused() { return this->bPaused; }
 
 signals:
+	void doGameOver() const;
 	void doLevelStartCountdown() const;
 	void debugMessage(const QString &sMessage) const;
 	void move() const;
@@ -45,9 +49,14 @@ signals:
 	void statusMessage(const QString &sMessage) const;
 
 public slots:
+	void onPlayerCountChanged(const quint8 ubCountHumans,
+							  const quint8 ubCountAIs);
+	void onReset();
+	void onSpeedChanged(const int iIndex);
 	void onWormAteBonus(Worm *pWorm, const quint8 ubBonus);
 	void onWormCrashed(Worm *pWorm);
-	inline void onWormCreated(Worm *pWorm) { this->apWorms.append(pWorm); }
+	void onWormCreated(Worm *pWorm);
+	void onWormDied(); //Worm *pWorm);
 	inline void onDebugMessage(const QString &sMessage) const {
 		Q_EMIT this->debugMessage("G:" + sMessage); }
 	void onPauseResumeToggled();
