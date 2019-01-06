@@ -701,7 +701,20 @@ void SurfaceBuilder::setCellState(SurfaceCell *pCell, const quint8 ubState,
 	quint8 ubStateOld = pCell->getState();
 
 	// nothing to do?
-	if (ubStateOld == ubState) return;
+	if (ubStateOld == ubState) {
+
+		if (0u == ubState) return;
+
+		if (11 >= this->pUi->selectTool->currentIndex()) {
+
+			pCell->setState(0u);
+			if (bUpdate) pCell->update();
+
+		} // if wall-tool toggle between wall and floor
+
+		return;
+
+	} // if same state
 
 	static QVector<quint8> aStatesSpawns = IconEngine::statesSpawns();
 	static QVector<quint8> aStatesTeleporterEntrances = IconEngine::statesTeleporterEntrances();
