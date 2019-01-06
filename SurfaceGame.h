@@ -3,6 +3,7 @@
 
 #include <QFrame>
 #include "AppSettings.h"
+#include "FrameStartCountdown.h"
 #include "ScoreBoard.h"
 #include "SurfaceCell.h"
 #include "Worm.h"
@@ -43,6 +44,7 @@ protected:
 	QHash<quint8, SurfaceCell *> hpTeleporterEntrances;
 	QHash<quint8, SurfaceCell *> hpTeleporterExits;
 	AppSettings *pAS;
+	FrameStartCountdown *pStartCountDownFrame;
 	quint8 ubCurrentLevel;
 	mutable int iLastHeight;
 

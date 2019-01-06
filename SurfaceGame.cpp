@@ -20,6 +20,7 @@ SurfaceGame::SurfaceGame(QWidget *pParent) :
 	QFrame(pParent),
 	pUi(new Ui::SurfaceGame),
 	pAS(AppSettings::pAppSettings()),
+	pStartCountDownFrame(nullptr),
 	ubCurrentLevel(0xFFu) {
 
 	this->pUi->setupUi(this);
@@ -164,6 +165,8 @@ void SurfaceGame::countdownTick() {
 	if (0 < iTick) {
 
 		QString sMessage = QString::number(iTick);
+		this->pStartCountDownFrame->onSetText(sMessage);
+		this->pStartCountDownFrame->update();
 		this->pUi->buttonPP->setText(sMessage);
 		Q_EMIT this->statusMessage(sMessage);
 
@@ -173,6 +176,7 @@ void SurfaceGame::countdownTick() {
 
 	} // if still got ticks to go
 
+	this->pStartCountDownFrame->hide();
 	this->pUi->buttonPP->setChecked(true);
 	this->pUi->buttonPP->setEnabled(true);
 	this->pUi->buttonSR->setEnabled(true);
@@ -422,17 +426,33 @@ void SurfaceGame::on_buttonSR_clicked() {
 
 void SurfaceGame::onDoLevelStartCountdown() {
 
+	// go 5 steps in original direction
 	this->onMove();
 	this->onMove();
 	this->onMove();
 	this->onMove();
 	this->onMove();
 
+	// open count-down dialog
+	if (nullptr == this->pStartCountDownFrame) {
+
+		FrameStartCountdown *pF = new FrameStartCountdown();
+		this->pStartCountDownFrame = pF;
+		pF->setWindowFlags(Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint);
+
+	} // if first time
+
+	this->pStartCountDownFrame->onSetText("3");
+	this->pStartCountDownFrame->setGeometry(this->window()->geometry());
+	this->pStartCountDownFrame->show();
+
 	this->pUi->buttonPP->setText("3");
 	this->pUi->buttonPP->setEnabled(false);
 	this->pUi->buttonSR->setEnabled(false);
-	QTimer::singleShot(1000, this, SLOT(countdownTick()));
+
 	Q_EMIT this->statusMessage(tr("Get Ready: 3..."));
+
+	QTimer::singleShot(1000, this, SLOT(countdownTick()));
 
 } // onDoLevelStartCountdown
 

@@ -27,6 +27,7 @@ SOURCES += \
 	AppSettings.cpp \
 	DialogLoad.cpp \
 	DialogSave.cpp \
+	FrameStartCountdown.cpp \
 	Game.cpp \
 	IconEngine.cpp \
 	main.cpp \
@@ -42,6 +43,7 @@ HEADERS += \
 	definitions.h \
 	DialogLoad.h \
 	DialogSave.h \
+	FrameStartCountdown.h \
 	Game.h \
 	IconEngine.h \
 	MainWindow.h \
@@ -54,6 +56,7 @@ HEADERS += \
 FORMS += \
 	DialogLoad.ui \
 	DialogSave.ui \
+	FrameStartCountdown.ui \
 	MainWindow.ui \
 	ScoreBoard.ui \
 	SurfaceBuilder.ui \
