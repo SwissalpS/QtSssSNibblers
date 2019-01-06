@@ -43,6 +43,7 @@ public slots:
 	inline void onDebugMessage(const QString &sMessage) const {
 		Q_EMIT this->debugMessage("SB:" + sMessage); }
 
+	virtual void setColour(const quint8 ubColour);
 	virtual void setName(const QString sName);
 	virtual void setScore(const quint32 ulScore);
 	virtual void setLives(const quint8 ubLives);

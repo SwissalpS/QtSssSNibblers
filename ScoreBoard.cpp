@@ -16,54 +16,7 @@ ScoreBoard::ScoreBoard(const quint8 ubColour, QWidget *pParent) :
 
 	this->pUi->setupUi(this);
 
-	QColor oColour;
-	QColor oColourText;
-	switch (ubColour) {
-
-		case 0u:
-			oColour = SssS_Nibblers_Colour_0;
-			oColourText = SssS_Nibblers_Colour_Text_0;
-		break;
-		case 1u:
-			oColour = SssS_Nibblers_Colour_1;
-			oColourText = SssS_Nibblers_Colour_Text_1;
-		break;
-		case 2u:
-			oColour = SssS_Nibblers_Colour_2;
-			oColourText = SssS_Nibblers_Colour_Text_2;
-		break;
-		case 3u:
-			oColour = SssS_Nibblers_Colour_3;
-			oColourText = SssS_Nibblers_Colour_Text_3;
-		break;
-		case 4u:
-			oColour = SssS_Nibblers_Colour_4;
-			oColourText = SssS_Nibblers_Colour_Text_4;
-		break;
-		case 5u:
-			oColour = SssS_Nibblers_Colour_5;
-			oColourText = SssS_Nibblers_Colour_Text_5;
-		break;
-		case 6u:
-			oColour = SssS_Nibblers_Colour_6;
-			oColourText = SssS_Nibblers_Colour_Text_6;
-		break;
-		case 7u:
-			oColour = SssS_Nibblers_Colour_7;
-			oColourText = SssS_Nibblers_Colour_Text_7;
-		break;
-
-		default:
-			oColour = Qt::white;
-			oColourText = Qt::black;
-		break;
-
-	} // switch ubColour
-	QString sBackgroundStyle = "background-color: " + oColour.name() + ";";
-	QString sTextStyle = "color: " + oColourText.name() + ";";
-
-	this->pUi->frameTop->setStyleSheet(sBackgroundStyle + sTextStyle);
-	this->pUi->frameLives->setStyleSheet(sBackgroundStyle);
+	this->setColour(ubColour);
 
 	QLabel *pL;
 	QPixmap oPM = QPixmap(":/Images/scoreboard_life.svg");
@@ -115,6 +68,60 @@ void ScoreBoard::changeEvent(QEvent *eEvent) {
 	} // switch
 
 } // changeEvent
+
+
+void ScoreBoard::setColour(const quint8 ubColour) {
+
+	QColor oColour;
+	QColor oColourText;
+	switch (ubColour) {
+
+		case 0u:
+			oColour = SssS_Nibblers_Colour_0;
+			oColourText = SssS_Nibblers_Colour_Text_0;
+		break;
+		case 1u:
+			oColour = SssS_Nibblers_Colour_1;
+			oColourText = SssS_Nibblers_Colour_Text_1;
+		break;
+		case 2u:
+			oColour = SssS_Nibblers_Colour_2;
+			oColourText = SssS_Nibblers_Colour_Text_2;
+		break;
+		case 3u:
+			oColour = SssS_Nibblers_Colour_3;
+			oColourText = SssS_Nibblers_Colour_Text_3;
+		break;
+		case 4u:
+			oColour = SssS_Nibblers_Colour_4;
+			oColourText = SssS_Nibblers_Colour_Text_4;
+		break;
+		case 5u:
+			oColour = SssS_Nibblers_Colour_5;
+			oColourText = SssS_Nibblers_Colour_Text_5;
+		break;
+		case 6u:
+			oColour = SssS_Nibblers_Colour_6;
+			oColourText = SssS_Nibblers_Colour_Text_6;
+		break;
+		case 7u:
+			oColour = SssS_Nibblers_Colour_7;
+			oColourText = SssS_Nibblers_Colour_Text_7;
+		break;
+
+		default:
+			oColour = Qt::white;
+			oColourText = Qt::black;
+		break;
+
+	} // switch ubColour
+	QString sBackgroundStyle = "background-color: " + oColour.name() + ";";
+	QString sTextStyle = "color: " + oColourText.name() + ";";
+
+	this->pUi->frameTop->setStyleSheet(sBackgroundStyle + sTextStyle);
+	this->pUi->frameLives->setStyleSheet(sBackgroundStyle);
+
+} // setColour
 
 
 void ScoreBoard::setName(const QString sName) {

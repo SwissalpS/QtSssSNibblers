@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>SurfaceCell</class>
  <widget class="QFrame" name="SurfaceCell">
+  <property name="windowModality">
+   <enum>Qt::ApplicationModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -25,6 +28,9 @@
   <property name="mouseTracking">
    <bool>false</bool>
   </property>
+  <property name="contextMenuPolicy">
+   <enum>Qt::NoContextMenu</enum>
+  </property>
   <property name="windowTitle">
    <string>Frame</string>
   </property>
@@ -36,6 +42,9 @@
   </property>
   <property name="frameShadow">
    <enum>QFrame::Plain</enum>
+  </property>
+  <property name="lineWidth">
+   <number>0</number>
   </property>
  </widget>
  <resources/>

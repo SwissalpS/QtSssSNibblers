@@ -109,6 +109,10 @@ public:
 
 signals:
 	void debugMessage(const QString &sMessage) const;
+	void mainTabIndexChanged(const int iIndex) const;
+	void settingsPlayerColoursChanged(const QVector<quint8> aubColours) const;
+	void settingsPlayerCountChanged(const quint8 ubCountHumans,
+									const quint8 ubCountAIs) const;
 	void settingsPlayerKeyChanged(const quint8 ubWorm,
 						  const QKeySequence &oKeySequence,
 						  const L::Heading eHeading) const;

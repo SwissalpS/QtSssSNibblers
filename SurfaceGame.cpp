@@ -7,6 +7,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QHBoxLayout>
+#include <QTime>
 #include <QTimer>
 #include <QVBoxLayout>
 
@@ -19,12 +20,18 @@ namespace SwissalpS { namespace QtNibblers {
 SurfaceGame::SurfaceGame(QWidget *pParent) :
 	QFrame(pParent),
 	pUi(new Ui::SurfaceGame),
+	bProtectPP(false),
 	pAS(AppSettings::pAppSettings()),
+	pDialogLoad(nullptr),
 	pStartCountDownFrame(nullptr),
 	ubCurrentLevel(0xFFu) {
 
 	this->pUi->setupUi(this);
 
+	// init randomizer
+	qsrand(QTime::currentTime().msecsSinceStartOfDay());
+
+	// for forced aspect ratio
 	this->iLastHeight = height();
 
 	// for key events
@@ -163,6 +170,27 @@ void SurfaceGame::clearSurfaceOfWorms() {
 } // clearSurfaceOfWorms
 
 
+void SurfaceGame::focusInEvent(QFocusEvent *pEvent) {
+
+	//this->onDebugMessage("todo: focus in");
+
+	QFrame::focusInEvent(pEvent);
+
+} // focusInEvent
+
+
+void SurfaceGame::focusOutEvent(QFocusEvent *pEvent) {
+
+	if (this->pUi->buttonPP->hasFocus()) return;
+	if (this->pStartCountDownFrame->isVisible()) return;
+
+	this->pauseIfRunning();
+
+	QFrame::focusOutEvent(pEvent);
+
+} // focusOutEvent
+
+
 void SurfaceGame::countdownTick() {
 
 	int iTick = this->pUi->buttonPP->text().toInt() - 1;
@@ -191,6 +219,170 @@ void SurfaceGame::countdownTick() {
 	Q_EMIT this->pauseResumeToggled();
 
 } // countdownTick
+
+
+void SurfaceGame::dialogLoadFinished(const int iResult) {
+
+	// canceled
+	if (0 == iResult) return;
+
+	this->ubCurrentLevel = this->pDialogLoad->getSelected();
+
+	// TODO: make checkbox in settings for this feature
+	this->pAS->setValue(AppSettings::sSettingGameStartLevel, this->ubCurrentLevel);
+
+	this->loadCurrentLevel();
+
+	Q_EMIT this->resetGame();
+
+	this->resetButtons();
+
+} // dialogLoadFinished
+
+
+void SurfaceGame::findNextMovesForWorm(Worm *pWorm) {
+
+	static QVector<quint8> aStatesPickups = IconEngine::statesPickups();
+	//static QVector<quint8> aStatesTeleporterEntrances = IconEngine::statesTeleporterEntrances();
+	//static QVector<quint8> aStatesTeleporterExits = IconEngine::statesTeleporterExits();
+	static QVector<quint8> aStatesToAvoid =
+			IconEngine::statesSnakes() + IconEngine::statesWalls();
+
+	SurfaceCell *pCell = this->getCell(pWorm->nextPoint());
+	if (pCell->isNull()) return;
+
+	bool bCanTurnLeft = false;
+	bool bCanTurnRight = false;
+	quint8 ubCanTurnCount;
+
+	quint8 ubState = pCell->getState();
+
+	if (aStatesToAvoid.contains(ubState)) {
+
+		// need to change direction if possible
+
+		bCanTurnLeft = !aStatesToAvoid.contains(
+						   this->getCell(pWorm->leftPoint())->getState());
+
+		bCanTurnRight = !aStatesToAvoid.contains(
+							this->getCell(pWorm->rightPoint())->getState());
+
+		ubCanTurnCount = quint8(bCanTurnLeft) + quint8(bCanTurnRight);
+
+		// no safe direction
+		if (0u == ubCanTurnCount) return;
+
+		// either direction is free
+		if (2u == ubCanTurnCount) {
+
+			// pick a direction
+			if (qrand() & 1) pWorm->onTurnLeft();
+			else pWorm->onTurnRight();
+
+			return;
+
+		} // if can go either way
+
+		if (bCanTurnLeft) pWorm->onTurnLeft();
+		else pWorm->onTurnRight();
+
+		return;
+
+	} else if (aStatesPickups.contains(ubState)) {
+
+		// we're good, keep going
+		return;
+
+	} // if need to imediately turn or keep going
+
+	// cell ahead contains no imediate danger or bonus
+	// find the nearest bonus (and prioratize)
+
+	pCell = pWorm->headCell();
+	if (pCell->isNull()) return;
+
+	QVector<quint8> aubAhead = this->nextPOIinDirection(pCell, pWorm->currentDirection());
+	QVector<quint8> aubLeft = this->nextPOIinDirection(pCell, pWorm->headingLeft());
+	QVector<quint8> aubRight = this->nextPOIinDirection(pCell, pWorm->headingRight());
+
+	// which is the most promising?
+	QVector<quint8> aubGoodDistances;
+	if (2u == aubAhead.at(2)) aubGoodDistances.append(1u);
+	if (2u == aubLeft.at(2)) aubGoodDistances.append(2u);
+	if (2u == aubRight.at(2)) aubGoodDistances.append(3u);
+
+	// which is nearest?
+	quint8 ubNearestDistance = 0xFFu;
+	quint8 ubIndexNearestDistance = 0u;
+	if (aubGoodDistances.contains(1u) && ubNearestDistance > aubAhead.at(1)) {
+		ubNearestDistance = aubAhead.at(1);
+		ubIndexNearestDistance = 1u;
+	} // if ahead has something good
+
+	if (aubGoodDistances.contains(2u) && ubNearestDistance > aubLeft.at(1)) {
+		ubNearestDistance = aubLeft.at(1);
+		ubIndexNearestDistance = 2u;
+	} // if left has something good
+
+	if (aubGoodDistances.contains(3u) && ubNearestDistance > aubRight.at(1)) {
+		ubNearestDistance = aubRight.at(1);
+		ubIndexNearestDistance = 3u;
+	} // if right has something good
+
+	switch (ubIndexNearestDistance) {
+
+		case 3u: pWorm->onTurnRight(); return;
+		case 2u: pWorm->onTurnLeft(); return;
+		case 1u: return;
+
+		case 0u:
+		default:
+		break;
+
+	} // switch ubIndexNearestDistance
+
+	// nothing promising to go for
+	// randomly change direction
+	if (!((qrand() & 1u) && (qrand() & 1u))) return;
+
+	// which is the most promising?
+	QVector<quint8> aubBadDistances;
+	if ((1u == aubAhead.at(2)) && (0u < aubAhead.at(1))) aubBadDistances.append(1u);
+	if ((1u == aubLeft.at(2)) && (0u < aubLeft.at(1))) aubBadDistances.append(2u);
+	if ((1u == aubRight.at(2)) && (0u < aubRight.at(1))) aubBadDistances.append(3u);
+
+	// which is farthest?
+	quint8 ubFarthestDistance = 0u;
+	quint8 ubIndexFarthestDistance = 0u;
+	if (aubBadDistances.contains(1u) && (ubFarthestDistance < aubAhead.at(1))) {
+		ubFarthestDistance = aubAhead.at(1);
+		ubIndexFarthestDistance = 1u;
+	} // if ahead has something bad
+
+	if (aubBadDistances.contains(2u) && (ubFarthestDistance < aubLeft.at(1))) {
+		ubFarthestDistance = aubLeft.at(1);
+		ubIndexFarthestDistance = 2u;
+	} // if left has something bad
+
+	if (aubBadDistances.contains(3u) && (ubFarthestDistance < aubRight.at(1))) {
+		ubFarthestDistance = aubRight.at(1);
+		ubIndexFarthestDistance = 3u;
+	} // if right has something bad
+
+	switch (ubIndexFarthestDistance) {
+
+		case 3u: pWorm->onTurnRight(); return;
+		case 2u: pWorm->onTurnLeft(); return;
+		case 1u: return;
+
+		case 0u:
+			// should not happen
+		default:
+		break;
+
+	} // switch ubIndex
+
+} // findNextMovesForWorm
 
 
 SurfaceCell *SurfaceGame::getCell(const QPoint oPoint) {
@@ -224,9 +416,7 @@ void SurfaceGame::init() {
 
 	this->initKeys();
 
-	this->pUi->buttonPP->setChecked(false);
-	this->pUi->buttonPP->setEnabled(true);
-	this->pUi->buttonPP->setText(tr("Start"));
+	this->resetButtons();
 
 } // init
 
@@ -331,6 +521,8 @@ void SurfaceGame::initWorms() {
 
 		pWorm = new Worm(pCell, ubColour, (ubCount >= ubCountHumans), this);
 
+		pWorm->setUseRelativeControls(this->pAS->getPlayerRelative(ubCount));
+
 		connect(pWorm, SIGNAL(debugMessage(QString)),
 				this, SLOT(onDebugMessage(QString)));
 
@@ -341,6 +533,9 @@ void SurfaceGame::initWorms() {
 				this, SLOT(onDebugMessage(QString)));
 
 		// connect worm with score board
+		connect(pWorm, SIGNAL(updateColour(quint8)),
+				pSB, SLOT(setColour(quint8)));
+
 		connect(pWorm, SIGNAL(updateLives(quint8)),
 				pSB, SLOT(setLives(quint8)));
 
@@ -476,18 +671,148 @@ void SurfaceGame::loadCurrentLevel() {
 } // loadCurrentLevel
 
 
+QVector<quint8> SurfaceGame::nextPOIinDirection(SurfaceCell *pCell,
+											 const L::Heading eDirection) {
+
+	static QVector<quint8> aStatesPickups = IconEngine::statesPickups();
+	//static QVector<quint8> aStatesTeleporterEntrances = IconEngine::statesTeleporterEntrances();
+	//static QVector<quint8> aStatesTeleporterExits = IconEngine::statesTeleporterExits();
+	static QVector<quint8> aStatesToAvoid =
+			IconEngine::statesSnakes() + IconEngine::statesWalls();
+
+	QVector<quint8> aubResult;
+	quint8 ubX = pCell->getColumn();
+	quint8 ubY = pCell->getRow();
+	int iDx = 0;
+	int iDy = 0;
+
+	switch (eDirection) {
+
+		case L::North: iDy = -1; break;
+		case L::South: iDy = 1; break;
+		case L::West: iDx = -1; break;
+		case L::East: iDx = 1; break;
+
+	} // switch eDirection
+
+	quint8 ubDistance = 0;
+	quint8 ubState;
+	while (true) {
+
+		ubDistance++;
+
+		if (0 > iDx) {
+			if (0 == ubX) ubX = SssS_Nibblers_Surface_Width - 1u;
+			else ubX--;
+		} else {
+			ubX++;
+			if (SssS_Nibblers_Surface_Width <= ubX) ubX = 0u;
+		} // if horizontal direction
+
+		if (0 > iDy) {
+			if (0 == ubY) ubY = SssS_Nibblers_Surface_Height - 1u;
+			else ubY--;
+		} else {
+			ubY++;
+			if (SssS_Nibblers_Surface_Height <= ubY) ubY = 0u;
+		} // if vertical direction
+
+		ubState = this->getCell(ubX, ubY)->getState();
+
+		if (aStatesToAvoid.contains(ubState)) {
+
+			aubResult.append(ubState);
+			aubResult.append(ubDistance);
+			aubResult.append(1u);
+			return aubResult;
+
+		} // if something to avoid encountered
+
+		if (aStatesPickups.contains(ubState)) {
+
+			aubResult.append(ubState);
+			aubResult.append(ubDistance);
+			aubResult.append(2u);
+			return aubResult;
+
+		} // if something worth while encountered
+
+	} // loop true
+
+	// should never happen but jic
+	aubResult.append(0XFFu);
+	aubResult.append(0xFFu);
+	aubResult.append(0xFFu);
+	return aubResult;
+
+} // nextPOIinDirection
+
+
 void SurfaceGame::on_buttonPP_toggled(bool bChecked) {
 
 	this->pUi->buttonPP->setText(bChecked ? tr("Pause") : tr("Play"));
 
+	if (this->bProtectPP) return;
+
 	Q_EMIT this->pauseResumeToggled();
+
+	if (bChecked) this->setFocus();
 
 } // on_buttonPP_toggled
 
 
 void SurfaceGame::on_buttonSR_clicked() {
 
+	// pause game if running
+	this->pauseIfRunning();
+
+	// open restart dialog
+	if (nullptr == this->pDialogLoad) {
+
+		this->pDialogLoad = new DialogLoad(this);
+
+		connect(this->pDialogLoad, SIGNAL(finished(int)),
+			this, SLOT(dialogLoadFinished(int)));
+
+	} // if first time
+
+	this->pDialogLoad->setSelected(this->ubCurrentLevel);
+
+	this->pDialogLoad->exec();
+
 } // on_buttonSR_clicked
+
+
+void SurfaceGame::onColoursChanged(const QVector<quint8> aubColours) {
+
+	// better safe than sorry
+	if (aubColours.length() < this->apWorms.length()) return;
+
+	quint8 ubWorm;
+	for (ubWorm = 0u; ubWorm < this->apWorms.length(); ++ubWorm) {
+
+		this->apWorms.at(ubWorm)->setColourIndex(aubColours.at(ubWorm));
+
+	} // loop
+
+} // onColoursChanged
+
+
+void SurfaceGame::onDoGameOver() {
+
+	// button is probably showing "Pause"
+	if (this->pUi->buttonPP->isChecked()) {
+		this->bProtectPP = true;
+		this->pUi->buttonPP->setChecked(false);
+		this->pUi->buttonPP->setEnabled(false);
+		this->bProtectPP = false;
+	}
+
+	// show game over dialog
+
+	Q_EMIT this->statusMessage("Game Over");
+
+} // onDoGameOver
 
 
 void SurfaceGame::onDoLevelStartCountdown() {
@@ -523,8 +848,17 @@ void SurfaceGame::onDoLevelStartCountdown() {
 } // onDoLevelStartCountdown
 
 
+void SurfaceGame::onMainTabChanged(const int iIndex) {
+	Q_UNUSED(iIndex)
+
+	//this->pauseIfRunning();
+
+} // onMainTabChanged
+
+
 void SurfaceGame::onMove() {
 
+	static QVector<quint8> aStatesPickups = IconEngine::statesPickups();
 	static QVector<quint8> aStatesSnakes = IconEngine::statesSnakes();
 	static QVector<quint8> aStatesSpawns = IconEngine::statesSpawns();
 	static QVector<quint8> aStatesTeleporterEntrances = IconEngine::statesTeleporterEntrances();
@@ -573,8 +907,14 @@ void SurfaceGame::onMove() {
 
 		} // if not empty
 
+		if (aStatesPickups.contains(ubState)) {
+
+			// figure out which bonus it is
+
+		} // if picked up something
 
 		pWorm->advanceTo(pCell);
+
 		if (hppCrashPotential.keys().contains(pCell)) {
 			// head-on-colision
 			apCrashedWorms.append(pWorm);
@@ -588,27 +928,54 @@ void SurfaceGame::onMove() {
 	for (int i = 0; i < apCrashedWorms.length(); ++i) {
 
 		pWorm = apCrashedWorms.at(i);
-		Q_EMIT this->wormCrashed(pWorm);
+
 		this->clearSurfaceOfWorm(pWorm->colourIndex());
+
+		Q_EMIT this->wormCrashed(pWorm);
 
 	} // loop
 
+	// do AI-moves
+	for (int i = 0; i < this->apWorms.length(); ++i) {
+
+		pWorm = this->apWorms.at(i);
+
+		if (!pWorm->isAI()) continue;
+
+		if (pWorm->isDead()) continue;
+
+		this->findNextMovesForWorm(pWorm);
+
+	} // loop worms
 
 } // onMove
 
 
 void SurfaceGame::onNextLevel() {
 
+	if (0xFFu == this->ubCurrentLevel) this->ubCurrentLevel = 0u;
+	else this->ubCurrentLevel++;
+
+	this->loadCurrentLevel();
+
+	// distribute spawn points. this could be done by Game
+
 } // onNextLevel
 
 
 void SurfaceGame::onPlaceBonus(const quint8 ubBonus) {
 
+	// TODO:
+
 } // onPlaceBonus
 
 
+void SurfaceGame::onPlayerCountChanged(const quint8 ubCountHumans,
+									   const quint8 ubCountAIs) {
 
+	// TODO:
 
+} // onPlayerCountChanged
 
 
 void SurfaceGame::onPlayerKeyChanged(const quint8 ubWorm,
@@ -653,6 +1020,27 @@ void SurfaceGame::onSpawnWorms() {
 	} // loop worms
 
 } // onSpawnWorms
+
+
+void SurfaceGame::pauseIfRunning() {
+
+	// pause game if running
+	if (this->pUi->buttonPP->isChecked())
+		this->pUi->buttonPP->setChecked(false);
+
+} // pauseIfRunning
+
+
+void SurfaceGame::resetButtons() {
+
+	this->bProtectPP = true;
+	this->pUi->buttonPP->setChecked(false);
+	this->pUi->buttonPP->setEnabled(true);
+	this->pUi->buttonSR->setEnabled(true);
+	this->pUi->buttonPP->setText(tr("Start"));
+	this->bProtectPP = false;
+
+} // resetButtons
 
 
 void SurfaceGame::resizeEvent(QResizeEvent *pEvent) {

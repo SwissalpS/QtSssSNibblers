@@ -18,20 +18,7 @@ Worm::Worm(SurfaceCell *pCell, const quint8 ubColour,
 	ulScore(0u),
 	pCellSpawn(pCell) {
 
-	// determine initial heading from spawn-cell
-	switch (this->pCellSpawn->getState()) {
-		case 90u: this->eCurrentHeading = North; break;
-		case 91u: this->eCurrentHeading = West; break;
-		case 92u: this->eCurrentHeading = South; break;
-
-		case 93u:
-		default:
-			this->eCurrentHeading = East;
-		break;
-
-	} // switch pCell->getState()
-
-	this->eSpawnHeading = this->eCurrentHeading;
+	this->onSetSpawnCell(pCell);
 
 	this->startSpawning();
 
@@ -59,7 +46,7 @@ void Worm::advanceTo(SurfaceCell *pCell) {
 	while (this->uiTargetLength < this->apCells.length()) {
 
 		// revert to normal game state
-		this->apCells.last()->defrostState();
+		this->apCells.last()->desnakeState();
 		this->apCells.remove(this->apCells.length() - 1);
 
 	} // loop
@@ -68,6 +55,8 @@ void Worm::advanceTo(SurfaceCell *pCell) {
 	this->tailCell()->setState(this->tailState());
 
 	if (this->ubSpawnSafetyTicks) this->ubSpawnSafetyTicks--;
+
+	this->doNextTurn();
 
 } // advanceTo
 
@@ -81,12 +70,183 @@ SurfaceCell *Worm::assCell() {
 } // assCell
 
 
+void Worm::doNextTurn() {
+
+	if (0 == this->aeNextHeadings.length()) return;
+
+	L::Heading eDirection = this->aeNextHeadings.takeFirst();
+
+	if (this->bUseRelativeControls) {
+
+		// only interested in left an right
+		if (L::Left == eDirection) this->onTurnLeft();
+		else if (L::Right == eDirection) this->onTurnRight();
+		else Q_EMIT this->fart();
+
+		return;
+
+	} // if 2-button steering
+
+	// 4-button navigation
+
+	// check same direction
+	if (eDirection == this->eCurrentHeading) {
+
+		Q_EMIT this->fart();
+
+		return;
+
+	} // if already going that way
+
+	// check opposite direction
+	if ((eDirection & 1u) == (this->eCurrentHeading & 1u)) {
+
+		Q_EMIT this->fart();
+
+		return;
+
+	} // if opposite direction
+
+	switch (this->eCurrentHeading) {
+
+		case L::North:
+
+			// possible are: w and e
+			if (L::West == eDirection) this->onTurnLeft();
+			else this->onTurnRight();
+
+		break;
+
+		case L::South:
+
+			// possible are: w and e
+			if (L::East == eDirection) this->onTurnLeft();
+			else this->onTurnRight();
+
+		break;
+
+		case L::West:
+
+			// possible are: s and n
+			if (L::South == eDirection) this->onTurnLeft();
+			else this->onTurnRight();
+
+		break;
+
+		case L::East:
+
+			// possible are: s and n
+			if (L::North == eDirection) this->onTurnLeft();
+			else this->onTurnRight();
+
+		break;
+
+		default:
+		break;
+
+	} // switch this->eCurrentHeading
+
+} // doNextTurn
+
+
 SurfaceCell *Worm::headCell() {
 
 	return this->apCells.length() ? this->apCells.first()
 								  : new SurfaceCell();
 
 } // headCell
+
+
+L::Heading Worm::headingLeft() const {
+
+	switch (this->eCurrentHeading) {
+
+		case L::North: return L::West;
+		case L::South: return L::East;
+		case L::West: return L::South;
+		case L::East: return L::North;
+
+		default:
+
+			this->onDebugMessage(tr("Weird situation in Worm::headingLeft() ")
+									+ QString::number(this->eCurrentHeading));
+		break;
+
+	} // switch this->eCurrentHeading
+
+} // headingLeft
+
+
+L::Heading Worm::headingRight() const {
+
+	switch (this->eCurrentHeading) {
+
+		case L::North: return L::East;
+		case L::South: return L::West;
+		case L::West: return L::North;
+		case L::East: return L::South;
+
+		default:
+
+			this->onDebugMessage(tr("Weird situation in Worm::headingRight() ")
+									+ QString::number(this->eCurrentHeading));
+		break;
+
+	} // switch this->eCurrentHeading
+
+} // headingRight
+
+
+QPoint Worm::leftPoint() {
+
+	if (0 == this->apCells.length()) return QPoint();
+
+	SurfaceCell *pCell = this->apCells.first();
+	quint8 ubX = pCell->getColumn();
+	quint8 ubY = pCell->getRow();
+
+	switch (this->headingLeft()) {
+
+		case L::North:
+
+			if (0u == ubY) {
+				ubY = SssS_Nibblers_Surface_Height - 1u;
+			} else ubY--;
+
+		break;
+
+		case L::South:
+
+			ubY++;
+			if (SssS_Nibblers_Surface_Height <= ubY) ubY = 0u;
+
+		break;
+
+		case L::West:
+
+			if (0u == ubX) {
+				ubX = SssS_Nibblers_Surface_Width - 1u;
+			} else ubX--;
+
+		break;
+
+		case L::East:
+
+			ubX++;
+			if (SssS_Nibblers_Surface_Width <= ubX) ubX = 0u;
+
+		break;
+
+		default:
+			this->onDebugMessage(tr("Weird situation in Worm::leftPoint() ")
+									+ QString::number(this->eCurrentHeading));
+		break;
+
+	} // switch this->eCurrentHeading
+
+	return QPoint(ubX, ubY);
+
+} // leftPoint
 
 
 SurfaceCell *Worm::neckCell() {
@@ -107,7 +267,7 @@ QPoint Worm::nextPoint() {
 
 	switch (this->eCurrentHeading) {
 
-		case North:
+		case L::North:
 
 			if (0u == ubY) {
 				ubY = SssS_Nibblers_Surface_Height - 1u;
@@ -115,14 +275,14 @@ QPoint Worm::nextPoint() {
 
 		break;
 
-		case South:
+		case L::South:
 
 			ubY++;
 			if (SssS_Nibblers_Surface_Height <= ubY) ubY = 0u;
 
 		break;
 
-		case West:
+		case L::West:
 
 			if (0u == ubX) {
 				ubX = SssS_Nibblers_Surface_Width - 1u;
@@ -130,7 +290,7 @@ QPoint Worm::nextPoint() {
 
 		break;
 
-		case East:
+		case L::East:
 
 			ubX++;
 			if (SssS_Nibblers_Surface_Width <= ubX) ubX = 0u;
@@ -186,6 +346,28 @@ void Worm::onSetLives(const quint8 ubLives) {
 } // onSetLives
 
 
+void Worm::onSetSpawnCell(SurfaceCell *pCell) {
+
+	this->pCellSpawn = pCell;
+
+	// determine initial heading from spawn-cell
+	switch (this->pCellSpawn->getState()) {
+		case 90u: this->eCurrentHeading = L::North; break;
+		case 91u: this->eCurrentHeading = L::West; break;
+		case 92u: this->eCurrentHeading = L::South; break;
+
+		case 93u:
+		default:
+			this->eCurrentHeading = L::East;
+		break;
+
+	} // switch pCell->getState()
+
+	this->eSpawnHeading = this->eCurrentHeading;
+
+} // onSetSpawnCell
+
+
 void Worm::onSubtractLife() {
 
 	if (this->isDead()) return;
@@ -199,58 +381,109 @@ void Worm::onSubtractLife() {
 } // onSubtractLife
 
 
+void Worm::onTurn(const L::Heading eDirection) {
+
+	if (SssS_Nibblers_Max_Key_Cache > this->aeNextHeadings.length())
+		this->aeNextHeadings.append(eDirection);
+
+} // onTurn
+
+
 void Worm::onTurnLeft() {
 
-	switch (this->eCurrentHeading) {
-
-		case North: this->eCurrentHeading = West; break;
-
-		case South:	this->eCurrentHeading = East; break;
-
-		case West: this->eCurrentHeading = South; break;
-
-		case East: this->eCurrentHeading = North; break;
-
-		default:
-
-			this->onDebugMessage(tr("Weird situation in Worm::onTurnLeft() ")
-									+ QString::number(this->eCurrentHeading));
-		break;
-
-	} // switch this->eCurrentHeading
+	this->eCurrentHeading = this->headingLeft();
 
 } // onTurnLeft
 
 
 void Worm::onTurnRight() {
 
-	switch (this->eCurrentHeading) {
+	this->eCurrentHeading = this->headingRight();
 
-		case North: this->eCurrentHeading = East; break;
+} // onTurnRight
 
-		case South:	this->eCurrentHeading = West; break;
 
-		case West: this->eCurrentHeading = North; break;
+QPoint Worm::rightPoint() {
 
-		case East: this->eCurrentHeading = South; break;
+	if (0 == this->apCells.length()) return QPoint();
+
+	SurfaceCell *pCell = this->apCells.first();
+	quint8 ubX = pCell->getColumn();
+	quint8 ubY = pCell->getRow();
+
+	switch (this->headingRight()) {
+
+		case L::North:
+
+			if (0u == ubY) {
+				ubY = SssS_Nibblers_Surface_Height - 1u;
+			} else ubY--;
+
+		break;
+
+		case L::South:
+
+			ubY++;
+			if (SssS_Nibblers_Surface_Height <= ubY) ubY = 0u;
+
+		break;
+
+		case L::West:
+
+			if (0u == ubX) {
+				ubX = SssS_Nibblers_Surface_Width - 1u;
+			} else ubX--;
+
+		break;
+
+		case L::East:
+
+			ubX++;
+			if (SssS_Nibblers_Surface_Width <= ubX) ubX = 0u;
+
+		break;
 
 		default:
-
-			this->onDebugMessage(tr("Weird situation in Worm::onTurnRight() ")
+			this->onDebugMessage(tr("Weird situation in Worm::rightPoint() ")
 									+ QString::number(this->eCurrentHeading));
 		break;
 
 	} // switch this->eCurrentHeading
 
-} // onTurnRight
+	return QPoint(ubX, ubY);
+
+} // rightPoint
+
+
+void Worm::setColourIndex(const quint8 ubIndex) {
+
+	this->ubColourIndex = ubIndex;
+
+	this->headCell()->setState(this->headState());
+	this->tailCell()->setState(this->tailState());
+
+	quint8 ubState = this->midState();
+
+	for (int i = 1; i < this->apCells.length() -1; ++i) {
+
+		this->apCells.at(i)->setState(ubState);
+
+	} // loop
+
+	Q_EMIT this->updateColour(ubIndex);
+
+} // setColourIndex
 
 
 void Worm::startSpawning() {
 
 	this->apCells.clear();
 	this->apCells.prepend(this->pCellSpawn);
+
 	this->uiTargetLength = 5u;
 	this->ubSpawnSafetyTicks = 7u;
+
+	this->aeNextHeadings.clear();
 	this->eCurrentHeading = this->eSpawnHeading;
 
 } // startSpawning

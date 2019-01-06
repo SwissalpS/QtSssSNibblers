@@ -223,6 +223,16 @@ QColor SurfaceCell::colour() const {
 } // colour
 
 
+void SurfaceCell::desnakeState() {
+
+	// TODO: start counter and cycle through
+	// slime states and eventually reach original state
+
+	this->defrostState();
+
+} // desnakeState
+
+
 void SurfaceCell::mouseReleaseEvent(QMouseEvent *pEvent) {
 
 	if (!this->bBuilder) return;
@@ -245,35 +255,97 @@ void SurfaceCell::paintEvent(QPaintEvent *pEvent) {
 
 	QIcon oIcon = IconEngine::cell(this->ubState, this->bBuilder);
 
-	if (oIcon.isNull()) {
+	if (!oIcon.isNull()) {
 
-		if (this->bBuilder) {
-
-			oP.setBrush(Qt::lightGray);
-			oP.setPen(Qt::darkGray);
-			oP.drawRoundedRect(this->rect(), this->width() * 0.32,
-							   this->height() * 0.32);
-
-		} else if (aubSnakes.contains(this->ubState)) {
-
-			oP.setBrush(this->colour());
-			oP.setPen(Qt::black);
-			oP.drawRoundedRect(this->rect(), this->width() * 0.32,
-							   this->height() * 0.32);
-
-		} else {
-
-			oP.fillRect(this->rect(), this->colour());
-
-		} // if builder mode or not
-
-	} else {
-
+		// draw icon
 		oP.drawPixmap(this->rect(), oIcon.pixmap(this->size()));
 
-	} // if empty icon returned
+		return;
 
-	return;
+	} // if icon returned
+
+	// empty icon returned
+
+	if (this->bBuilder) {
+
+		// draw floor tile for builder
+		oP.setBrush(Qt::lightGray);
+		oP.setPen(Qt::darkGray);
+		oP.drawRoundedRect(this->rect(), this->width() * 0.32,
+						   this->height() * 0.32);
+
+		return;
+
+	} // if builder mode
+
+	if (aubSnakes.contains(this->ubState)) {
+
+		// draw snake
+		QColor oColour = this->colour();
+
+		int iA = 1;
+		QRect oRect = this->rect().adjusted(iA, iA, -1 * iA, -1 * iA);
+		oP.fillRect(oRect, oColour);
+
+		//		oP.setBrush(oColour);
+		//		oP.setPen(Qt::black);
+				//oP.drawRoundedRect(oRect, oRect.width() * 0.32,
+				//				   oRect.height() * 0.32);
+
+		int iBh = this->height() * 0.42 + 1;
+		int iBw = this->width() * 0.42 + 1;
+
+		int iSpan;
+		int iStart;
+		L::Heading eHeading;
+
+		oP.setBrush(oColour);
+		oP.setPen(oColour);
+
+		for (int i = 0; i < this->aeHeadingsBloated.length(); ++i) {
+
+			eHeading = this->aeHeadingsBloated.at(i);
+
+			if (L::North == eHeading) {
+
+				iStart = 0;
+				iSpan = -180;
+				oRect = QRect(0, 0,
+							  this->width(), iBh + 1);
+
+			} else if (L::East == eHeading) {
+
+				iStart = 90;
+				iSpan = 180;
+				oRect = QRect(this->width() - iBw, 0,
+							  iBw + 1, this->height());
+
+			} else if (L::South == eHeading) {
+
+				iStart = 0;
+				iSpan = 180;
+				oRect = QRect(0, this->height() - iBh,
+							  this->width(), iBh + 1);
+
+			} else { // must be West
+
+				iStart = 0;
+				iSpan = -180;
+				oRect = QRect(0, 0,
+							  iBw + 1, this->height());
+
+			} // switch heading
+
+			oP.drawChord(oRect, iStart * 16, iSpan * 16);
+
+		} // loop bloated sides
+
+		return;
+
+	} // if snake
+
+	// fallback to just a coloured tile
+	oP.fillRect(this->rect(), this->colour());
 
 }  // paintEvent
 

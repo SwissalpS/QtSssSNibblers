@@ -90,6 +90,15 @@ void MainWindow::initGame() {
 	SurfaceGame *pSurface = new SurfaceGame();
 	this->pUi->tabPlay->layout()->addWidget(pSurface);
 
+	connect(this, SIGNAL(mainTabIndexChanged(int)),
+			pSurface, SLOT(onMainTabChanged(int)));
+
+	connect(this, SIGNAL(settingsPlayerColoursChanged(QVector<quint8>)),
+			pSurface, SLOT(onColoursChanged(QVector<quint8>)));
+
+	connect(this, SIGNAL(settingsPlayerCountChanged(quint8,quint8)),
+			pSurface, SLOT(onPlayerCountChanged(quint8,quint8)));
+
 	connect(this, SIGNAL(settingsPlayerKeyChanged(quint8,QKeySequence,L::Heading)),
 			pSurface, SLOT(onPlayerKeyChanged(quint8,QKeySequence,L::Heading)));
 
@@ -103,7 +112,11 @@ void MainWindow::initGame() {
 	connect(pSurface, SIGNAL(statusMessage(QString)),
 			this, SLOT(onStatusMessage(QString)));
 
+
 	Game *pGame = new Game(this);
+
+	connect(this, SIGNAL(settingsPlayerCountChanged(quint8,quint8)),
+			pGame, SLOT(onPlayerCountChanged(quint8,quint8)));
 
 	connect(this, SIGNAL(settingsSpeedChanged(int)),
 			pGame, SLOT(onSpeedChanged(int)));
@@ -115,6 +128,9 @@ void MainWindow::initGame() {
 	connect(pGame, SIGNAL(statusMessage(QString)),
 			this, SLOT(onStatusMessage(QString)));
 
+
+	connect(pGame, SIGNAL(doGameOver()),
+			pSurface, SLOT(onDoGameOver()));
 
 	connect(pGame, SIGNAL(doLevelStartCountdown()),
 			pSurface, SLOT(onDoLevelStartCountdown()));
@@ -134,6 +150,9 @@ void MainWindow::initGame() {
 
 	connect(pSurface, SIGNAL(pauseResumeToggled()),
 			pGame, SLOT(onPauseResumeToggled()));
+
+	connect(pSurface, SIGNAL(resetGame()),
+			pGame, SLOT(onReset()));
 
 	connect(pSurface, SIGNAL(wormCreated(Worm*)),
 			pGame, SLOT(onWormCreated(Worm*)));
@@ -577,6 +596,12 @@ void MainWindow::onPlayerColourChanged(const quint8 ubWorm, const quint8 ubIndex
 	this->pAS->setPlayerColour(ubWorm, ubIndex);
 	this->pAS->setPlayerColour(ubWormOldHolder, ubIndexOld);
 
+	QVector<quint8> aubColours;
+	for (int i = 0; i < 8; ++i)
+		aubColours.append(this->pAS->getPlayerColour(i));
+
+	Q_EMIT this->settingsPlayerColoursChanged(aubColours);
+
 	this->settingsUpdatePlayerColours();
 
 } // onPlayerColourChanged
@@ -678,6 +703,8 @@ void MainWindow::onPlayerUseMouseToggled(const quint8 ubWorm, const bool bChecke
 
 	this->settingsUpdatePlayerMouseAndRelative();
 
+	//Q_EMIT this->settingsPlayerMouseChanged(ubWorm, bChecked);
+
 } // onPlayerUseMouseToggled
 
 
@@ -776,6 +803,8 @@ void MainWindow::onStatusMessage(const QString &sMessage) const {
 
 void MainWindow::on_tabWidgetMain_currentChanged(int iIndex) {
 
+	Q_EMIT this->mainTabIndexChanged(iIndex);
+
 	QString sMessage;
 	switch (iIndex) {
 
@@ -807,9 +836,8 @@ void MainWindow::run() {
 	//this->initScores();
 
 	// bring last used to front
-	this->pUi->tabWidgetMain->setCurrentIndex(
-				this->pAS->get(AppSettings::sSettingTabMainIndex).toInt());
-
+	int iLastTabIndex = this->pAS->get(AppSettings::sSettingTabMainIndex).toInt();
+	this->pUi->tabWidgetMain->setCurrentIndex(iLastTabIndex);
 
 } // run
 
@@ -851,6 +879,8 @@ void MainWindow::settingsUpdatePlayerCount() {
 
 	this->pAS->setValue(AppSettings::sSettingGameCountAIs, ubAIs);
 	this->pAS->setValue(AppSettings::sSettingGameCountHumans, ubHumans);
+
+	Q_EMIT this->settingsPlayerCountChanged(ubHumans, ubAIs);
 
 } // settingsUpdatePlayerCount
 

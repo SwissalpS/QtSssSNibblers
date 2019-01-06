@@ -48,6 +48,7 @@ public:
 						 quint8 ubColumn, quint8 ubRow, QWidget *pParent = 0);
 	~SurfaceCell();
 	inline virtual void defrostState() { this->ubState = this->ubStateFrozen; this->update(); }
+	virtual void desnakeState();
 	inline virtual void freezeState() { this->ubStateFrozen = this->ubState; }
 	inline virtual quint8 getColumn() { return this->ubColumn; }
 	inline virtual quint8 getRow() { return this->ubRow; }

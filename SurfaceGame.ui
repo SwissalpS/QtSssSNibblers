@@ -32,7 +32,7 @@
       <item>
        <widget class="QPushButton" name="buttonSR">
         <property name="text">
-         <string>Stop / Restart</string>
+         <string>Load New Game</string>
         </property>
        </widget>
       </item>
