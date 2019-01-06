@@ -10,6 +10,81 @@
 #include <QPainter>
 
 
+/* states 0-255 in a nutshell
+ *
+ * 0: empty floor tile
+ * 1..9: other floor tiles (such as slime marks or RIPs)
+ * 10..19: Player 1
+ * 20..29: Player 2
+ * 30..39: Player 3
+ * 40..49: Player 4
+ * 50..59: Player 5
+ * 60..69: Player 6
+ * 70..79: Player 7
+ * 80..89: Player 8
+ * 90: Spawn Point headed North
+ * 91: Spawn Point headed West
+ * 92: Spawn Point headed South
+ * 93: Spawn Point headed East
+ * 94..99: Reserved tombstones?
+ * 100..103: Bonus Apples
+ * 104..109: Reserved decaying Bonus
+ * 110..113: Bonus Cherries
+ * 114..119: Reserved decaying Bonus
+ * 120..123: Bonus Bananas
+ * 124..129: Reserved decaying Bonus
+ * 130..133: Bonus Hearts
+ * 134..139: Reserved decaying Bonus
+ * 140..143: Bonus Diamonds
+ * 144..149: Reserved decaying Bonus
+ *
+ *
+ * 200u: Wall Vertical
+ * 201u: Wall Horizontal
+ * 202u: Wall Corner SW
+ * 203u: Wall Corner SE
+ * 204u: Wall Corner NW
+ * 205u: Wall Corner NE
+ * 206u: Wall T North (upside down T)
+ * 207u: Wall T East
+ * 208u: Wall T West
+ * 209u: Wall T South
+ * 210u: Wall Cross
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ * 220: Teleporter Entrance A
+ * 221: Teleporter Exit A
+ * 222: Teleporter Entrance B
+ * 223: Teleporter Exit B
+ * 224: Teleporter Entrance C
+ * 225: Teleporter Exit C
+ * 226: Teleporter Entrance D
+ * 227: Teleporter Exit D
+ * 228: Teleporter Entrance E
+ * 229: Teleporter Exit E
+ * 230: Teleporter Entrance F
+ * 221: Teleporter Exit F
+ * 232: Teleporter Entrance G
+ * 223: Teleporter Exit G
+ * 234: Teleporter Entrance H
+ * 225: Teleporter Exit H
+ * 236: Teleporter Entrance I
+ * 227: Teleporter Exit I
+ * 238: Teleporter Entrance J
+ * 229: Teleporter Exit J
+ *
+ *
+ *
+ * 255: Null Cell
+ */
+
 
 namespace SwissalpS { namespace QtNibblers {
 
