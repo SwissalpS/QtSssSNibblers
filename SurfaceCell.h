@@ -2,6 +2,7 @@
 #define SURFACECELL_H
 
 #include <QFrame>
+#include "Lingo.h"
 
 
 
@@ -33,6 +34,7 @@ protected:
 	quint8 ubStateFrozen;
 	quint8 ubColumn;
 	quint8 ubRow;
+	QVector<L::Heading> aeHeadingsBloated;
 
 	void changeEvent(QEvent *pEvent);
 	QColor colour() const;

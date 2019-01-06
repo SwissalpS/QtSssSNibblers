@@ -22,6 +22,8 @@ SurfaceCell::SurfaceCell(QWidget *pParent) :
 	ubColumn(0xFFu),
 	ubRow(0xFFu) {
 
+	this->aeHeadingsBloated.clear();
+
 } // construct null-cell
 
 
@@ -35,6 +37,8 @@ SurfaceCell::SurfaceCell(bool bBuilder, quint8 ubState, quint8 ubColumn,
 	ubRow(ubRow) {
 
 	this->pUi->setupUi(this);
+
+	this->aeHeadingsBloated.clear();
 
 } // construct
 

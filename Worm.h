@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include "SurfaceCell.h"
+#include "Lingo.h"
 
 
 
@@ -15,19 +16,24 @@ class Worm : public QObject {
 
 private:
 
-public:
+protected:
+	bool bAmAI;
+	bool bAmCrashed;
+	bool bUseRelativeControls;
+	quint16 uiTargetLength;
+	quint8 ubColourIndex;
+	quint8 ubLives;
+	quint8 ubSpawnSafetyTicks;
+	quint32 ulScore;
+	SurfaceCell *pCellSpawn;
+	QVector<SurfaceCell *> apCells;
+	QVector<L::Heading> aeNextHeadings;
+	L::Heading eCurrentHeading;
+	L::Heading eSpawnHeading;
 
-	enum Heading {
-		North = 0x90u,
-		West = 0x91u,
-		South = 0x92u,
-		East = 0x93u,
-		Up = North,
-		Left = West,
-		Down = South,
-		Right = East
-	};
-	Q_ENUM(Heading)
+	void doNextTurn();
+
+public:
 
 	explicit Worm(SurfaceCell *pCell, const quint8 ubColour, const bool bAI,
 				  QObject *pParent = nullptr);
@@ -75,19 +81,6 @@ public slots:
 	void onSubtractLife();
 	void onTurnLeft();
 	void onTurnRight();
-
-protected:
-	bool bAmAI;
-	bool bAmCrashed;
-	quint16 uiTargetLength;
-	quint8 ubColourIndex;
-	quint8 ubLives;
-	quint8 ubSpawnSafetyTicks;
-	quint32 ulScore;
-	SurfaceCell *pCellSpawn;
-	QVector<SurfaceCell *> apCells;
-	Heading eCurrentHeading;
-	Heading eSpawnHeading;
 
 }; // Worm
 

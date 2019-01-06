@@ -46,6 +46,7 @@ HEADERS += \
 	FrameStartCountdown.h \
 	Game.h \
 	IconEngine.h \
+	Lingo.h \
 	MainWindow.h \
 	ScoreBoard.h \
 	SurfaceBuilder.h \
