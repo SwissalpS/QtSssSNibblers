@@ -61,8 +61,10 @@ protected:
 	virtual void keyPressEvent(QKeyEvent *pEvent) override;
 	virtual void loadCurrentLevel();
 	void resizeEvent(QResizeEvent *pEvent);
-	virtual void setCellState(SurfaceCell *pCell, const quint8 ubState, const bool bUpdate = true);
-	virtual void setCellState(const quint8 ubColumn, const quint8 ubRow, const quint8 ubState, const bool bUpdate = true);
+	virtual void setCellState(SurfaceCell *pCell, const quint8 ubState,
+							  const bool bUpdate = true);
+	virtual void setCellState(const quint8 ubColumn, const quint8 ubRow,
+							  const quint8 ubState, const bool bUpdate = true);
 
 protected slots:
 	void countdownTick();
@@ -91,7 +93,6 @@ public slots:
 	void onMove();
 	void onNextLevel();
 	void onPlaceBonus(const quint8 ubBonus);
-	virtual void onSpawnWorm(const quint8 ubWorm);
 	void onPlayerKeyChanged(const quint8 ubWorm,
 						  const QKeySequence &oKeySequence,
 						  const L::Heading eHeading);

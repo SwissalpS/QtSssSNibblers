@@ -607,11 +607,8 @@ void SurfaceGame::onPlaceBonus(const quint8 ubBonus) {
 } // onPlaceBonus
 
 
-void SurfaceGame::onSpawnWorm(const quint8 ubWorm) {
 
-	this->onDebugMessage("spawn work");
 
-} // onSpawnWorm
 
 
 void SurfaceGame::onPlayerKeyChanged(const quint8 ubWorm,
@@ -620,31 +617,25 @@ void SurfaceGame::onPlayerKeyChanged(const quint8 ubWorm,
 	Q_UNUSED(ubWorm)
 	Q_UNUSED(oKeySequence)
 	Q_UNUSED(eHeading)
-void SurfaceGame::onSpawnWorm(Worm *pWorm) {
 
 	this->initKeys();
-	pWorm->startSpawning();
 
 } // onPlayerKeyChanged
 
-	return;
-	this->onDebugMessage("spawn wormmmm");
 
 void SurfaceGame::onPlayerRelativeChanged(const quint8 ubWorm,
 										  const bool bRelative) {
-	// go 5 steps in original direction
-	SurfaceCell *pCellNext;
-	for (quint8 ubCount = 0u; ubCount < 5u; ++ubCount) {
 
 	if (this->apWorms.length() <= ubWorm) return;
-		pCellNext = this->getCell(pWorm->nextPoint());
 
 	this->apWorms.at(ubWorm)->setUseRelativeControls(bRelative);
 
 } // onPlayerRelativeChanged
 
 
-	} // loop
+void SurfaceGame::onSpawnWorm(Worm *pWorm) {
+
+	pWorm->startSpawning();
 
 } // onSpawnWorm
 
@@ -657,7 +648,7 @@ void SurfaceGame::onSpawnWorms() {
 	quint8 ubCount = 0u;
 	for (; ubCount < ubTotal; ++ubCount) {
 
-		this->onSpawnWorm(ubCount);
+//		this->onSpawnWorm(ubCount);
 
 	} // loop worms
 
