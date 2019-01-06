@@ -31,6 +31,7 @@ private:
 	//IconEngine& operator=(const IconEngine &other);
 
 protected:
+	// caches
 	QHash<quint8, QIcon> hCells;
 	QHash<quint8, QIcon> hCellsForBuilder;
 	QHash<quint8, QIcon> hLevels;
@@ -51,11 +52,13 @@ public:
 	static IconEngine *pIconEngine();
 	virtual void removeCacheOfLevel(const quint8 ubLevel);
 
-	static QVector<quint8> statesTeleporterEntrances();
-	static QVector<quint8> statesTeleporterExits();
-	static QVector<quint8> statesSpawns();
+	static QVector<quint8> statesFloors();
+	static QVector<quint8> statesPickups();
 	static QVector<quint8> statesSnake(const quint8 ubSnake);
 	static QVector<quint8> statesSnakes();
+	static QVector<quint8> statesSpawns();
+	static QVector<quint8> statesTeleporterEntrances();
+	static QVector<quint8> statesTeleporterExits();
 	static QVector<quint8> statesWalls();
 
 	virtual ~IconEngine();

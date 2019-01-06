@@ -209,7 +209,7 @@ QIcon IconEngine::getCell(const quint8 ubState) {
 		case 143u: oIcon = IconEngine::makeQuart(QIcon(":/Images/diamond.png"), 3u); break;
 
 		// most common -> empty space
-		case 0u:
+		case 0u: // 0-9 floor tiles
 		// spawn points
 		case 90u: // headed north
 		case 91u: // headed west
@@ -249,7 +249,17 @@ QIcon IconEngine::getCellForBuilder(const quint8 ubState) {
 	switch (ubState) {
 
 		// most common -> empty space
-		case 0u: oIcon = IconEngine::makeFloor(); break;
+		case 0u:
+		case 1u:
+		case 2u:
+		case 3u:
+		case 4u:
+		case 5u:
+		case 6u:
+		case 7u:
+		case 8u:
+		case 9u:
+			oIcon = IconEngine::makeFloor(); break;
 
 		// spawn points
 		case 90u: // headed north
@@ -606,19 +616,35 @@ QVector<quint8> IconEngine::statesTeleporterExits() {
 
 
 // static
-QVector<quint8> IconEngine::statesSpawns() {
+QVector<quint8> IconEngine::statesFloors() {
 
 	static QVector<quint8> aStates;
 
 	if (!aStates.empty()) return aStates;
 
 	quint8 ubCount;
-	for (ubCount = 90u; ubCount < 94u; ++ubCount)
+	for (ubCount = 0u; ubCount < 10u; ++ubCount)
 		aStates.append(ubCount);
 
 	return aStates;
 
-} // statesSpawns
+} // statesFloors
+
+
+// static
+QVector<quint8> IconEngine::statesPickups() {
+
+	static QVector<quint8> aStates;
+
+	if (!aStates.empty()) return aStates;
+
+	quint8 ubCount;
+	for (ubCount = 100u; ubCount < 150u; ++ubCount)
+		aStates.append(ubCount);
+
+	return aStates;
+
+} // statesPickups
 
 
 // static
@@ -652,6 +678,22 @@ QVector<quint8> IconEngine::statesSnakes() {
 	return aStates;
 
 } // statesSnakes
+
+
+// static
+QVector<quint8> IconEngine::statesSpawns() {
+
+	static QVector<quint8> aStates;
+
+	if (!aStates.empty()) return aStates;
+
+	quint8 ubCount;
+	for (ubCount = 90u; ubCount < 94u; ++ubCount)
+		aStates.append(ubCount);
+
+	return aStates;
+
+} // statesSpawns
 
 
 // static
