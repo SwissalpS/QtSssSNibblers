@@ -89,11 +89,12 @@ public:
 	virtual QSize sizeHint() const;
 
 signals:
-	void wormAteBonus(Worm *pWorm, const quint8 ubBonus) const;
 	void debugMessage(const QString &sMessage) const;
+	void noSpaceFoundForBonus(const quint8 ubBonus) const;
 	void pauseResumeToggled() const;
 	void resetGame() const;
 	void statusMessage(const QString &sMessage) const;
+	void wormAteBonus(Worm *pWorm, const quint8 ubBonus) const;
 	void wormCrashed(Worm *pWorm) const;
 	void wormCreated(Worm *pWorm) const;
 

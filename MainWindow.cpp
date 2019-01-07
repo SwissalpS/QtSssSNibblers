@@ -153,6 +153,9 @@ void MainWindow::initGame() {
 			pSurface, SLOT(onSpawnWorm(Worm*)));
 
 
+	connect(pSurface, SIGNAL(noSpaceFoundForBonus(quint8)),
+			pGame, SLOT(onNoSpaceFoundForBonus(quint8)));
+
 	connect(pSurface, SIGNAL(pauseResumeToggled()),
 			pGame, SLOT(onPauseResumeToggled()));
 

@@ -37,6 +37,13 @@ void Game::init() {
 } // init
 
 
+void Game::onNoSpaceFoundForBonus(const quint8 ubBonus) {
+
+	// TODO:
+
+} // onNoSpaceFoundForBonus
+
+
 void Game::onPlayerCountChanged(const quint8 ubCountHumans,
 								const quint8 ubCountAIs) {
 
