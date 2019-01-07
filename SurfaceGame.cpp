@@ -1049,6 +1049,25 @@ void SurfaceGame::resizeEvent(QResizeEvent *pEvent) {
 
 	if (height() != this->iLastHeight) this->updateGeometry();
 
+	int iSBwidth = 200;
+	int iDiff = this->window()->width() - this->width();
+
+	for (int i = 0; i < this->apScoreBoards.length(); ++i) {
+
+		if (iDiff >= 2 * iSBwidth) {
+			// place score-boards left and right of field
+			if (i & 1) this->pUi->frameScoreLeft->layout()->addWidget(this->apScoreBoards.at(i));
+			else this->pUi->frameScoreRight->layout()->addWidget(this->apScoreBoards.at(i));
+		} else if (iDiff >= iSBwidth) {
+			// place score-boards on left of field
+			this->pUi->frameScoreLeft->layout()->addWidget(this->apScoreBoards.at(i));
+		} else {
+			// move them to bottom
+			this->pUi->frameScore->layout()->addWidget(this->apScoreBoards.at(i));
+		} // switch spare space
+
+	} // loop
+
 } // resizeEvent
 
 
