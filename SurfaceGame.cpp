@@ -423,12 +423,15 @@ void SurfaceGame::init() {
 
 void SurfaceGame::initCells() {
 
-	quint8 ubRows = 0u;
 	quint8 ubColumns = 0u;
+	quint8 ubRows = 0u;
+	quint8 ubState = 0u;
 	QList<SurfaceCell*> aRow;
 	SurfaceCell *pCell;
 	QHBoxLayout *pHBox;
-	quint8 ubState = 0u;
+	QVBoxLayout *pVBox = new QVBoxLayout();
+
+	pVBox->setSpacing(0);
 
 	for (; ubRows < SssS_Nibblers_Surface_Height; ++ubRows) {
 
@@ -448,9 +451,11 @@ void SurfaceGame::initCells() {
 		} // loop columns
 
 		this->aopRows.append(aRow);
-		this->pUi->surfaceRows->addItem(pHBox);
+		pVBox->addItem(pHBox);
 
 	} // loop rows
+
+	this->pUi->frameSurface->setLayout(pVBox);
 
 } // initCells
 
@@ -1047,8 +1052,6 @@ void SurfaceGame::resizeEvent(QResizeEvent *pEvent) {
 
 	QFrame::resizeEvent(pEvent);
 
-	if (height() != this->iLastHeight) this->updateGeometry();
-
 	int iSBwidth = 200;
 	int iDiff = this->window()->width() - this->width();
 
@@ -1104,16 +1107,7 @@ void SurfaceGame::setCellState(const quint8 ubColumn, const quint8 ubRow,
 
 QSize SurfaceGame::sizeHint() const {
 
-	QSize oS(size());
-
-	this->iLastHeight = oS.height();
-
-	oS.setWidth((oS.height() * SssS_Nibblers_Surface_Width)
-				/ SssS_Nibblers_Surface_Height);
-
-	oS.setHeight(QFrame::sizeHint().height());
-
-	return oS;
+	return QFrame::sizeHint();
 
 } // sizeHint
 

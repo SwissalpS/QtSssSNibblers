@@ -35,6 +35,7 @@ SOURCES += \
 	ScoreBoard.cpp \
 	SurfaceBuilder.cpp \
 	SurfaceCell.cpp \
+	SurfaceFrame.cpp \
 	SurfaceGame.cpp \
 	Worm.cpp
 
@@ -51,6 +52,7 @@ HEADERS += \
 	ScoreBoard.h \
 	SurfaceBuilder.h \
 	SurfaceCell.h \
+	SurfaceFrame.h \
 	SurfaceGame.h \
 	Worm.h
 
