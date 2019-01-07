@@ -3,8 +3,9 @@
 
 #include <QFrame>
 
-class SurfaceFrame : public QFrame {
 
+
+class SurfaceFrame : public QFrame {
 	Q_OBJECT
 
 private:
@@ -28,5 +29,7 @@ public slots:
 		Q_EMIT this->debugMessage("SurfaceFrame:" + sMessage); }
 
 }; // SurfaceFrame
+
+
 
 #endif // SURFACEFRAME_H

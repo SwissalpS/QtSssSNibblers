@@ -1,6 +1,8 @@
 #include "SurfaceFrame.h"
 #include "definitions.h"
 
+
+
 SurfaceFrame::SurfaceFrame(QWidget *pParent) :
 	QFrame(pParent) {
 

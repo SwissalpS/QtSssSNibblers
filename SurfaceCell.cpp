@@ -61,6 +61,7 @@ void SurfaceCell::changeEvent(QEvent *pEvent) {
 		break;
 
 		case QEvent::PaletteChange: break;
+		case QEvent::ParentChange: break;
 
 		case QEvent::MouseButtonRelease:
 			this->onDebugMessage("Clicked at " + QString::number(this->ubColumn)
