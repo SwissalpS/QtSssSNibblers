@@ -907,8 +907,12 @@ void SurfaceGame::onMove() {
 		} else if (aStatesTeleporterEntrances.contains(ubState)) {
 
 			// enter teleporter
-			// TODO: find matching exit
-			pWorm->advanceTo(pCell);
+			if (this->hpTeleporterExits.contains(ubState + 1u)) {
+
+				pWorm->advanceTo(this->hpTeleporterExits.value(ubState + 1u));
+				continue;
+
+			} // if matching exit exists
 
 		} // if not empty
 
