@@ -153,6 +153,9 @@ void MainWindow::initGame() {
 			pSurface, SLOT(onSpawnWorm(Worm*)));
 
 
+	connect(pSurface, SIGNAL(bonusPlaced(QVector<SurfaceCell*>)),
+			pGame, SLOT(onBonusPlaced(QVector<SurfaceCell*>)));
+
 	connect(pSurface, SIGNAL(noSpaceFoundForBonus(quint8)),
 			pGame, SLOT(onNoSpaceFoundForBonus(quint8)));
 

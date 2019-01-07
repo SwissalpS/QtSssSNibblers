@@ -928,6 +928,7 @@ void SurfaceGame::onMove() {
 		if (aStatesPickups.contains(ubState)) {
 
 			// figure out which bonus it is
+			Q_EMIT this->wormAteBonus(pWorm, ubState);
 
 		} // if picked up something
 
@@ -983,7 +984,76 @@ void SurfaceGame::onNextLevel() {
 
 void SurfaceGame::onPlaceBonus(const quint8 ubBonus) {
 
-	// TODO:
+	// find 4 adjacent cells that are not occupied
+
+	static QVector<quint8> aubStatesFree = IconEngine::statesFloors()
+										 + IconEngine::statesTeleporterExits()
+										 + IconEngine::statesSpawns();
+
+
+
+	quint8 ubColumns = 0u;
+	quint8 ubRows = 0u;
+	SurfaceCell *pCell;
+	SurfaceCell *pCell1;
+	SurfaceCell *pCell2;
+	SurfaceCell *pCell3;
+	QVector<SurfaceCell *> apFreeCells;
+	apFreeCells.clear();
+
+	for (; ubRows < SssS_Nibblers_Surface_Height; ++ubRows) {
+
+		for (ubColumns = 0u; ubColumns < SssS_Nibblers_Surface_Width; ++ubColumns) {
+
+			pCell = this->getCell(ubColumns, ubRows);
+			if (!aubStatesFree.contains(pCell->getState())) continue;
+
+			pCell1 = this->getCell(L::warpPoint(ubColumns, ubRows, L::Right));
+			if (!aubStatesFree.contains(pCell1->getState())) continue; // TODO: optimize as we have already checked this one
+
+			pCell2 = this->getCell(L::warpPoint(ubColumns, ubRows, L::Down));
+			if (!aubStatesFree.contains(pCell2->getState())) continue;
+
+			pCell3 = this->getCell(L::warpPoint(pCell2->getColumn(), pCell2->getRow(), L::Right));
+			if (!aubStatesFree.contains(pCell3->getState())) continue;
+
+			// OK, this one could work
+			apFreeCells.append(pCell);
+
+		} // loop columns
+
+	} // loop rows
+
+	int iMaxPlusOne = apFreeCells.length();
+	if (0 == iMaxPlusOne) {
+
+		Q_EMIT this->noSpaceFoundForBonus(ubBonus);
+
+		return;
+
+	} // if no free space to put any bonus
+
+	int iMin = 0;
+	int iIndex = iMin + (qrand() % (iMaxPlusOne - iMin));
+
+	pCell = apFreeCells.at(iIndex);
+	pCell1 = this->getCell(L::warpPoint(pCell->getColumn(), pCell->getRow(), L::Right));
+	pCell2 = this->getCell(L::warpPoint(pCell->getColumn(), pCell->getRow(), L::Down));
+	pCell3 = this->getCell(L::warpPoint(pCell2->getColumn(), pCell2->getRow(), L::Right));
+
+	pCell->setState(ubBonus); pCell->update();
+	pCell1->setState(ubBonus + 1u); pCell1->update();
+	pCell2->setState(ubBonus + 3u); pCell2->update();
+	pCell3->setState(ubBonus + 2u); pCell3->update();
+
+	QVector<SurfaceCell *> apCells;
+	apCells.clear();
+	apCells.append(pCell);
+	apCells.append(pCell1);
+	apCells.append(pCell3);
+	apCells.append(pCell2);
+
+	Q_EMIT this->bonusPlaced(apCells);
 
 } // onPlaceBonus
 

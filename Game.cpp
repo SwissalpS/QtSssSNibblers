@@ -37,6 +37,13 @@ void Game::init() {
 } // init
 
 
+void Game::onBonusPlaced(const QVector<SurfaceCell *> apCells) {
+
+	// TODO:
+
+} // onBonusPlaced
+
+
 void Game::onNoSpaceFoundForBonus(const quint8 ubBonus) {
 
 	// TODO:

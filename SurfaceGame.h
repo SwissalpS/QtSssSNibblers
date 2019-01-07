@@ -89,6 +89,7 @@ public:
 	virtual QSize sizeHint() const;
 
 signals:
+	void bonusPlaced(QVector<SurfaceCell *> apCells) const;
 	void debugMessage(const QString &sMessage) const;
 	void noSpaceFoundForBonus(const quint8 ubBonus) const;
 	void pauseResumeToggled() const;

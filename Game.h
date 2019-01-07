@@ -49,6 +49,7 @@ signals:
 	void statusMessage(const QString &sMessage) const;
 
 public slots:
+	void onBonusPlaced(const QVector<SurfaceCell *> apCells);
 	void onNoSpaceFoundForBonus(const quint8 ubBonus);
 	void onPlayerCountChanged(const quint8 ubCountHumans,
 							  const quint8 ubCountAIs);
