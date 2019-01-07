@@ -202,49 +202,9 @@ QPoint Worm::leftPoint() {
 	if (0 == this->apCells.length()) return QPoint();
 
 	SurfaceCell *pCell = this->apCells.first();
-	quint8 ubX = pCell->getColumn();
-	quint8 ubY = pCell->getRow();
 
-	switch (this->headingLeft()) {
-
-		case L::North:
-
-			if (0u == ubY) {
-				ubY = SssS_Nibblers_Surface_Height - 1u;
-			} else ubY--;
-
-		break;
-
-		case L::South:
-
-			ubY++;
-			if (SssS_Nibblers_Surface_Height <= ubY) ubY = 0u;
-
-		break;
-
-		case L::West:
-
-			if (0u == ubX) {
-				ubX = SssS_Nibblers_Surface_Width - 1u;
-			} else ubX--;
-
-		break;
-
-		case L::East:
-
-			ubX++;
-			if (SssS_Nibblers_Surface_Width <= ubX) ubX = 0u;
-
-		break;
-
-		default:
-			this->onDebugMessage(tr("Weird situation in Worm::leftPoint() ")
-									+ QString::number(this->eCurrentHeading));
-		break;
-
-	} // switch this->eCurrentHeading
-
-	return QPoint(ubX, ubY);
+	return L::warpPoint(pCell->getColumn(), pCell->getRow(),
+						this->headingLeft());
 
 } // leftPoint
 
@@ -262,49 +222,8 @@ QPoint Worm::nextPoint() {
 	if (0 == this->apCells.length()) return QPoint();
 
 	SurfaceCell *pCell = this->apCells.first();
-	quint8 ubX = pCell->getColumn();
-	quint8 ubY = pCell->getRow();
 
-	switch (this->eCurrentHeading) {
-
-		case L::North:
-
-			if (0u == ubY) {
-				ubY = SssS_Nibblers_Surface_Height - 1u;
-			} else ubY--;
-
-		break;
-
-		case L::South:
-
-			ubY++;
-			if (SssS_Nibblers_Surface_Height <= ubY) ubY = 0u;
-
-		break;
-
-		case L::West:
-
-			if (0u == ubX) {
-				ubX = SssS_Nibblers_Surface_Width - 1u;
-			} else ubX--;
-
-		break;
-
-		case L::East:
-
-			ubX++;
-			if (SssS_Nibblers_Surface_Width <= ubX) ubX = 0u;
-
-		break;
-
-		default:
-			this->onDebugMessage(tr("Weird situation in Worm::nextPoint() ")
-									+ QString::number(this->eCurrentHeading));
-		break;
-
-	} // switch this->eCurrentHeading
-
-	return QPoint(ubX, ubY);
+	return L::warpPoint(pCell->getColumn(), pCell->getRow(), this->eCurrentHeading);
 
 } // nextPoint
 
@@ -408,49 +327,8 @@ QPoint Worm::rightPoint() {
 	if (0 == this->apCells.length()) return QPoint();
 
 	SurfaceCell *pCell = this->apCells.first();
-	quint8 ubX = pCell->getColumn();
-	quint8 ubY = pCell->getRow();
 
-	switch (this->headingRight()) {
-
-		case L::North:
-
-			if (0u == ubY) {
-				ubY = SssS_Nibblers_Surface_Height - 1u;
-			} else ubY--;
-
-		break;
-
-		case L::South:
-
-			ubY++;
-			if (SssS_Nibblers_Surface_Height <= ubY) ubY = 0u;
-
-		break;
-
-		case L::West:
-
-			if (0u == ubX) {
-				ubX = SssS_Nibblers_Surface_Width - 1u;
-			} else ubX--;
-
-		break;
-
-		case L::East:
-
-			ubX++;
-			if (SssS_Nibblers_Surface_Width <= ubX) ubX = 0u;
-
-		break;
-
-		default:
-			this->onDebugMessage(tr("Weird situation in Worm::rightPoint() ")
-									+ QString::number(this->eCurrentHeading));
-		break;
-
-	} // switch this->eCurrentHeading
-
-	return QPoint(ubX, ubY);
+	return L::warpPoint(pCell->getColumn(), pCell->getRow(), this->headingRight());
 
 } // rightPoint
 

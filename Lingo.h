@@ -1,7 +1,9 @@
 #ifndef LINGO_H
 #define LINGO_H
 
+#include "definitions.h"
 #include <QObject>
+#include <QPoint>
 
 namespace SwissalpS { namespace QtNibblers {
 
@@ -137,6 +139,62 @@ public:
 
 	};
 	Q_ENUM(Tiles)
+
+	inline static QPoint warpPoint(const quint8 ubColumn,
+								   const quint8 ubRow,
+								   const Heading eDirection) {
+
+		return L::warpPoint(QPoint(ubColumn, ubRow), eDirection);
+
+	} // warpPoint(x,y)
+
+
+	inline static QPoint warpPoint(const QPoint oOrigin,
+									   const Heading eDirection) {
+
+		if (oOrigin.x() < 0 || oOrigin.y() < 0
+				|| 255 <= oOrigin.x() || 255 <= oOrigin.y())
+			return QPoint();
+
+		static const quint8 ubMaxX = SssS_Nibblers_Surface_Width - 1u;
+		static const quint8 ubMaxY = SssS_Nibblers_Surface_Height - 1u;
+
+		quint8 ubX = oOrigin.x();
+		quint8 ubY = oOrigin.y();
+
+		switch (eDirection) {
+
+			case L::North:
+
+				ubY = (0u == ubY) ? ubMaxY : ubY - 1u;
+
+			break;
+
+			case L::South:
+
+				ubY++;
+				if (ubMaxY < ubY) ubY = 0u;
+
+			break;
+
+			case L::West:
+
+				ubX = (0u == ubX) ? ubMaxX : ubX - 1u;
+
+			break;
+
+			case L::East:
+
+				ubX++;
+				if (ubMaxX < ubX) ubX = 0u;
+
+			break;
+
+		} // switch eDirection
+
+		return QPoint(ubX, ubY);
+
+	} // warpX(QPoint)
 
 }; // L
 
