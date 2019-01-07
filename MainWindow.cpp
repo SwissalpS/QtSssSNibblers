@@ -66,6 +66,8 @@ void MainWindow::closeEvent(QCloseEvent *pEvent) {
 	this->pAS->setValue(AppSettings::sSettingTabSettingIndex,
 						this->pUi->tabSettingsInner->currentIndex());
 
+	Q_EMIT this->quitting();
+
 } // closeEvent
 
 
@@ -92,6 +94,9 @@ void MainWindow::initGame() {
 
 	connect(this, SIGNAL(mainTabIndexChanged(int)),
 			pSurface, SLOT(onMainTabChanged(int)));
+
+	connect(this, SIGNAL(quitting()),
+			pSurface, SLOT(onQuitting()));
 
 	connect(this, SIGNAL(settingsPlayerColoursChanged(QVector<quint8>)),
 			pSurface, SLOT(onColoursChanged(QVector<quint8>)));

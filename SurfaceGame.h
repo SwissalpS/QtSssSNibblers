@@ -114,6 +114,7 @@ public slots:
 						  const QKeySequence &oKeySequence,
 						  const L::Heading eHeading);
 	void onPlayerRelativeChanged(const quint8 ubWorm, const bool bRelative);
+	void onQuitting();
 	virtual void onSpawnWorm(Worm *pWorm);
 	virtual void onSpawnWorms();
 

@@ -759,6 +759,15 @@ void SurfaceGame::on_buttonPP_toggled(bool bChecked) {
 
 	if (this->bProtectPP) return;
 
+	if (this->pStartCountDownFrame) {
+	if (!bChecked) {
+		this->pStartCountDownFrame->onSetText(tr("Paused"));
+		this->pStartCountDownFrame->setGeometry(this->pUi->frameSurface->geometry());
+		this->pStartCountDownFrame->move(mapToGlobal(QPoint(this->pUi->frameSurface->geometry().left(), this->pUi->frameSurface->geometry().top())));//, this->pUi->buttonPP->height() + 12);
+		this->pStartCountDownFrame->show();
+		} else this->pStartCountDownFrame->hide();
+	}
+
 	Q_EMIT this->pauseResumeToggled();
 
 	if (bChecked) this->setFocus();
@@ -1007,6 +1016,13 @@ void SurfaceGame::onPlayerRelativeChanged(const quint8 ubWorm,
 	this->apWorms.at(ubWorm)->setUseRelativeControls(bRelative);
 
 } // onPlayerRelativeChanged
+
+
+void SurfaceGame::onQuitting() {
+
+	if (this->pStartCountDownFrame) this->pStartCountDownFrame->close();
+
+} // onQuitting
 
 
 void SurfaceGame::onSpawnWorm(Worm *pWorm) {
