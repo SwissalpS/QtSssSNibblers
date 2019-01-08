@@ -25,6 +25,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
 	AppSettings.cpp \
+	Bonus.cpp \
 	DialogLoad.cpp \
 	DialogSave.cpp \
 	FrameStartCountdown.cpp \
@@ -41,6 +42,7 @@ SOURCES += \
 
 HEADERS += \
 	AppSettings.h \
+	Bonus.h \
 	definitions.h \
 	DialogLoad.h \
 	DialogSave.h \

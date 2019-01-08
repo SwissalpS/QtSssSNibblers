@@ -14,6 +14,29 @@
 #define SssS_Nibblers_Max_Lives_Per_Row quint8(8u)
 #define SssS_Nibblers_Max_Key_Cache quint8(64u)
 
+#define SssS_Nibblers_Penalty_Non_Pickup quint8(1u)
+
+#define SssS_Nibblers_Bonus_Apple_Lifetime quint16(950u)
+#define SssS_Nibblers_Bonus_Apple_Grow float(1.0f)
+#define SssS_Nibblers_Bonus_Apple_Points quint16(8u)
+
+#define SssS_Nibblers_Bonus_Cherry_Lifetime quint16(632u)
+#define SssS_Nibblers_Bonus_Cherry_Grow float(0.6f)
+#define SssS_Nibblers_Bonus_Cherry_Points quint16(32u)
+
+#define SssS_Nibblers_Bonus_Banana_Lifetime quint16(790u)
+#define SssS_Nibblers_Bonus_Banana_Grow float(1.2f)
+#define SssS_Nibblers_Bonus_Banana_Points quint16(33u)
+
+#define SssS_Nibblers_Bonus_Heart_Lifetime quint16(316u)
+#define SssS_Nibblers_Bonus_Heart_Grow float(1.0f)
+#define SssS_Nibblers_Bonus_Heart_Points quint16(0u)
+
+#define SssS_Nibblers_Bonus_Diamond_Lifetime quint16(474u)
+#define SssS_Nibblers_Bonus_Diamond_Grow float(1.0f)
+#define SssS_Nibblers_Bonus_Diamond_Points quint16(0u)
+
+
 #define SssS_Nibblers_Colour_0 Qt::blue
 #define SssS_Nibblers_Colour_1 Qt::cyan
 #define SssS_Nibblers_Colour_2 Qt::darkCyan
