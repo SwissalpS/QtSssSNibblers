@@ -14,7 +14,6 @@ namespace SwissalpS { namespace QtNibblers {
 
 
 class Game : public QObject {
-
 	Q_OBJECT
 
 private:
@@ -22,12 +21,23 @@ private:
 protected:
 	bool bLevelStarted;
 	bool bPaused;
+	quint8 ubCountApplesLeft;
 	quint8 ubCountDead;
 	quint8 ubCountLevels;
+	quint8 ubSpeedIndex;
+	quint16 uiApplesToGo;
+	float fFactorApple;
+	float fFactorBanana;
+	float fFactorCherry;
+	float fFractionApple;
+	float fFractionBanana;
+	float fFractionCherry;
 	AppSettings *pAS;
 	QVector<Bonus *> apBonus;
 	QVector<Worm *> apWorms;
 	QTimer *pTimer;
+
+	virtual void destroyBonus(Bonus *pBonus);
 
 protected slots:
 	virtual void onTick();
@@ -52,6 +62,7 @@ signals:
 
 public slots:
 	void onBonusPlaced(const QVector<SurfaceCell *> apCells);
+	void onBonusTimedOut(Bonus *pBonus);
 	void onNoSpaceFoundForBonus(const quint8 ubBonus);
 	void onPlayerCountChanged(const quint8 ubCountHumans,
 							  const quint8 ubCountAIs);
