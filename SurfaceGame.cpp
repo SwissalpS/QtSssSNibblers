@@ -927,8 +927,8 @@ void SurfaceGame::onMove() {
 
 		if (aStatesPickups.contains(ubState)) {
 
-			// figure out which bonus it is
-			Q_EMIT this->wormAteBonus(pWorm, ubState);
+			// let Game figure out which bonus it is
+			Q_EMIT this->wormAteBonus(pWorm, pCell);
 
 		} // if picked up something
 

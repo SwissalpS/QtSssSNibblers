@@ -37,8 +37,7 @@
  * 134..139: Reserved decaying Bonus
  * 140..143: Bonus Diamonds
  * 144..149: Reserved decaying Bonus
- *
- *
+ * 150..199: Reserved for other bonuses
  * 200u: Wall Vertical
  * 201u: Wall Horizontal
  * 202u: Wall Corner SW
