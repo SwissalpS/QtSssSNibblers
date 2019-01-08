@@ -255,6 +255,12 @@ void Worm::onAddScore(const qint16 iScore) {
 } // onAddScore
 
 
+void Worm::onGrow(const float fFactor) {
+
+	this->uiTargetLength = quint16(fFactor * float(this->uiTargetLength));
+
+} // onGrow
+
 
 void Worm::onReverse() {
 

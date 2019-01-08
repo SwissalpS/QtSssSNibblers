@@ -94,6 +94,7 @@ public slots:
 	void onTurn(const L::Heading eDirection);
 	void onTurnLeft();
 	void onTurnRight();
+	void onGrow(const float fFactor);
 
 }; // Worm
 
