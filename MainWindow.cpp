@@ -68,6 +68,8 @@ void MainWindow::closeEvent(QCloseEvent *pEvent) {
 
 	Q_EMIT this->quitting();
 
+	qApp->quit();
+
 } // closeEvent
 
 
@@ -168,8 +170,8 @@ void MainWindow::initGame() {
 	connect(pSurface, SIGNAL(wormCreated(Worm*)),
 			pGame, SLOT(onWormCreated(Worm*)));
 
-	connect(pSurface, SIGNAL(wormAteBonus(Worm*,quint8)),
-			pGame, SLOT(onWormAteBonus(Worm*,quint8)));
+	connect(pSurface, SIGNAL(wormAteBonus(Worm*,SurfaceCell*)),
+			pGame, SLOT(onWormAteBonus(Worm*,SurfaceCell*)));
 
 	connect(pSurface, SIGNAL(wormCrashed(Worm*)),
 			pGame, SLOT(onWormCrashed(Worm*)));

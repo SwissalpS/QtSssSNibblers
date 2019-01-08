@@ -95,7 +95,7 @@ signals:
 	void pauseResumeToggled() const;
 	void resetGame() const;
 	void statusMessage(const QString &sMessage) const;
-	void wormAteBonus(Worm *pWorm, const quint8 ubBonus) const;
+	void wormAteBonus(Worm *pWorm, SurfaceCell *pCell) const;
 	void wormCrashed(Worm *pWorm) const;
 	void wormCreated(Worm *pWorm) const;
 

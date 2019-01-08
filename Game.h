@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QTimer>
 #include "AppSettings.h"
+#include "Bonus.h"
 #include "Worm.h"
 
 
@@ -24,6 +25,7 @@ protected:
 	quint8 ubCountDead;
 	quint8 ubCountLevels;
 	AppSettings *pAS;
+	QVector<Bonus *> apBonus;
 	QVector<Worm *> apWorms;
 	QTimer *pTimer;
 
@@ -55,7 +57,7 @@ public slots:
 							  const quint8 ubCountAIs);
 	void onReset();
 	void onSpeedChanged(const int iIndex);
-	void onWormAteBonus(Worm *pWorm, const quint8 ubBonus);
+	void onWormAteBonus(Worm *pWorm, SurfaceCell *pCell);
 	void onWormCrashed(Worm *pWorm);
 	void onWormCreated(Worm *pWorm);
 	void onWormDied(); //Worm *pWorm);
