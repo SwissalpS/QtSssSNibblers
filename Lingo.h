@@ -140,6 +140,16 @@ public:
 	};
 	Q_ENUM(Tiles)
 
+	inline static Heading oppositeHeading(const Heading eDirection) {
+		switch (eDirection) {
+			case North: return South;
+			case South: return North;
+			case West: return East;
+			case East: return West;
+		} // switch eDirection
+	} // oppositeHeading
+
+
 	inline static QPoint warpPoint(const quint8 ubColumn,
 								   const quint8 ubRow,
 								   const Heading eDirection) {

@@ -99,6 +99,7 @@ void Worm::doNextTurn() {
 	} // if already going that way
 
 	// check opposite direction
+	//if (eDirection == L::oppositeHeading(this->eCurrentHeading)) {
 	if ((eDirection & 1u) == (this->eCurrentHeading & 1u)) {
 
 		Q_EMIT this->fart();
@@ -252,6 +253,23 @@ void Worm::onAddScore(const qint16 iScore) {
 	Q_EMIT this->updateScore(this->ulScore);
 
 } // onAddScore
+
+
+
+void Worm::onReverse() {
+
+	QVector<SurfaceCell *> apOld(this->apCells);
+	this->apCells.clear();
+
+	for (int i = apOld.length() - 1; i >= 0 ; ++i) {
+
+		this->apCells.append(apOld.at(i));
+
+	} // loop
+
+	this->eCurrentHeading = L::oppositeHeading(this->eCurrentHeading);
+
+} // onReverse
 
 
 void Worm::onSetLives(const quint8 ubLives) {

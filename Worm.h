@@ -86,6 +86,7 @@ public slots:
 	inline void onDebugMessage(const QString &sMessage) const {
 		Q_EMIT this->debugMessage("Worm:" + sMessage); }
 	inline void onResetScore() { this->ulScore = 0u; Q_EMIT this->updateScore(0u);}
+	void onReverse();
 	void onSetLives(const quint8 ubLives);
 	inline void onSetName(const QString sName) { Q_EMIT this->updateName(sName); }
 	void onSetSpawnCell(SurfaceCell *pCell);
