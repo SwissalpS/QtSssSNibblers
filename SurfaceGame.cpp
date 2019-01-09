@@ -24,9 +24,13 @@ SurfaceGame::SurfaceGame(QWidget *pParent) :
 	pAS(AppSettings::pAppSettings()),
 	pDialogLoad(nullptr),
 	pStartCountDownFrame(nullptr),
-	ubCurrentLevel(0xFFu) {
+	ubCurrentLevel(0xFFu),
+	uiAIdeadendRunnumber(0u) {
 
 	this->pUi->setupUi(this);
+
+	this->pAImap = new Map(SssS_Nibblers_Surface_Width,
+						   SssS_Nibblers_Surface_Height, this);
 
 	// init randomizer
 	qsrand(QTime::currentTime().msecsSinceStartOfDay());
@@ -63,6 +67,31 @@ SurfaceGame::~SurfaceGame() {
 	delete this->pUi;
 
 } // dealloc
+
+
+void SurfaceGame::addCrashPotential(QHash<SurfaceCell *, Worm *> &hppCrashPotential,
+									QVector<Worm *> &apCrashedWorms,
+									SurfaceCell *pCell, Worm *pWorm) {
+
+	if (hppCrashPotential.keys().contains(pCell)) {
+
+		// head-on-colision
+		if (!pWorm->isImmune()) apCrashedWorms.append(pWorm);
+
+		if (!apCrashedWorms.contains(hppCrashPotential.value(pCell))) {
+
+			if (!hppCrashPotential.value(pCell)->isImmune())
+				apCrashedWorms.append(hppCrashPotential.value(pCell));
+
+		} // if other worm needs to be added too
+
+		return;
+
+	} // if cell is already in hash
+
+	hppCrashPotential.insert(pCell, pWorm);
+
+} // addCrashPotential
 
 
 void SurfaceGame::changeEvent(QEvent *pEvent) {
@@ -103,7 +132,7 @@ void SurfaceGame::clearSurface() {
 		for (ubX = 0u; ubX < ubColumns; ubX++) {
 
 			pCell = aRow.at(ubX);
-			this->setCellState(pCell, 0u, false);
+			this->setCellState(pCell, L::FloorClean, false);
 
 		} // loop columns
 
@@ -143,7 +172,7 @@ void SurfaceGame::clearSurfaceOf(const QVector<quint8> aStates) {
 
 			if (aStates.contains(pCell->getState())) {
 
-				this->setCellState(pCell, 0u, false);
+				this->setCellState(pCell, L::FloorClean, false);
 
 			} // if one to clear
 
@@ -168,6 +197,30 @@ void SurfaceGame::clearSurfaceOfWorms() {
 	this->clearSurfaceOf(IconEngine::statesSnakes());
 
 } // clearSurfaceOfWorms
+
+
+Map *SurfaceGame::currentMap() {
+
+	quint8 ubRows = this->aopRows.count();
+	quint8 ubColumns = this->aopRows.first().count();
+	quint8 ubX = 0u;
+	quint8 ubY = 0u;
+
+	Map *pMap = new Map(ubColumns, ubRows, this);
+
+	for (ubY = 0u; ubY < ubRows; ubY++) {
+
+		for (ubX = 0u; ubX < ubColumns; ubX++) {
+
+			pMap->setTile(ubX, ubY, this->aopRows.at(ubY).at(ubX)->getState());
+
+		} // loop columns
+
+	} // loop rows
+
+	return pMap;
+
+} // currentMap
 
 
 void SurfaceGame::focusInEvent(QFocusEvent *pEvent) {
@@ -240,6 +293,409 @@ void SurfaceGame::dialogLoadFinished(const int iResult) {
 } // dialogLoadFinished
 
 
+quint16 SurfaceGame::findNextGood(const QPoint oStart, const L::Heading eDirection) {
+
+	static QVector<quint8> aStatesPickups = IconEngine::statesPickups();
+	//static QVector<quint8> aStatesTeleporterEntrances = IconEngine::statesTeleporterEntrances();
+	//static QVector<quint8> aStatesTeleporterExits = IconEngine::statesTeleporterExits();
+	static QVector<quint8> aStatesToAvoid =
+			IconEngine::statesSnakes() + IconEngine::statesWalls();
+
+	SurfaceCell *pCell;
+
+	quint8 ubState;
+	quint16 uiDistance = 0u;
+	QPoint oNext(oStart);
+
+	while (0xFFFFu > uiDistance) {
+
+		pCell = this->getCell(oNext);
+		if (pCell->isNull()) return 0xFFFFu;
+
+		ubState = pCell->getState();
+		if (aStatesToAvoid.contains(ubState)) return 0xFFFFu;
+
+		if (aStatesPickups.contains(ubState)) return uiDistance;
+
+		oNext = L::warpPoint(oNext, eDirection);
+
+		// gone around field?
+		if (oNext == oStart) return 0xFFFFu;
+
+		uiDistance++;
+
+	} // loop 0xFFFFu > uiDistance
+
+	return uiDistance;
+
+} // findNextGood
+
+
+// virtual copy of worm.vala Worm.can_move_to(....)
+bool SurfaceGame::aiCanMoveTo(Worm *pWorm) {
+
+	if (pWorm->isImmune()) return true;
+
+	SurfaceCell *pCell = this->getCell(pWorm->nextPoint());
+	if (pCell->isNull()) return false;
+
+	static QVector<quint8> aStatesToAvoid =
+			IconEngine::statesSnakes() + IconEngine::statesWalls();
+
+	return !aStatesToAvoid.contains(pCell->getState());
+
+} // aiCanMoveTo
+
+
+// virtual copy of worm.vala Worm::ai_deadend_after(....)
+/* Check whether the worm will be trapped in a dead end. A location
+ * within the dead end and the length of the worm is given. This
+ * prevents worms getting trapped in a spiral, or in a corner sharper
+ * than 90 degrees.  runnumber is a unique number used to update the
+ * deadend board. The principle of the deadend board is that it marks
+ * all squares previously checked, so the exact size of the deadend
+ * can be calculated in O(n) time; to prevent the need to clear it
+ * afterwards, a different number is stored in the board each time
+ * (the number will not have been previously used, so the board will
+ * appear empty). Although in theory deadend_runnumber may wrap round,
+ * after 4 billion steps the entire board is likely to have been
+ * overwritten anyway.
+ */
+int SurfaceGame::aiDeadend(const QPoint oStart, qint16 iLen) {
+
+	static QVector<quint8> aStatesToAvoid =
+			IconEngine::statesSnakes() + IconEngine::statesWalls();
+
+	if (0 >= iLen) return 0;
+
+	QPoint oNext;
+
+	for (quint8 ubDirection = L::North; ubDirection <= L::East; ubDirection++) {
+
+		oNext = L::warpPoint(oStart, ubDirection);
+
+		if ((!aStatesToAvoid.contains(this->getCell(oNext)->getState()))
+				&& (this->uiAIdeadendRunnumber != this->pAImap->tile(oNext))) {
+
+			this->pAImap->setTile(oNext, this->uiAIdeadendRunnumber);
+			iLen = this->aiDeadend(oNext, iLen - 1);
+			if (0 >= iLen) return 0;
+
+		} // if free cell
+
+	} // loop all directions
+
+	return iLen;
+
+} // aiDeadend
+
+
+// virtual copy of worm.vala Worm::ai_deadend_after(....)
+/* Check a deadend starting from the next square in this direction,
+ * rather than from this square. Also block off the squares near worm
+ * heads, so that humans can't kill AI players by trapping them
+ * against a wall.  The given length is quartered and squared; this
+ * allows for the situation where the worm has gone round in a square
+ * and is about to get trapped in a spiral. However, it's set to at
+ * least BOARDWIDTH, so that on the levels with long thin paths a worm
+ * won't start down the path if it'll crash at the other end.
+ */
+int SurfaceGame::aiDeadendAfter(Worm *pWorm, const qint16 iLen) {
+
+	if (this->getCell(pWorm->nextPoint())->isNull()) return 0;
+
+	if (255u == this->uiAIdeadendRunnumber) {
+		this->onDebugMessage("ran out of space in deadendnumber SurfaceGame::aiDeadendAfter");
+
+		return 0;
+
+	} // if ran out of space
+	this->uiAIdeadendRunnumber++;
+
+	int iX, iY, iCx, iCy, iCl;
+	QPoint oNext = pWorm->nextPoint();
+	iX = oNext.x();
+	iY = oNext.y();
+
+	QPoint oHeadOther;
+	L::Heading eDirection = pWorm->currentDirection();
+
+	Worm *pWormOther;
+	for (int i = 0; i < this->apWorms.length(); ++i) {
+
+		pWormOther = this->apWorms.at(i);
+		if (pWormOther == pWorm) continue; // ???
+		if (pWormOther->isDead()) continue;
+
+		oHeadOther = pWormOther->headCell()->getPos();
+
+		iCx = oHeadOther.x();
+		iCy = oHeadOther.y();
+		if (iCx != iX || iCy != iY) {
+
+			if (0 < iCx) this->pAImap->setTile(iCx - 1, iCy, this->uiAIdeadendRunnumber);
+			if (0 < iCy) this->pAImap->setTile(iCx, iCy - 1, this->uiAIdeadendRunnumber);
+			if ((SssS_Nibblers_Surface_Width - 1) > iCx) this->pAImap->setTile(iCx + 1, iCy, this->uiAIdeadendRunnumber);
+			if ((SssS_Nibblers_Surface_Height -1) > iCy) this->pAImap->setTile(iCx, iCy + 1, this->uiAIdeadendRunnumber);
+
+		} // if
+
+	} // loop worms
+
+	this->pAImap->setTile(oNext, this->uiAIdeadendRunnumber);
+
+	oNext = L::warpPoint(oNext, eDirection);
+
+	this->pAImap->setTile(oNext, this->uiAIdeadendRunnumber);
+
+	iCl = (iLen * iLen) / 16;
+	if (SssS_Nibblers_Surface_Width > iCl) iCl = SssS_Nibblers_Surface_Width;
+
+	return aiDeadend(oNext, iCl);
+
+} // aiDeadendAfter
+
+
+// virtual copy of worm.vala Worm.ai_move(....)
+void SurfaceGame::aiMove(Worm *pWorm) {
+
+	//L::Heading eOpposite = L::oppositeHeading(pWorm->currentDirection());
+
+	bool bAhead = aiWander(pWorm->nextPoint(), pWorm->nextPoint(), pWorm->currentDirection());
+	bool bLeft = aiWander(pWorm->leftPoint(), pWorm->leftPoint(), pWorm->headingLeft());
+	bool bRight = aiWander(pWorm->rightPoint(), pWorm->rightPoint(), pWorm->headingRight());
+
+	if (!bAhead) {
+
+		if (bLeft) pWorm->onTurnLeft();
+		else if (bRight) pWorm->onTurnRight();
+		else {
+
+			// move randomly
+			if ((qrand() % 31) == 1) {
+
+				if (qrand() & 1) pWorm->onTurnLeft();
+				else pWorm->onTurnRight();
+
+			} // if random turn
+
+		} // if left, right or ahead
+
+
+	} // if not ahead
+
+	// update eOpposite?
+
+	/* Avoid walls, dead-ends and other worm's heads. This is done using
+	 * an evalution function which is CAPACITY for a wall, 4 if another
+	 * worm's head is in the tooclose area, 4 if another worm's head
+	 * could move to the same location as ours, plus 0 if there's no
+	 * dead-end, or the amount that doesn't fit for a deadend. olddir's
+	 * score is reduced by 100, to favour it, but only if its score is 0
+	 * otherwise; this is so that if we're currently trapped in a dead
+	 * end, the worm will move in a space-filling manner in the hope
+	 * that the dead end will disappear (e.g. if it's made from the tail
+	 * of some worm, as often happens).
+	 */
+	L::Heading eDirectionOld = pWorm->currentDirection();
+	static const quint16 uiCapacity = SssS_Nibblers_Surface_Height * SssS_Nibblers_Surface_Width;
+	qint16 iBestYet = uiCapacity * 2;
+	qint8 ibDirectionBest = -1;
+	qint16 iLen;
+
+	this->pAImap->fillAll(L::FloorClean);
+	this->uiAIdeadendRunnumber = 0;
+
+	for (int i = 0; i < 3; ++i) {
+
+		iLen = 0;
+
+		if (0 == i) {
+			// ahead
+
+
+		} else if (1 == i) {
+			// left
+			pWorm->onTurnLeft();
+
+		} else {
+			// right
+			pWorm->onTurnRight();
+			pWorm->onTurnRight();
+
+		} // switch direction
+
+		if (!this->aiCanMoveTo(pWorm)) iLen += uiCapacity;
+
+		if (this->aiTooClose(pWorm)) iLen += 4;
+
+		iLen += aiDeadendAfter(pWorm, iLen);
+
+		// favour current direction
+		if ((pWorm->currentDirection() == eDirectionOld) && (0 >= iLen))
+			iLen -= 100;
+
+		/* If the favoured direction isn't appropriate, then choose
+		 * another direction at random rather than favouring one in
+		 * particular, to stop the worms bunching in the bottom-
+		 * right corner of the board.
+		 */
+		if (0 >= iLen) {
+
+			iLen -= (qrand() % 101);
+
+		}
+
+		if (iLen < iBestYet) {
+
+			iBestYet = iLen;
+			ibDirectionBest = pWorm->currentDirection();
+
+		} // if better found
+
+	} // loop 3 directions
+
+	if (0 < ibDirectionBest) pWorm->setHeading(L::headingOfUint(ibDirectionBest));
+
+	/* Make sure we are at least avoiding walls.
+	 * Mostly other snakes should avoid our head.
+	 */
+
+	if (!this->aiCanMoveTo(pWorm)) {
+
+		pWorm->onTurnLeft();
+
+		if (!this->aiCanMoveTo(pWorm)) {
+
+			// try right
+			pWorm->onTurnRight();
+			pWorm->onTurnRight();
+
+		} // if can not go left
+
+	} // if can not go ahead
+
+} // aiMove
+
+
+// virtual copy of worm.vala Worm.ai_too_close(....)
+/* Check to see if another worm's head is too close in front of us;
+ * that is, that it's within 3 in the direction we're going and within
+ * 1 to the side.
+ */
+bool SurfaceGame::aiTooClose(Worm *pWorm) {
+
+	if (pWorm->isImmune()) return false;
+
+	int iDx, iDy;
+	QPoint oHead = pWorm->headCell()->getPos();
+	QPoint oHeadOther;
+	L::Heading eDirection = pWorm->currentDirection();
+
+	Worm *pWormOther;
+	for (int i = 0; i < this->apWorms.length(); ++i) {
+
+		pWormOther = this->apWorms.at(i);
+		if (pWormOther == pWorm) continue;
+		if (pWormOther->isDead()) continue;
+
+		oHeadOther = pWormOther->headCell()->getPos();
+
+		iDx = oHead.x() - oHeadOther.x();
+		iDy = oHead.y() - oHeadOther.y();
+
+		switch (eDirection) {
+
+			case L::North:
+				if ((iDy > 0) && (iDy <= 3) && (iDx >= -1) && (iDx <= 1))
+					return true;
+			break;
+
+			case L::South:
+				if ((iDy < 0) && (iDy >= -3) && (iDx >= -1) && (iDx <= 1))
+					return true;
+			break;
+
+			case L::West:
+				if ((iDx > 0) && (iDx <= 3) && (iDy >= -1) && (iDy <= 1))
+					return true;
+			break;
+
+			case L::East:
+				if ((iDx < 0) && (iDx >= -3) && (iDy >= -1) && (iDy <= 1))
+					return true;
+			break;
+			default: break;
+
+		} // switch eDirection
+
+	} // loop worms
+
+	return false;
+
+} // aiTooClose
+
+
+// virtual copy of worm.vala Worm::ai_wander(....)
+bool SurfaceGame::aiWander(const QPoint oStart, const QPoint oStop,
+						   const L::Heading eDirection) {
+
+	static QVector<quint8> aStatesToAvoid =
+			IconEngine::statesSnakes() + IconEngine::statesWalls();
+
+	QPoint oNext = L::warpPoint(oStart, eDirection);
+
+	SurfaceCell *pCell = this->getCell(oStart);
+	if (pCell->isNull()) return false;
+
+	quint8 ubState = pCell->getState();
+	if (aStatesToAvoid.contains(ubState)) return false;
+
+	switch (ubState) {
+
+		case L::BonusAppleNW:
+		case L::BonusAppleNE:
+		case L::BonusAppleSE:
+		case L::BonusAppleSW:
+			return true;
+
+		case L::BonusCherryNW:
+		case L::BonusCherryNE:
+		case L::BonusCherrySE:
+		case L::BonusCherrySW:
+			return false;
+
+		case L::BonusBananaNW:
+		case L::BonusBananaNE:
+		case L::BonusBananaSE:
+		case L::BonusBananaSW:
+			return true;
+
+		case L::BonusHeartNW:
+		case L::BonusHeartNE:
+		case L::BonusHeartSE:
+		case L::BonusHeartSW:
+			return true;
+
+		case L::BonusDiamondNW:
+		case L::BonusDiamondNE:
+		case L::BonusDiamondSE:
+		case L::BonusDiamondSW:
+			return true;
+
+		default:
+
+			if (oNext == oStop) return false;
+
+			return aiWander(oNext, oStop, eDirection);
+
+		break;
+
+	} // switch this->getCell(oStart)->getState()
+
+} // aiWander
+
+
 void SurfaceGame::findNextMovesForWorm(Worm *pWorm) {
 
 	static QVector<quint8> aStatesPickups = IconEngine::statesPickups();
@@ -251,6 +707,7 @@ void SurfaceGame::findNextMovesForWorm(Worm *pWorm) {
 	SurfaceCell *pCell = this->getCell(pWorm->nextPoint());
 	if (pCell->isNull()) return;
 
+//	bool bCanGoAhead = true;
 	bool bCanTurnLeft = false;
 	bool bCanTurnRight = false;
 	quint8 ubCanTurnCount;
@@ -258,6 +715,8 @@ void SurfaceGame::findNextMovesForWorm(Worm *pWorm) {
 	quint8 ubState = pCell->getState();
 
 	if (aStatesToAvoid.contains(ubState)) {
+
+//		bCanGoAhead = false;
 
 		// need to change direction if possible
 
@@ -276,13 +735,20 @@ void SurfaceGame::findNextMovesForWorm(Worm *pWorm) {
 		if (2u == ubCanTurnCount) {
 
 			// pick a direction
-			if (qrand() & 1) pWorm->onTurnLeft();
-			else pWorm->onTurnRight();
+			quint16 uiLeftGoodIn = this->findNextGood(pWorm->leftPoint(), pWorm->headingLeft());
+			quint16 uiRightGoodIn = this->findNextGood(pWorm->rightPoint(), pWorm->headingRight());
+			if (0u == uiLeftGoodIn + uiRightGoodIn) {
+				// both have bonus
+				if ((qrand() & 1) == 1) pWorm->onTurnLeft();
+				else pWorm->onTurnRight();
+
+			}
 
 			return;
 
 		} // if can go either way
 
+		// can only go one way
 		if (bCanTurnLeft) pWorm->onTurnLeft();
 		else pWorm->onTurnRight();
 
@@ -425,7 +891,7 @@ void SurfaceGame::initCells() {
 
 	quint8 ubColumns = 0u;
 	quint8 ubRows = 0u;
-	quint8 ubState = 0u;
+	quint8 ubState = L::FloorClean;
 	QList<SurfaceCell*> aRow;
 	SurfaceCell *pCell;
 	QHBoxLayout *pHBox;
@@ -636,7 +1102,7 @@ void SurfaceGame::loadCurrentLevel() {
 	quint8 ubRows = 0u;
 	QList<SurfaceCell*> aRow;
 	SurfaceCell *pCell;
-	quint8 ubState = 0u;
+	quint8 ubState = L::FloorClean;
 
 	for (; ubRows < SssS_Nibblers_Surface_Height; ++ubRows) {
 
@@ -698,6 +1164,8 @@ QVector<quint8> SurfaceGame::nextPOIinDirection(SurfaceCell *pCell,
 		case L::West: iDx = -1; break;
 		case L::East: iDx = 1; break;
 
+		default: break;
+
 	} // switch eDirection
 
 	quint8 ubDistance = 0;
@@ -745,7 +1213,7 @@ QVector<quint8> SurfaceGame::nextPOIinDirection(SurfaceCell *pCell,
 	} // loop true
 
 	// should never happen but jic
-	aubResult.append(0XFFu);
+	aubResult.append(L::NullCell);
 	aubResult.append(0xFFu);
 	aubResult.append(0xFFu);
 	return aubResult;
@@ -882,11 +1350,14 @@ void SurfaceGame::onMove() {
 	Worm *pWorm;
 	SurfaceCell *pCell;
 	quint8 ubState;
+	// keep track of cells that are being newly occupied
 	QHash<SurfaceCell *, Worm *> hppCrashPotential;
+	// keep track of worms that are crashing
 	QVector<Worm *> apCrashedWorms;
 	hppCrashPotential.clear();
 	apCrashedWorms.clear();
 
+	// collect immediate threats and goodies
 	for (int i = 0; i < this->apWorms.length(); ++i) {
 
 		pWorm = this->apWorms.at(i);
@@ -894,11 +1365,11 @@ void SurfaceGame::onMove() {
 		if (pWorm->isDead()) continue;
 
 		pCell = this->getCell(pWorm->nextPoint());
-
 		if (pCell->isNull()) continue;
 
 		if (pWorm->isImmune()) {
 
+			addCrashPotential(hppCrashPotential, apCrashedWorms, pCell, pWorm);
 			pWorm->advanceTo(pCell);
 			continue;
 
@@ -918,6 +1389,15 @@ void SurfaceGame::onMove() {
 			// enter teleporter
 			if (this->hpTeleporterExits.contains(ubState + 1u)) {
 
+				// add both entrance and exit to crash potentials
+				addCrashPotential(hppCrashPotential, apCrashedWorms,
+								  pCell, pWorm);
+				addCrashPotential(hppCrashPotential, apCrashedWorms,
+								  this->hpTeleporterExits.value(ubState + 1u),
+								  pWorm);
+
+				// advance to both locations
+				pWorm->advanceTo(pCell);
 				pWorm->advanceTo(this->hpTeleporterExits.value(ubState + 1u));
 				continue;
 
@@ -934,16 +1414,12 @@ void SurfaceGame::onMove() {
 
 		pWorm->advanceTo(pCell);
 
-		if (hppCrashPotential.keys().contains(pCell)) {
-			// head-on-colision
-			apCrashedWorms.append(pWorm);
-			if (!apCrashedWorms.contains(hppCrashPotential.value(pCell))) {
-				apCrashedWorms.append(hppCrashPotential.value(pCell));
-			}
-		} else hppCrashPotential.insert(pCell, pWorm);
+		SurfaceGame::addCrashPotential(hppCrashPotential, apCrashedWorms,
+									   pCell, pWorm);
 
 	} // loop
 
+	// deal with crashed worms
 	for (int i = 0; i < apCrashedWorms.length(); ++i) {
 
 		pWorm = apCrashedWorms.at(i);
@@ -952,7 +1428,7 @@ void SurfaceGame::onMove() {
 
 		Q_EMIT this->wormCrashed(pWorm);
 
-	} // loop
+	} // loop crashed worms
 
 	// do AI-moves
 	for (int i = 0; i < this->apWorms.length(); ++i) {
@@ -963,7 +1439,8 @@ void SurfaceGame::onMove() {
 
 		if (pWorm->isDead()) continue;
 
-		this->findNextMovesForWorm(pWorm);
+		this->aiMove(pWorm);
+		//this->findNextMovesForWorm(pWorm);
 
 	} // loop worms
 
@@ -982,7 +1459,7 @@ void SurfaceGame::onNextLevel() {
 } // onNextLevel
 
 
-void SurfaceGame::onPlaceBonus(const quint8 ubBonus) {
+void SurfaceGame::onPlaceBonus(const quint8 ubBonus, const bool bFake) {
 
 	// find 4 adjacent cells that are not occupied
 
@@ -1027,7 +1504,7 @@ void SurfaceGame::onPlaceBonus(const quint8 ubBonus) {
 	int iMaxPlusOne = apFreeCells.length();
 	if (0 == iMaxPlusOne) {
 
-		Q_EMIT this->noSpaceFoundForBonus(ubBonus);
+		Q_EMIT this->noSpaceFoundForBonus(ubBonus, bFake);
 
 		return;
 
@@ -1053,13 +1530,15 @@ void SurfaceGame::onPlaceBonus(const quint8 ubBonus) {
 	apCells.append(pCell3);
 	apCells.append(pCell2);
 
-	Q_EMIT this->bonusPlaced(apCells);
+	Q_EMIT this->bonusPlaced(apCells, bFake);
 
 } // onPlaceBonus
 
 
 void SurfaceGame::onPlayerCountChanged(const quint8 ubCountHumans,
 									   const quint8 ubCountAIs) {
+	Q_UNUSED(ubCountAIs)
+	Q_UNUSED(ubCountHumans)
 
 	// TODO:
 

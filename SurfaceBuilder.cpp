@@ -87,7 +87,7 @@ void SurfaceBuilder::clearSurface() {
 		for (ubX = 0u; ubX < ubColumns; ubX++) {
 
 			pCell = aRow.at(ubX);
-			this->setCellState(pCell, 0u, false);
+			this->setCellState(pCell, L::FloorClean, false);
 
 		} // loop columns
 
@@ -127,7 +127,7 @@ void SurfaceBuilder::clearSurfaceOf(const QVector<quint8> aStates) {
 
 			if (aStates.contains(pCell->getState())) {
 
-				this->setCellState(pCell, 0u, false);
+				this->setCellState(pCell, L::FloorClean, false);
 
 			} // if one to clear
 
@@ -161,18 +161,18 @@ quint8 SurfaceBuilder::currentBrushState() const {
 	switch (iCurrent) {
 
 		 // walls
-		case 1: return 205u;
-		case 2: return 204u;
-		case 3: return 203u;
-		case 4: return 202u;
-		case 5: return 210u;
-		case 6: return 201u;
-		case 7: return 207u;
-		// wall Ts
-		case 8: return 206u;
-		case 9: return 209u;
-		case 10: return 208u;
-		case 11: return 200u;
+		case 1: return L::WallCornerNE;
+		case 2: return L::WallCornerNW;
+		case 3: return L::WallCornerSE;
+		case 4: return L::WallCornerSW;
+		case 5: return L::WallCross;
+		case 6: return L::WallHorizontal;
+			// wall Ts
+		case 7: return L::WallTeast;
+		case 8: return L::WallTnorth;
+		case 9: return L::WallTsouth;
+		case 10: return L::WallTwest;
+		case 11: return L::WallVertical;
 		// spawn points
 		case 12:
 		case 13:
@@ -183,13 +183,13 @@ quint8 SurfaceBuilder::currentBrushState() const {
 
 				Q_EMIT this->statusMessage(tr("Maximum amount of spawn-points reached. Click on one to remove it."));
 
-				return 0u;
+				return L::FloorClean;
 
 			} // if already full
 
 			Q_EMIT this->statusMessage(tr("Click on a cell to set spawn-point."));
 
-			return quint8(iCurrent) + 78u;
+			return quint8(iCurrent) - 12 + L::SpawnHeadingNorth;
 
 		// Teleporter
 		case 16:
@@ -233,13 +233,13 @@ quint8 SurfaceBuilder::currentBrushState() const {
 		// floor
 		case 0:
 		default:
-			return 0u;
+			return L::FloorClean;
 		break;
 
 	} // switch this->pUi->selectTool->currentIndex()
 
 	// just to silence compiler
-	return 0u;
+	return L::FloorClean;
 
 } // currentBrushState
 
@@ -342,23 +342,23 @@ void SurfaceBuilder::initBrushes() {
 
 	QComboBox *pCB = this->pUi->selectTool;
 
-	pCB->addItem(IconEngine::cell(0u, true), tr("Floor / Eraser"));
-	pCB->addItem(IconEngine::cell(205u, true), tr("Wall Corner NE"));
-	pCB->addItem(IconEngine::cell(204u, true), tr("Wall Corner NW"));
-	pCB->addItem(IconEngine::cell(203u, true), tr("Wall Corner SE"));
-	pCB->addItem(IconEngine::cell(202u, true), tr("Wall Corner SW"));
-	pCB->addItem(IconEngine::cell(210u, true), tr("Wall Cross"));
-	pCB->addItem(IconEngine::cell(201u, true), tr("Wall Horizontal"));
-	pCB->addItem(IconEngine::cell(207u, true), tr("Wall T East (Right)"));
-	pCB->addItem(IconEngine::cell(206u, true), tr("Wall T North (Up)"));
-	pCB->addItem(IconEngine::cell(209u, true), tr("Wall T South (Down)"));
-	pCB->addItem(IconEngine::cell(208u, true), tr("Wall T West (Left)"));
-	pCB->addItem(IconEngine::cell(200u, true), tr("Wall Vertical"));
+	pCB->addItem(IconEngine::cell(L::FloorClean, true), tr("Floor / Eraser"));
+	pCB->addItem(IconEngine::cell(L::WallCornerNE, true), tr("Wall Corner NE"));
+	pCB->addItem(IconEngine::cell(L::WallCornerNW, true), tr("Wall Corner NW"));
+	pCB->addItem(IconEngine::cell(L::WallCornerSE, true), tr("Wall Corner SE"));
+	pCB->addItem(IconEngine::cell(L::WallCornerSW, true), tr("Wall Corner SW"));
+	pCB->addItem(IconEngine::cell(L::WallCross, true), tr("Wall Cross"));
+	pCB->addItem(IconEngine::cell(L::WallHorizontal, true), tr("Wall Horizontal"));
+	pCB->addItem(IconEngine::cell(L::WallTeast, true), tr("Wall T East (Right)"));
+	pCB->addItem(IconEngine::cell(L::WallTnorth, true), tr("Wall T North (Up)"));
+	pCB->addItem(IconEngine::cell(L::WallTsouth, true), tr("Wall T South (Down)"));
+	pCB->addItem(IconEngine::cell(L::WallTleft, true), tr("Wall T West (Left)"));
+	pCB->addItem(IconEngine::cell(L::WallVertical, true), tr("Wall Vertical"));
 
-	pCB->addItem(IconEngine::cell(90u, true), tr("Spawn heading north"));
-	pCB->addItem(IconEngine::cell(91u, true), tr("Spawn heading west"));
-	pCB->addItem(IconEngine::cell(92u, true), tr("Spawn heading south"));
-	pCB->addItem(IconEngine::cell(93u, true), tr("Spawn heading east"));
+	pCB->addItem(IconEngine::cell(L::SpawnHeadingNorth, true), tr("Spawn heading north"));
+	pCB->addItem(IconEngine::cell(L::SpawnHeadingWest, true), tr("Spawn heading west"));
+	pCB->addItem(IconEngine::cell(L::SpawnHeadingSouth, true), tr("Spawn heading south"));
+	pCB->addItem(IconEngine::cell(L::SpawnHeadingEast, true), tr("Spawn heading east"));
 
 	pCB->addItem(IconEngine::makeTeleporter(""), tr("Teleporter"));
 
@@ -378,7 +378,7 @@ void SurfaceBuilder::initCells() {
 	QList<SurfaceCell*> aRow;
 	SurfaceCell *pCell;
 	QHBoxLayout *pHBox;
-	quint8 ubState = 0u;
+	quint8 ubState = L::FloorClean;
 
 	for (; ubRows < SssS_Nibblers_Surface_Height; ++ubRows) {
 
@@ -446,7 +446,7 @@ void SurfaceBuilder::loadCurrentLevel() {
 	quint8 ubRows = 0u;
 	QList<SurfaceCell*> aRow;
 	SurfaceCell *pCell;
-	quint8 ubState = 0u;
+	quint8 ubState = L::FloorClean;
 
 	for (; ubRows < SssS_Nibblers_Surface_Height; ++ubRows) {
 
@@ -703,11 +703,11 @@ void SurfaceBuilder::setCellState(SurfaceCell *pCell, const quint8 ubState,
 	// nothing to do?
 	if (ubStateOld == ubState) {
 
-		if (0u == ubState) return;
+		if (L::FloorClean == ubState) return;
 
 		if (11 >= this->pUi->selectTool->currentIndex()) {
 
-			pCell->setState(0u);
+			pCell->setState(L::FloorClean);
 			if (bUpdate) pCell->update();
 
 		} // if wall-tool toggle between wall and floor

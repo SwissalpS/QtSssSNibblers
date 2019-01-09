@@ -6,6 +6,7 @@
 #include "AppSettings.h"
 #include "DialogLoad.h"
 #include "FrameStartCountdown.h"
+#include "Map.h"
 #include "ScoreBoard.h"
 #include "SurfaceCell.h"
 #include "Worm.h"
@@ -28,6 +29,7 @@ namespace SwissalpS { namespace QtNibblers {
 
 
 class SurfaceGame : public QFrame {
+
 	Q_OBJECT
 
 private:
@@ -51,6 +53,20 @@ protected:
 	FrameStartCountdown *pStartCountDownFrame;
 	quint8 ubCurrentLevel;
 	mutable int iLastHeight;
+	uint uiAIdeadendRunnumber;
+	Map *pAImap;
+
+	static void addCrashPotential(QHash<SurfaceCell *, Worm *> &hppCrashPotential,
+								   QVector<Worm *> &apCrashedWorms,
+								   SurfaceCell *pCell, Worm *pWorm);
+
+	virtual bool aiCanMoveTo(Worm *pWorm);
+	virtual int aiDeadend(const QPoint oStart, qint16 iLen);
+	virtual int aiDeadendAfter(Worm *pWorm, const qint16 iLen);
+	virtual void aiMove(Worm *pWorm);
+	virtual bool aiTooClose(Worm *pWorm);
+	virtual bool aiWander(const QPoint oStart, const QPoint oStop,
+								 const L::Heading eDirection);
 
 	void changeEvent(QEvent *pEvent);
 	virtual void clearSurface();
@@ -58,6 +74,8 @@ protected:
 	virtual void clearSurfaceOf(const QVector<quint8>aStates);
 	virtual void clearSurfaceOfWorm(const quint8 ubWormColourIndex);
 	virtual void clearSurfaceOfWorms();
+	virtual Map *currentMap();
+	virtual quint16 findNextGood(const QPoint oStart, const L::Heading eDirection);
 	virtual void findNextMovesForWorm(Worm *pWorm);
 	virtual void focusInEvent(QFocusEvent *pEvent);
 	virtual void focusOutEvent(QFocusEvent *pEvent);
@@ -75,6 +93,7 @@ protected:
 	virtual void setCellState(const quint8 ubColumn, const quint8 ubRow,
 							  const quint8 ubState, const bool bUpdate = true);
 
+
 protected slots:
 	void countdownTick();
 	virtual void dialogLoadFinished(const int iResult);
@@ -89,9 +108,9 @@ public:
 	virtual QSize sizeHint() const;
 
 signals:
-	void bonusPlaced(QVector<SurfaceCell *> apCells) const;
+	void bonusPlaced(QVector<SurfaceCell *> apCells, const bool bFake) const;
 	void debugMessage(const QString &sMessage) const;
-	void noSpaceFoundForBonus(const quint8 ubBonus) const;
+	void noSpaceFoundForBonus(const quint8 ubBonus, const bool bFake) const;
 	void pauseResumeToggled() const;
 	void resetGame() const;
 	void statusMessage(const QString &sMessage) const;
@@ -109,7 +128,7 @@ public slots:
 	void onMainTabChanged(const int iIndex);
 	void onMove();
 	void onNextLevel();
-	void onPlaceBonus(const quint8 ubBonus);
+	void onPlaceBonus(const quint8 ubBonus, const bool bFake);
 	void onPlayerCountChanged(const quint8 ubCountHumans,
 							  const quint8 ubCountAIs);
 	void onPlayerKeyChanged(const quint8 ubWorm,

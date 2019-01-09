@@ -47,10 +47,11 @@ public:
 	explicit SurfaceCell(bool bBuilder, quint8 ubState,
 						 quint8 ubColumn, quint8 ubRow, QWidget *pParent = 0);
 	~SurfaceCell();
-	inline virtual void defrostState() { this->ubState = this->ubStateFrozen; this->update(); }
+	virtual void defrostState();
 	virtual void desnakeState();
 	inline virtual void freezeState() { this->ubStateFrozen = this->ubState; }
 	inline virtual quint8 getColumn() { return this->ubColumn; }
+	inline virtual QPoint getPos() { return QPoint(this->ubColumn, this->ubRow); }
 	inline virtual quint8 getRow() { return this->ubRow; }
 	inline virtual quint8 getState() { return this->ubState; }
 	inline virtual quint8 getStateFrozen() { return this->ubStateFrozen; }

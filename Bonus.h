@@ -17,22 +17,24 @@ private:
 
 protected:
 	bool bExpired;
+	bool bFake;
 	quint8 ubStateBase;
 	uint uiTicks;
 
 	QVector<SurfaceCell *> apCells;
-	virtual void defreezeCells();
 
 protected slots:
+	virtual void defreezeCells();
 
 public:
-	explicit Bonus(QVector<SurfaceCell *> apCells, QObject *pParent = nullptr);
+	explicit Bonus(QVector<SurfaceCell *> apCells, const bool bFake, QObject *pParent = nullptr);
 	virtual ~Bonus();
 
 	inline virtual bool contains(SurfaceCell *pCell) const { return this->apCells.contains(pCell); }
 	inline virtual QVector<SurfaceCell *> getCells() const { return this->apCells; }
 	inline virtual quint8 getStateBase() const { return this->ubStateBase; }
-	inline virtual bool hasTimedOut() const { return 0 < this->uiTicks;}
+	inline virtual bool hasTimedOut() const { return 0 == this->uiTicks;}
+	inline virtual bool isFake() const { return this->bFake; }
 	virtual void setStateBase(const quint8 &ubState);
 	inline virtual void start(const uint uiTicks) { this->uiTicks = uiTicks;
 													this->bExpired = false; }
@@ -47,12 +49,7 @@ public slots:
 		Q_EMIT this->debugMessage("Bonus:" + sMessage); }
 
 	virtual void onGotEaten();
-	inline virtual void onTick() {
-		if (this->hasTimedOut()) return;
-		this->uiTicks--;
-		if (!this->hasTimedOut()) return;
-		this->defreezeCells();
-		Q_EMIT this->timedOut(this); }
+	virtual void onTick();
 
 }; // Bonus
 

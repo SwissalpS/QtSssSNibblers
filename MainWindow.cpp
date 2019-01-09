@@ -148,18 +148,18 @@ void MainWindow::initGame() {
 	connect(pGame, SIGNAL(nextLevel()),
 			pSurface, SLOT(onNextLevel()));
 
-	connect(pGame, SIGNAL(placeBonus(quint8)),
-			pSurface, SLOT(onPlaceBonus(quint8)));
+	connect(pGame, SIGNAL(placeBonus(quint8,bool)),
+			pSurface, SLOT(onPlaceBonus(quint8,bool)));
 
 	connect(pGame, SIGNAL(spawnWorm(Worm*)),
 			pSurface, SLOT(onSpawnWorm(Worm*)));
 
 
-	connect(pSurface, SIGNAL(bonusPlaced(QVector<SurfaceCell*>)),
-			pGame, SLOT(onBonusPlaced(QVector<SurfaceCell*>)));
+	connect(pSurface, SIGNAL(bonusPlaced(QVector<SurfaceCell*>,bool)),
+			pGame, SLOT(onBonusPlaced(QVector<SurfaceCell*>,bool)));
 
-	connect(pSurface, SIGNAL(noSpaceFoundForBonus(quint8)),
-			pGame, SLOT(onNoSpaceFoundForBonus(quint8)));
+	connect(pSurface, SIGNAL(noSpaceFoundForBonus(quint8,bool)),
+			pGame, SLOT(onNoSpaceFoundForBonus(quint8,bool)));
 
 	connect(pSurface, SIGNAL(pauseResumeToggled()),
 			pGame, SLOT(onPauseResumeToggled()));

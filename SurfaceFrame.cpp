@@ -17,6 +17,7 @@ SurfaceFrame::~SurfaceFrame() {
 
 
 void SurfaceFrame::resizeEvent(QResizeEvent *pEvent) {
+	Q_UNUSED(pEvent)
 	//return QFrame::resizeEvent(pEvent);
 
 	if (this->height() != this->iLastHeight) this->updateGeometry();

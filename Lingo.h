@@ -10,15 +10,29 @@ namespace SwissalpS { namespace QtNibblers {
 
 
 class L : public QObject {
+
 	Q_OBJECT
 
 public:
 
 	enum Heading {
-		North = 90u,
+		NorthWest = 0u,
+		NorthEast = 1u,
+		SouthEast = 2u,
+		SouthWest = 3u,
+
+		North = 90u, // ==> Tiles::SpawnHeadingNorth
 		West = 91u,
 		South = 92u,
 		East = 93u,
+
+		Nowhere = 255u,
+
+		LeftUpper = NorthWest,
+		RightUpper = NorthEast,
+		RightLower = SouthEast,
+		LeftLower = SouthWest,
+
 		Up = North,
 		Left = West,
 		Down = South,
@@ -130,15 +144,111 @@ public:
 		Player_8_Mid8 = 88u,
 		Player_8_Tail = 89u,
 
-		SpawnHeadingNorth = 90u,
+		SpawnHeadingNorth = 90u, // ==> Heading::North
 		SpawnHeadingWest = 91u,
 		SpawnHeadingSouth = 92u,
 		SpawnHeadingEast = 93u,
 
-		NullTile = 255u
+		// 94..99: Reserved tombstones?
+
+		BonusApple = 100u,
+		BonusAppleNW = BonusApple,
+		BonusAppleNE = 101u,
+		BonusAppleSE = 102u,
+		BonusAppleSW = 103u,
+		// 104..109 Reserved decaying Bonus
+		BonusCherry = 110u,
+		BonusCherryNW = BonusCherry,
+		BonusCherryNE = 111u,
+		BonusCherrySE = 112u,
+		BonusCherrySW = 113u,
+		// 114..119 Reserved decaying Bonus
+		BonusBanana = 120u,
+		BonusBananaNW = BonusBanana,
+		BonusBananaNE = 121u,
+		BonusBananaSE = 122u,
+		BonusBananaSW = 123u,
+		// 124..129 Reserved decaying Bonus
+		BonusHeart = 130u,
+		BonusHeartNW = BonusHeart,
+		BonusHeartNE = 131u,
+		BonusHeartSE = 132u,
+		BonusHeartSW = 133u,
+		// 134..139 Reserved decaying Bonus
+		BonusDiamond = 140u,
+		BonusDiamondNW = BonusDiamond,
+		BonusDiamondNE = 141u,
+		BonusDiamondSE = 142u,
+		BonusDiamondSW = 143u,
+		// 144..149 Reserved decaying Bonus
+
+		// 150..199 Reserved for other bonuses
+
+		WallVertical = 200u,
+		WallHorizontal = 201u,
+		WallCornerSW = 202u,
+		WallCornerSE = 203u,
+		WallCornerNW = 204u,
+		WallCornerNE = 205u,
+		WallTnorth = 206u,
+		WallTeast = 207u,
+		WallTwest = 208u,
+		WallTsouth = 209u,
+		WallCross = 210u,
+
+		WallTup = WallTnorth,
+		WallTright = WallTeast,
+		WallTleft = WallTwest,
+		WallTdown = WallTsouth,
+
+		// 211..219 Reserved for other walls
+
+		TeleporterInA = 220u,
+		TeleporterOutA = 221u,
+		TeleporterInB = 222u,
+		TeleporterOutB = 223u,
+		TeleporterInC = 224u,
+		TeleporterOutC = 225u,
+		TeleporterInD = 226u,
+		TeleporterOutD = 227u,
+		TeleporterInE = 228u,
+		TeleporterOutE = 229u,
+		TeleporterInF = 230u,
+		TeleporterOutF = 231u,
+		TeleporterInG = 232u,
+		TeleporterOutG = 233u,
+		TeleporterInH = 234u,
+		TeleporterOutH = 235u,
+		TeleporterInI = 236u,
+		TeleporterOutI = 237u,
+		TeleporterInJ = 238u,
+		TeleporterOutJ = 239u,
+
+		// 240..249 Reserved for some future do-dad
+
+		// 250..254 Reserved for some extra stuff
+
+		NullTile = 255u,
+		NullCell = NullTile
 
 	};
 	Q_ENUM(Tiles)
+
+
+	inline static Heading headingOfUint(const quint8 ubDirection) {
+		switch (ubDirection) {
+			case North: return North;
+			case South: return South;
+			case West: return West;
+			case East: return East;
+			case NorthWest: return NorthWest;
+			case NorthEast: return NorthEast;
+			case SouthWest: return SouthWest;
+			case SouthEast: return SouthEast;
+		} // switch ubDirection
+		return Nowhere;
+	} // headingOfUint
+
 
 	inline static Heading oppositeHeading(const Heading eDirection) {
 		switch (eDirection) {
@@ -146,8 +256,21 @@ public:
 			case South: return North;
 			case West: return East;
 			case East: return West;
+			case NorthWest: return SouthEast;
+			case NorthEast: return SouthWest;
+			case SouthWest: return NorthEast;
+			case SouthEast: return NorthWest;
+			default: break;
 		} // switch eDirection
+		return Nowhere;
 	} // oppositeHeading
+
+
+	inline static quint8 uintOfHeading(const Heading eDirection) {
+
+		return quint8(eDirection);
+
+	} // uintOfHeading
 
 
 	inline static QPoint warpPoint(const quint8 ubColumn,
@@ -156,7 +279,25 @@ public:
 
 		return L::warpPoint(QPoint(ubColumn, ubRow), eDirection);
 
-	} // warpPoint(x,y)
+	} // warpPoint(x,y,Heading)
+
+
+	inline static QPoint warpPoint(const quint8 ubColumn,
+								   const quint8 ubRow,
+								   const quint8 ubDirection) {
+
+		return L::warpPoint(QPoint(ubColumn, ubRow),
+							L::headingOfUint(ubDirection));
+
+	} // warpPoint(x,y,quint8)
+
+
+	inline static QPoint warpPoint(const QPoint oOrigin,
+								   const quint8 ubDirection) {
+
+		return L::warpPoint(oOrigin, L::headingOfUint(ubDirection));
+
+	} // warpPoint(QPoint,quint8)
 
 
 	inline static QPoint warpPoint(const QPoint oOrigin,
@@ -199,12 +340,14 @@ public:
 				if (ubMaxX < ubX) ubX = 0u;
 
 			break;
+			default:break;
 
 		} // switch eDirection
 
 		return QPoint(ubX, ubY);
 
-	} // warpX(QPoint)
+	} // warpX(QPoint,Heading)
+
 
 }; // L
 

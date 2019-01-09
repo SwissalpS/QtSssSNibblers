@@ -32,6 +32,33 @@ Worm::~Worm() {
 } // dealloc
 
 
+void Worm::addLength(int iLength) {
+
+	uint uiLen = abs(iLength);
+
+	if (0 > iLength) {
+
+		if (uiLen > this->uiTargetLength) {
+
+			this->uiTargetLength = 0u;
+
+		} else this->uiTargetLength -= uiLen;
+
+	} else this->uiTargetLength += uiLen;
+
+	if (2u > this->uiTargetLength) this->uiTargetLength = 2u;
+
+	while (this->apCells.length() > this->uiTargetLength) {
+
+		this->apCells.takeLast()->defrostState();
+
+	} // loop away excess tail
+
+	this->tailCell()->setState(this->tailState());
+
+} // dealloc
+
+
 void Worm::advanceTo(SurfaceCell *pCell) {
 
 	// make old head a mid-section
@@ -175,6 +202,8 @@ L::Heading Worm::headingLeft() const {
 
 	} // switch this->eCurrentHeading
 
+	return L::Nowhere;
+
 } // headingLeft
 
 
@@ -194,6 +223,8 @@ L::Heading Worm::headingRight() const {
 		break;
 
 	} // switch this->eCurrentHeading
+
+	return L::Nowhere;
 
 } // headingRight
 
@@ -258,6 +289,7 @@ void Worm::onAddScore(const qint16 iScore) {
 void Worm::onGrow(const float fFactor) {
 
 	this->uiTargetLength = quint16(fFactor * float(this->uiTargetLength));
+	if (2 > this->uiTargetLength) this->uiTargetLength = 2;
 
 } // onGrow
 
@@ -272,6 +304,9 @@ void Worm::onReverse() {
 		this->apCells.append(apOld.at(i));
 
 	} // loop
+
+	this->headCell()->setState(this->headState());
+	this->tailCell()->setState(this->tailState());
 
 	this->eCurrentHeading = L::oppositeHeading(this->eCurrentHeading);
 
@@ -295,11 +330,10 @@ void Worm::onSetSpawnCell(SurfaceCell *pCell) {
 
 	// determine initial heading from spawn-cell
 	switch (this->pCellSpawn->getState()) {
-		case 90u: this->eCurrentHeading = L::North; break;
-		case 91u: this->eCurrentHeading = L::West; break;
-		case 92u: this->eCurrentHeading = L::South; break;
-
-		case 93u:
+		case L::SpawnHeadingNorth: this->eCurrentHeading = L::North; break;
+		case L::SpawnHeadingWest: this->eCurrentHeading = L::West; break;
+		case L::SpawnHeadingSouth: this->eCurrentHeading = L::South; break;
+		case L::SpawnHeadingEast:
 		default:
 			this->eCurrentHeading = L::East;
 		break;
@@ -316,6 +350,8 @@ void Worm::onSubtractLife() {
 	if (this->isDead()) return;
 
 	this->ubLives--;
+
+	this->ulScore *= 7 / 10;
 
 	Q_EMIT this->updateLives(this->ubLives);
 

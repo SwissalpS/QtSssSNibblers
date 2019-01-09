@@ -1667,6 +1667,11 @@
                 <string>Fast</string>
                </property>
               </item>
+              <item>
+               <property name="text">
+                <string>Full Speed</string>
+               </property>
+              </item>
              </widget>
             </item>
             <item row="3" column="1">

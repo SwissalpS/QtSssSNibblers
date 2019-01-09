@@ -1,5 +1,7 @@
 #include "Game.h"
 
+#include <QTime>
+
 
 
 namespace SwissalpS { namespace QtNibblers {
@@ -10,7 +12,11 @@ Game::Game(QObject *pParent) :
 	QObject(pParent),
 	bLevelStarted(false),
 	bPaused(true),
+	bUseFakes(false),
 	ubCountApplesLeft(13u),
+	ubCountBonus(0u),
+	ubCountBonusLeft(0u),
+	ubCountBonusMissed(0u),
 	ubCountDead(0u),
 	ubCountLevels(0u),
 	ubSpeedIndex(0u),
@@ -25,6 +31,9 @@ Game::Game(QObject *pParent) :
 
 	this->apBonus.clear();
 	this->apWorms.clear();
+
+	// init randomizer
+	qsrand(QTime::currentTime().msecsSinceStartOfDay());
 
 } // construct
 
@@ -43,6 +52,58 @@ Game::~Game() {
 } // dealloc
 
 
+void Game::addBonus(const bool bApple) {
+	// don't always create bonus if it's not an apple
+	if (!bApple) {
+
+		if (this->ubCountBonusMissed >= SssS_Nibblers_Bonus_Max_Missed) return;
+
+		if ((qrand() % 51) != 0) return;
+
+		bool bMakeFake = ((qrand() % 8) != 0);
+
+		if (bMakeFake && !this->bUseFakes) return;
+
+		switch (qrand() % 22) {
+
+			case 0: case 1: case 2: case 3: case 4:
+			case 5: case 6: case 7: case 8: case 9:
+				Q_EMIT this->placeBonus(L::BonusCherry, bMakeFake);
+			break;
+
+			case 10: case 11: case 12: case 13: case 14:
+				Q_EMIT this->placeBonus(L::BonusBanana, bMakeFake);
+			break;
+
+			case 15:
+				Q_EMIT this->placeBonus(L::BonusHeart, bMakeFake);
+			break;
+
+			default:
+				if (1 < this->apWorms.length())
+					Q_EMIT this->placeBonus(L::BonusDiamond, bMakeFake);
+			break;
+
+		} // switch qrand() % 22
+
+	} else {
+
+		// regular apple
+
+		// also add a fake?
+		if (this->bUseFakes	&& ((qrand() % 8) == 0)) {
+
+			Q_EMIT this->placeBonus(L::BonusApple, true);
+
+		} // if add a fake
+
+		Q_EMIT this->placeBonus(L::BonusApple, false);
+
+	} // if not apple
+
+} // addBonus
+
+
 void Game::destroyBonus(Bonus *pBonus) {
 
 	this->disconnect(pBonus);
@@ -56,17 +117,24 @@ void Game::init() {
 
 	this->pTimer = new QTimer(this);
 	this->pTimer->setSingleShot(false);
-	this->onSpeedChanged(this->pAS->get(AppSettings::sSettingGameSpeed).toInt());
 
 	connect(this->pTimer, SIGNAL(timeout()),
 			this, SLOT(onTick()));
 
+	this->pTimerBonus = new QTimer(this);
+	this->pTimerBonus->setSingleShot(false);
+
+	connect(this->pTimerBonus, SIGNAL(timeout()),
+			this, SLOT(onTickBonus()));
+
+	this->onSpeedChanged(this->pAS->get(AppSettings::sSettingGameSpeed).toInt());
+
 } // init
 
 
-void Game::onBonusPlaced(const QVector<SurfaceCell *> apCells) {
+void Game::onBonusPlaced(const QVector<SurfaceCell *> apCells, const bool bFake) {
 
-	Bonus *pBonus = new Bonus(apCells, this);
+	Bonus *pBonus = new Bonus(apCells, bFake, this);
 
 	connect(this, SIGNAL(move()),
 			pBonus, SLOT(onTick()));
@@ -83,31 +151,31 @@ void Game::onBonusPlaced(const QVector<SurfaceCell *> apCells) {
 	quint16 uiTicks = 0u;
 	switch (pBonus->getStateBase()) {
 
-		case 100u: // apple
+		case L::BonusApple: // 100
 
 			uiTicks = SssS_Nibblers_Bonus_Apple_Lifetime;
 
 		break;
 
-		case 110u: // cherry
+		case L::BonusCherry: // 110
 
 			uiTicks = SssS_Nibblers_Bonus_Cherry_Lifetime;
 
 		break;
 
-		case 120u: // banana
+		case L::BonusBanana: // 120
 
 			uiTicks = SssS_Nibblers_Bonus_Banana_Lifetime;
 
 		break;
 
-		case 130u: // heart
+		case L::BonusHeart: // 130
 
 			uiTicks = SssS_Nibblers_Bonus_Heart_Lifetime;
 
 		break;
 
-		case 140u: // diamond
+		case L::BonusDiamond: // 140
 
 			uiTicks = SssS_Nibblers_Bonus_Diamond_Lifetime;
 
@@ -127,10 +195,15 @@ void Game::onBonusPlaced(const QVector<SurfaceCell *> apCells) {
 
 void Game::onBonusTimedOut(Bonus *pBonus) {
 
+	bool bWasApple = L::BonusApple == pBonus->getStateBase();
+	if (!bWasApple) this->ubCountBonusMissed++;
+
+	if (pBonus->isFake()) bWasApple = false;
+
 	// TODO:
 	// what kind? do we need to place it again?
 
-	qint16 iPenalty = -1 * SssS_Nibblers_Penalty_Non_Pickup
+	qint16 iPenalty = -1 * SssS_Nibblers_Bonus_Penalty_Miss
 					  * this->ubCountLevels	* this->ubSpeedIndex;
 
 	for (int i = 0; i < this->apWorms.length(); ++i) {
@@ -142,10 +215,14 @@ void Game::onBonusTimedOut(Bonus *pBonus) {
 	// destroy Bonus
 	this->destroyBonus(pBonus);
 
+	if (bWasApple) this->addBonus(true);
+
 } // onBonusTimedOut
 
 
-void Game::onNoSpaceFoundForBonus(const quint8 ubBonus) {
+void Game::onNoSpaceFoundForBonus(const quint8 ubBonus, const bool bFake) {
+	Q_UNUSED(ubBonus)
+	Q_UNUSED(bFake)
 
 	// TODO:
 
@@ -154,6 +231,8 @@ void Game::onNoSpaceFoundForBonus(const quint8 ubBonus) {
 
 void Game::onPlayerCountChanged(const quint8 ubCountHumans,
 								const quint8 ubCountAIs) {
+	Q_UNUSED(ubCountAIs)
+	Q_UNUSED(ubCountHumans)
 
 	// TODO:
 
@@ -162,9 +241,21 @@ void Game::onPlayerCountChanged(const quint8 ubCountHumans,
 
 void Game::onReset() {
 
+	this->pTimer->stop();
+	this->pTimerBonus->stop();
+
+	this->onSpeedChanged(this->pAS->get(AppSettings::sSettingGameSpeed).toUInt());
+
+	this->apBonus.clear();
+	this->ubCountBonus = 8 + this->apWorms.length();
+	this->ubCountApplesLeft = this->ubCountBonus;
+	this->ubCountBonusMissed = 0;
+
 	this->ubCountDead = 0u;
-	this->ubCountLevels = 0u;
+	this->ubCountLevels = 1u;
 	this->bLevelStarted = false;
+
+	this->bUseFakes = this->pAS->get(AppSettings::sSettingGameFakeBonuses).toBool();
 
 	quint8 ubLives = this->pAS->get(AppSettings::sSettingGameStartLives).toUInt();
 
@@ -195,12 +286,14 @@ void Game::onPauseResumeToggled() {
 			// do whatever to pause game
 
 			this->pTimer->stop();
+			this->pTimerBonus->stop();
 
 		} else {
 
 			// do whatever to resume game
 
 			this->pTimer->start();
+			this->pTimerBonus->start();
 
 		} // if pause or resume game
 
@@ -209,8 +302,12 @@ void Game::onPauseResumeToggled() {
 	} // if level already started
 
 	// not yet started
+	this->onReset();
+	this->ubCountLevels = 1u;
 	this->bLevelStarted = true;
 	this->bPaused = true;
+
+	Q_EMIT this->placeBonus(L::BonusApple, false);
 
 	for (int iCount = 0; iCount < this->apWorms.length(); ++iCount) {
 
@@ -228,27 +325,29 @@ void Game::onSpeedChanged(const int iIndex) {
 	this->ubSpeedIndex = iIndex;
 
 	int iInterval;
+	int iIntervalBonus;
+	quint8 ubFactor;
 	switch (iIndex) {
 
 		// beginner
-		case 0: iInterval = 387; break;
+		case 0: ubFactor = 4; break;
 			// slow
-		case 1: iInterval = 81; break;
+		case 1: ubFactor = 3; break;
 			// medium
-		case 2: iInterval = 52; break;
+		case 2: ubFactor = 2; break;
 			// fast
-		case 3: iInterval = 21; break;
+		case 3: ubFactor = 1; break;
 			// inhumane
-		default: iInterval = 0; break;
+		default: ubFactor = 0; break;
 
 	} // switch iIndex
 
-//	bool bRunning = this->pTimer->isActive();
-//	this->pTimer->stop();
+	iInterval = ubFactor * SssS_Nibblers_Speed_Base;
+	iIntervalBonus = qMax(ubFactor * SssS_Nibblers_Speed_Bonus_Base,
+						  SssS_Nibblers_Speed_Bonus_Base);
 
 	this->pTimer->setInterval(iInterval);
-
-//	if (bRunning) this->pTimer->start();
+	this->pTimerBonus->setInterval(iIntervalBonus);
 
 } // onSpeedChanged
 
@@ -256,9 +355,15 @@ void Game::onSpeedChanged(const int iIndex) {
 void Game::onTick() {
 
 	Q_EMIT this->move();
-	Q_EMIT this->placeBonus(100u);
 
 } // onTick
+
+
+void Game::onTickBonus() {
+
+	this->addBonus(false);
+
+} // onTickBonus
 
 
 void Game::onWormAteBonus(Worm *pWorm, SurfaceCell *pCell) {
@@ -289,77 +394,84 @@ void Game::onWormAteBonus(Worm *pWorm, SurfaceCell *pCell) {
 	// so tell good-bye
 	pBonus->onGotEaten();
 
+	if (pBonus->isFake()) {
+
+		pWorm->onReverse();
+		this->destroyBonus(pBonus);
+		return;
+
+	} // if it's a fake
+
 	// destroy it and remove it from cache
 	this->destroyBonus(pBonus);
 
+	this->onDebugMessage("cB " + QString::number(this->ubCountBonus)
+						 + " cAl " + QString::number(this->ubCountApplesLeft));
 	// now let's react to it with points and growth
 	switch (ubState) {
 
-		case 100u: // apple
+		case L::BonusApple:
 
 			// add points
-			pWorm->onAddScore(SssS_Nibblers_Bonus_Apple_Points
-							  * this->fFactorApple);
+			pWorm->onAddScore((this->ubCountBonus - this->ubCountApplesLeft)
+							  * this->ubCountLevels);
 			// grow
-			pWorm->onGrow(SssS_Nibblers_Bonus_Apple_Grow
-						  + this->fFractionApple);
+			pWorm->addLength(4 * (this->ubCountBonus - this->ubCountApplesLeft));
 
 			this->fFactorApple += 0.1f;
 			this->fFractionApple += 0.1f;
 
 			if (0u == this->ubCountApplesLeft) {
 
-				this->onDebugMessage("why? Game::onWormAteBonus");
+				this->onDebugMessage("failed to detect 'level done' Game::onWormAteBonus");
 
 			} else {
 
 				this->ubCountApplesLeft--;
 				if (0u == this->ubCountApplesLeft) {
-					// TODO: level done
-					//Q_EMIT this->
+
+					this->pTimer->stop();
+					this->pTimerBonus->stop();
+					this->bLevelStarted = false;
+					Q_EMIT this->nextLevel();
+
 				} else {
 					// TODO: keep track of apples as there may not be any space
 					// but there needs to be one as soon as space is available
-					Q_EMIT this->placeBonus(100u);
+					Q_EMIT this->placeBonus(L::BonusApple, false);
 				} // if have apples or not
 
 			} // if can subtract at all
 
 		break;
 
-		case 110u: // cherry
+		case L::BonusCherry:
+
+			if (2 >= pWorm->targetLength()) break;
 
 			// add points
-			pWorm->onAddScore(SssS_Nibblers_Bonus_Cherry_Points
-							  * this->fFactorCherry);
+			pWorm->onAddScore(0.5 * this->ubCountLevels * pWorm->targetLength());
 			// grow
-			if (this->fFractionCherry < SssS_Nibblers_Bonus_Cherry_Grow) {
-
-				pWorm->onGrow(SssS_Nibblers_Bonus_Cherry_Grow
-							  - this->fFractionCherry);
-
-			} else pWorm->onGrow(SssS_Nibblers_Bonus_Cherry_Grow);
+			pWorm->addLength(-0.5 * pWorm->targetLength());
 
 			this->fFactorCherry += 0.1f;
 			if (0.1f <= this->fFractionCherry) this->fFractionCherry -= 0.1f;
 
 		break;
 
-		case 120u: // banana
+		case L::BonusBanana:
 
 			// add points
-			pWorm->onAddScore(SssS_Nibblers_Bonus_Banana_Points
-							  * this->fFactorBanana);
+			pWorm->onAddScore(pWorm->targetLength() * this->ubCountLevels);
 			// grow
-			pWorm->onGrow(SssS_Nibblers_Bonus_Banana_Grow
-						  + this->fFractionBanana);
+			pWorm->addLength(pWorm->targetLength());
 
 			this->fFactorBanana += 0.1f;
 			this->fFractionBanana += 0.1f;
 
 		break;
 
-		case 130u: // heart
+		case L::BonusHeart:
 
 			// no points
 			// no growth
@@ -368,7 +480,7 @@ void Game::onWormAteBonus(Worm *pWorm, SurfaceCell *pCell) {
 
 		break;
 
-		case 140u: // diamond
+		case L::BonusDiamond:
 
 			// no points
 			// no growth
@@ -415,6 +527,8 @@ void Game::onWormCreated(Worm *pWorm) {
 
 
 void Game::onWormDied() {
+
+	// TODO: count dead humans if any human players...
 
 	++this->ubCountDead;
 	if (this->isGameOver()) {

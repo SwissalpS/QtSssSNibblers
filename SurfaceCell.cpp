@@ -85,38 +85,47 @@ QColor SurfaceCell::colour() const {
 	switch (this->ubState) {
 
 		// most common -> empty space
-		case 0u:
+		case L::FloorClean:
+		case L::FloorWet1:
+		case L::FloorWet2:
+		case L::FloorWet3:
+		case L::FloorWet4:
+		case L::FloorWet5:
+		case L::FloorWet6:
+		case L::FloorWet7:
+		case L::FloorWet8:
+		case L::FloorWet9:
 		// spawn points
-		case 90u: // headed north
-		case 91u: // headed west
-		case 92u: // headed south
-		case 93u: // headed east
+		case L::SpawnHeadingNorth:
+		case L::SpawnHeadingWest:
+		case L::SpawnHeadingSouth:
+		case L::SpawnHeadingEast:
 		// teleporter exits
-		case 221: // exit A
-		case 223: // exit B
-		case 225: // exit C
-		case 227: // exit D
-		case 229: // exit E
-		case 231: // exit F
-		case 233: // exit G
-		case 235: // exit H
-		case 237: // exit I
-		case 239: // exit J
-			return QColor(Qt::transparent); // black
+		case L::TeleporterOutA: // exit A
+		case L::TeleporterOutB: // exit B
+		case L::TeleporterOutC: // exit C
+		case L::TeleporterOutD: // exit D
+		case L::TeleporterOutE: // exit E
+		case L::TeleporterOutF: // exit F
+		case L::TeleporterOutG: // exit G
+		case L::TeleporterOutH: // exit H
+		case L::TeleporterOutI: // exit I
+		case L::TeleporterOutJ: // exit J
+			return QColor(Qt::black);//transparent); // black
 		break;
 
 		// also common -> walls
-		case 200u: // vertical
-		case 201u: // horizontal
-		case 202u: // corner sw
-		case 203u: // corner se
-		case 204u: // corner nw
-		case 205u: // corner ne
-		case 206u: // T north
-		case 207u: // T east
-		case 208u: // T west
-		case 209u: // T south
-		case 210u: // cross
+		case L::WallVertical:
+		case L::WallHorizontal:
+		case L::WallCornerSW:
+		case L::WallCornerSE:
+		case L::WallCornerNW:
+		case L::WallCornerNE:
+		case L::WallTnorth:
+		case L::WallTeast:
+		case L::WallTwest:
+		case L::WallTsouth:
+		case L::WallCross:
 			return QColor(Qt::white); break;
 
 		// players
@@ -153,44 +162,44 @@ QColor SurfaceCell::colour() const {
 			return QColor(SssS_Nibblers_Colour_7); break;
 
 		// teleporter entrances
-		case 220: // entrance A
-		case 222: // entrance B
-		case 224: // entrance C
-		case 226: // entrance D
-		case 228: // entrance E
-		case 230: // entrance F
-		case 232: // entrance G
-		case 234: // entrance H
-		case 236: // entrance I
-		case 238: // entrance J
+		case L::TeleporterInA: // entrance A
+		case L::TeleporterInB: // entrance B
+		case L::TeleporterInC: // entrance C
+		case L::TeleporterInD: // entrance D
+		case L::TeleporterInE: // entrance E
+		case L::TeleporterInF: // entrance F
+		case L::TeleporterInG: // entrance G
+		case L::TeleporterInH: // entrance H
+		case L::TeleporterInI: // entrance I
+		case L::TeleporterInJ: // entrance J
 			return QColor(Qt::darkGray); break;
 
 		// bonuses
 		// apples -> add length and advance level
-		case 100u:
-		case 101u:
-		case 102u:
-		case 103u: return QColor(Qt::cyan); break;
+		case L::BonusAppleNW:
+		case L::BonusAppleNE:
+		case L::BonusAppleSE:
+		case L::BonusAppleSW: return QColor(Qt::cyan); break;
 			// cherries -> shorten
-		case 110u:
-		case 111u:
-		case 112u:
-		case 113u: return QColor(Qt::magenta); break;
+		case L::BonusCherryNW:
+		case L::BonusCherryNE:
+		case L::BonusCherrySE:
+		case L::BonusCherrySW: return QColor(Qt::magenta); break;
 			// bananas -> add length
-		case 120u:
-		case 121u:
-		case 122u:
-		case 123u: return QColor(Qt::darkCyan); break;
+		case L::BonusBananaNW:
+		case L::BonusBananaNE:
+		case L::BonusBananaSE:
+		case L::BonusBananaSW: return QColor(Qt::darkCyan); break;
 			// hearts -> add life
-		case 130u:
-		case 131u:
-		case 132u:
-		case 133u: return QColor(Qt::darkMagenta); break;
+		case L::BonusHeartNW:
+		case L::BonusHeartNE:
+		case L::BonusHeartSE:
+		case L::BonusHeartSW: return QColor(Qt::darkMagenta); break;
 			// diamonds -> reverse direction
-		case 140u:
-		case 141u:
-		case 142u:
-		case 143u: return QColor(Qt::gray); break;
+		case L::BonusDiamondNW:
+		case L::BonusDiamondNE:
+		case L::BonusDiamondSE:
+		case L::BonusDiamondSW: return QColor(Qt::gray); break;
 
 		default: return QColor(Qt::lightGray); break;
 
@@ -222,6 +231,15 @@ QColor SurfaceCell::colour() const {
 */
 
 } // colour
+
+
+void SurfaceCell::defrostState() {
+
+	this->ubState = this->ubStateFrozen;
+
+	this->update();
+
+} // defrostState
 
 
 void SurfaceCell::desnakeState() {

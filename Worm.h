@@ -12,6 +12,7 @@ namespace SwissalpS { namespace QtNibblers {
 
 
 class Worm : public QObject {
+
 	Q_OBJECT
 
 private:
@@ -39,6 +40,7 @@ public:
 				  QObject *pParent = nullptr);
 	virtual ~Worm();
 
+	virtual void addLength(int iLength);
 	virtual void advanceTo(SurfaceCell *pCell);
 	// cell that will become tail next (2nd-last)
 	virtual SurfaceCell *assCell();
@@ -64,11 +66,13 @@ public:
 	virtual QPoint nextPoint();
 	virtual QPoint rightPoint();
 	virtual void setColourIndex(const quint8 ubIndex);
+	inline virtual void setHeading(const L::Heading eDirection) { this->eCurrentHeading = eDirection; }
 	inline virtual void setUseRelativeControls(bool bUse) { this->bUseRelativeControls = bUse; }
 	virtual void startSpawning();
 	// cell that comes last
 	virtual SurfaceCell *tailCell();
 	inline virtual quint8 tailState() { return (this->ubColourIndex * 10u) + 19u; }
+	inline virtual quint16 targetLength() { return this->uiTargetLength; }
 	inline virtual bool usesRelativeControls() const { return this->bUseRelativeControls; }
 
 signals:

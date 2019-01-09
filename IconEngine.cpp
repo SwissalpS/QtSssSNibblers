@@ -1,6 +1,7 @@
 #include "IconEngine.h"
 #include "definitions.h"
 #include "AppSettings.h"
+#include "Lingo.h"
 
 #include <QCoreApplication>
 #include <QFileInfo>
@@ -49,7 +50,7 @@
  * 208u: Wall T West
  * 209u: Wall T South
  * 210u: Wall Cross
- *
+ * 211..219: Reserved for other walls
  *
  *
  *
@@ -78,6 +79,28 @@
  * 227: Teleporter Exit I
  * 238: Teleporter Entrance J
  * 229: Teleporter Exit J
+ * 240..249: Reserved for some future do-dad
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ * 250..254: Reserved for some extra stuff
+ *
  *
  *
  *
@@ -186,66 +209,33 @@ QIcon IconEngine::getCell(const quint8 ubState) {
 	switch (ubState) {
 
 		// also common -> walls
-		case 200u: // vertical
-		case 201u: // horizontal
-		case 202u: // corner sw
-		case 203u: // corner se
-		case 204u: // corner nw
-		case 205u: // corner ne
-		case 206u: // T north
-		case 207u: // T east
-		case 208u: // T west
-		case 209u: // T south
-		case 210u: // cross
+		case L::WallVertical: // vertical
+		case L::WallHorizontal: // horizontal
+		case L::WallCornerSW: // corner sw
+		case L::WallCornerSE: // corner se
+		case L::WallCornerNW: // corner nw
+		case L::WallCornerNE: // corner ne
+		case L::WallTnorth: // T north
+		case L::WallTeast: // T east
+		case L::WallTwest: // T west
+		case L::WallTsouth: // T south
+		case L::WallCross: // cross
 
 			oIcon = this->getCellForBuilder(ubState);
 
 		break;
 
-//		// players
-//		case 10u:
-//		case 11u:
-////		case 12u: return QColor(Qt::green);	break;
-
-//		case 20u:
-//		case 21u:
-//		case 22u: return QColor(Qt::red); break;
-
-//		case 30u:
-//		case 31u:
-//		case 32u: return QColor(Qt::blue); break;
-
-//		case 40u:
-//		case 41u:
-//		case 42u: return QColor(Qt::yellow); break;
-
-//		case 50u:
-//		case 51u:
-//		case 52u: return QColor(Qt::darkGreen); break;
-
-//		case 60u:
-//		case 61u:
-//		case 62u: return QColor(Qt::darkRed); break;
-
-//		case 70u:
-//		case 71u:
-//		case 72u: return QColor(Qt::darkBlue); break;
-
-//		case 80u:
-//		case 81u:
-//		case 82u: return QColor(Qt::darkYellow); break;
-
 		// teleporter entrances
-		case 220: // entrance A
-		case 222: // entrance B
-		case 224: // entrance C
-		case 226: // entrance D
-		case 228: // entrance E
-		case 230: // entrance F
-		case 232: // entrance G
-		case 234: // entrance H
-		case 236: // entrance I
-		case 238: // entrance J
+		case L::TeleporterInA: // entrance A
+		case L::TeleporterInB: // entrance B
+		case L::TeleporterInC: // entrance C
+		case L::TeleporterInD: // entrance D
+		case L::TeleporterInE: // entrance E
+		case L::TeleporterInF: // entrance F
+		case L::TeleporterInG: // entrance G
+		case L::TeleporterInH: // entrance H
+		case L::TeleporterInI: // entrance I
+		case L::TeleporterInJ: // entrance J
 
 			oIcon = IconEngine::makeTeleporter("");
 
@@ -253,53 +243,39 @@ QIcon IconEngine::getCell(const quint8 ubState) {
 
 		// bonuses
 		// apples -> add length and advance level
-		case 100u: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus1.png"), 0u); break;
-		case 101u: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus1.png"), 1u); break;
-		case 102u: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus1.png"), 2u); break;
-		case 103u: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus1.png"), 3u); break;
+		case L::BonusAppleNW: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus1.png"), L::NorthWest); break;
+		case L::BonusAppleNE: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus1.png"), L::NorthEast); break;
+		case L::BonusAppleSE: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus1.png"), L::SouthEast); break;
+		case L::BonusAppleSW: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus1.png"), L::SouthWest); break;
 
 		// cherries -> shorten
-		case 110u: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus2.png"), 0u); break;
-		case 111u: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus2.png"), 1u); break;
-		case 112u: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus2.png"), 2u); break;
-		case 113u: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus2.png"), 3u); break;
+		case L::BonusCherryNW: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus2.png"), L::NorthWest); break;
+		case L::BonusCherryNE: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus2.png"), L::NorthEast); break;
+		case L::BonusCherrySE: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus2.png"), L::SouthEast); break;
+		case L::BonusCherrySW: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus2.png"), L::SouthWest); break;
 
 		// bananas -> add length
-		case 120u: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus3.png"), 0u); break;
-		case 121u: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus3.png"), 1u); break;
-		case 122u: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus3.png"), 2u); break;
-		case 123u: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus3.png"), 3u); break;
+		case L::BonusBananaNW: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus3.png"), L::NorthWest); break;
+		case L::BonusBananaNE: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus3.png"), L::NorthEast); break;
+		case L::BonusBananaSE: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus3.png"), L::SouthEast); break;
+		case L::BonusBananaSW: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus3.png"), L::SouthWest); break;
 
 		// hearts -> add life
-		case 130u: oIcon = IconEngine::makeQuart(QIcon(":/Images/life.png"), 0u); break;
-		case 131u: oIcon = IconEngine::makeQuart(QIcon(":/Images/life.png"), 1u); break;
-		case 132u: oIcon = IconEngine::makeQuart(QIcon(":/Images/life.png"), 2u); break;
-		case 133u: oIcon = IconEngine::makeQuart(QIcon(":/Images/life.png"), 3u); break;
+		case L::BonusHeartNW: oIcon = IconEngine::makeQuart(QIcon(":/Images/life.png"), L::NorthWest); break;
+		case L::BonusHeartNE: oIcon = IconEngine::makeQuart(QIcon(":/Images/life.png"), L::NorthEast); break;
+		case L::BonusHeartSE: oIcon = IconEngine::makeQuart(QIcon(":/Images/life.png"), L::SouthEast); break;
+		case L::BonusHeartSW: oIcon = IconEngine::makeQuart(QIcon(":/Images/life.png"), L::SouthWest); break;
 
 		// diamonds -> reverse direction
-		case 140u: oIcon = IconEngine::makeQuart(QIcon(":/Images/diamond.png"), 0u); break;
-		case 141u: oIcon = IconEngine::makeQuart(QIcon(":/Images/diamond.png"), 1u); break;
-		case 142u: oIcon = IconEngine::makeQuart(QIcon(":/Images/diamond.png"), 2u); break;
-		case 143u: oIcon = IconEngine::makeQuart(QIcon(":/Images/diamond.png"), 3u); break;
+		case L::BonusDiamondNW: oIcon = IconEngine::makeQuart(QIcon(":/Images/diamond.png"), L::NorthWest); break;
+		case L::BonusDiamondNE: oIcon = IconEngine::makeQuart(QIcon(":/Images/diamond.png"), L::NorthEast); break;
+		case L::BonusDiamondSE: oIcon = IconEngine::makeQuart(QIcon(":/Images/diamond.png"), L::SouthEast); break;
+		case L::BonusDiamondSW: oIcon = IconEngine::makeQuart(QIcon(":/Images/diamond.png"), L::SouthWest); break;
 
 		// most common -> empty space
-		case 0u: // 0-9 floor tiles
+			// 0-9 floor tiles
 		// spawn points
-		case 90u: // headed north
-		case 91u: // headed west
-		case 92u: // headed south
-		case 93u: // headed east
 		// teleporter exits
-		case 221: // exit A
-		case 223: // exit B
-		case 225: // exit C
-		case 227: // exit D
-		case 229: // exit E
-		case 231: // exit F
-		case 233: // exit G
-		case 235: // exit H
-		case 237: // exit I
-		case 239: // exit J
 		default:
 			oIcon = QIcon();
 		break;
@@ -323,155 +299,70 @@ QIcon IconEngine::getCellForBuilder(const quint8 ubState) {
 	switch (ubState) {
 
 		// most common -> empty space
-		case 0u:
-		case 1u:
-		case 2u:
-		case 3u:
-		case 4u:
-		case 5u:
-		case 6u:
-		case 7u:
-		case 8u:
-		case 9u:
-			oIcon = IconEngine::makeFloor(); break;
+		case L::FloorClean:
+		case L::FloorWet1:
+		case L::FloorWet2:
+		case L::FloorWet3:
+		case L::FloorWet4:
+		case L::FloorWet5:
+		case L::FloorWet6:
+		case L::FloorWet7:
+		case L::FloorWet8:
+		case L::FloorWet9:
+			oIcon = IconEngine::makeFloor();
+		break;
 
 		// spawn points
-		case 90u: // headed north
-			oIcon = QIcon(":/Images/arrow.png"); break;
-		case 91u: // headed west
-			oIcon = QIcon(":/Images/arrow.png").pixmap(32, 32).transformed(QTransform().rotate(-90.0)); break;
-		case 92u: // headed south
-			oIcon = QIcon(":/Images/arrow.png").pixmap(32, 32).transformed(QTransform().rotate(180.0)); break;
-		case 93u: // headed east
-			oIcon = QIcon(":/Images/arrow.png").pixmap(64, 64).transformed(QTransform().rotate(90.0)); break;
-
+		case L::SpawnHeadingNorth: oIcon = QIcon(":/Images/arrow.png"); break;
+		case L::SpawnHeadingWest: oIcon = QIcon(":/Images/arrow.png").pixmap(32, 32).transformed(QTransform().rotate(-90.0)); break;
+		case L::SpawnHeadingSouth: oIcon = QIcon(":/Images/arrow.png").pixmap(32, 32).transformed(QTransform().rotate(180.0)); break;
+		case L::SpawnHeadingEast: oIcon = QIcon(":/Images/arrow.png").pixmap(64, 64).transformed(QTransform().rotate(90.0));
+		break;
 
 		// also common -> walls
-		case 200u: // vertical
-			oIcon = QIcon(":/Images/wall_vertical.svg"); break;
-		case 201u: // horizontal
-			oIcon = QIcon(":/Images/wall_horizontal.svg"); break;
-		case 202u: // corner sw
-			oIcon = QIcon(":/Images/wall_corner_sw.svg"); break;
-		case 203u: // corner se
-			oIcon = QIcon(":/Images/wall_corner_se.svg"); break;
-		case 204u: // corner nw
-			oIcon = QIcon(":/Images/wall_corner_nw.svg"); break;
-		case 205u: // corner ne
-			oIcon = QIcon(":/Images/wall_corner_ne.svg"); break;
-		case 206u: // T north
-			oIcon = QIcon(":/Images/wall_T_north.svg"); break;
-		case 207u: // T east
-			oIcon = QIcon(":/Images/wall_T_east.svg"); break;
-		case 208u: // T west
-			oIcon = QIcon(":/Images/wall_T_west.svg"); break;
-		case 209u: // T south
-			oIcon = QIcon(":/Images/wall_T_south.svg"); break;
-		case 210u: // cross
-			oIcon = QIcon(":/Images/wall_cross.svg"); break;
+		case L::WallVertical: oIcon = QIcon(":/Images/wall_vertical.svg"); break;
+		case L::WallHorizontal: oIcon = QIcon(":/Images/wall_horizontal.svg"); break;
+		case L::WallCornerSW: oIcon = QIcon(":/Images/wall_corner_sw.svg"); break;
+		case L::WallCornerSE: oIcon = QIcon(":/Images/wall_corner_se.svg"); break;
+		case L::WallCornerNW: oIcon = QIcon(":/Images/wall_corner_nw.svg"); break;
+		case L::WallCornerNE: oIcon = QIcon(":/Images/wall_corner_ne.svg"); break;
+		case L::WallTnorth: oIcon = QIcon(":/Images/wall_T_north.svg"); break;
+		case L::WallTeast: oIcon = QIcon(":/Images/wall_T_east.svg"); break;
+		case L::WallTwest: oIcon = QIcon(":/Images/wall_T_west.svg"); break;
+		case L::WallTsouth: oIcon = QIcon(":/Images/wall_T_south.svg"); break;
+		case L::WallCross: oIcon = QIcon(":/Images/wall_cross.svg");
+		break;
 
 		// teleporters
-		case 220: // entrance A
-			oIcon = IconEngine::makeTeleporter("A"); break;
-		case 222: // entrance B
-			oIcon = IconEngine::makeTeleporter("B"); break;
-		case 224: // entrance C
-			oIcon = IconEngine::makeTeleporter("C"); break;
-		case 226: // entrance D
-			oIcon = IconEngine::makeTeleporter("D"); break;
-		case 228: // entrance E
-			oIcon = IconEngine::makeTeleporter("E"); break;
-		case 230: // entrance F
-			oIcon = IconEngine::makeTeleporter("F"); break;
-		case 232: // entrance G
-			oIcon = IconEngine::makeTeleporter("G"); break;
-		case 234: // entrance H
-			oIcon = IconEngine::makeTeleporter("H"); break;
-		case 236: // entrance I
-			oIcon = IconEngine::makeTeleporter("I"); break;
-		case 238: // entrance J
-			oIcon = IconEngine::makeTeleporter("J"); break;
+		case L::TeleporterInA: oIcon = IconEngine::makeTeleporter("A"); break;
+		case L::TeleporterInB: oIcon = IconEngine::makeTeleporter("B"); break;
+		case L::TeleporterInC: oIcon = IconEngine::makeTeleporter("C"); break;
+		case L::TeleporterInD: oIcon = IconEngine::makeTeleporter("D"); break;
+		case L::TeleporterInE: oIcon = IconEngine::makeTeleporter("E"); break;
+		case L::TeleporterInF: oIcon = IconEngine::makeTeleporter("F"); break;
+		case L::TeleporterInG: oIcon = IconEngine::makeTeleporter("G"); break;
+		case L::TeleporterInH: oIcon = IconEngine::makeTeleporter("H"); break;
+		case L::TeleporterInI: oIcon = IconEngine::makeTeleporter("I"); break;
+		case L::TeleporterInJ: oIcon = IconEngine::makeTeleporter("J"); break;
 
-		case 221: // exit A
-			oIcon = IconEngine::makeTeleporter("a"); break;
-		case 223: // exit B
-			oIcon = IconEngine::makeTeleporter("b"); break;
-		case 225: // exit C
-			oIcon = IconEngine::makeTeleporter("c"); break;
-		case 227: // exit D
-			oIcon = IconEngine::makeTeleporter("d"); break;
-		case 229: // exit E
-			oIcon = IconEngine::makeTeleporter("e"); break;
-		case 231: // exit F
-			oIcon = IconEngine::makeTeleporter("f"); break;
-		case 233: // exit G
-			oIcon = IconEngine::makeTeleporter("g"); break;
-		case 235: // exit H
-			oIcon = IconEngine::makeTeleporter("h"); break;
-		case 237: // exit I
-			oIcon = IconEngine::makeTeleporter("i"); break;
-		case 239: // exit J
-			oIcon = IconEngine::makeTeleporter("j"); break;
+		case L::TeleporterOutA: oIcon = IconEngine::makeTeleporter("a"); break;
+		case L::TeleporterOutB: oIcon = IconEngine::makeTeleporter("b"); break;
+		case L::TeleporterOutC: oIcon = IconEngine::makeTeleporter("c"); break;
+		case L::TeleporterOutD: oIcon = IconEngine::makeTeleporter("d"); break;
+		case L::TeleporterOutE: oIcon = IconEngine::makeTeleporter("e"); break;
+		case L::TeleporterOutF: oIcon = IconEngine::makeTeleporter("f"); break;
+		case L::TeleporterOutG: oIcon = IconEngine::makeTeleporter("g"); break;
+		case L::TeleporterOutH: oIcon = IconEngine::makeTeleporter("h"); break;
+		case L::TeleporterOutI: oIcon = IconEngine::makeTeleporter("i"); break;
+		case L::TeleporterOutJ: oIcon = IconEngine::makeTeleporter("j"); break;
 
 		// players
-		case 10u: // head
-		case 11u: // tail
-		case 12u: // mid-sections
-
-		case 20u:
-		case 21u:
-		case 22u:
-
-		case 30u:
-		case 31u:
-		case 32u:
-
-		case 40u:
-		case 41u:
-		case 42u:
-
-		case 50u:
-		case 51u:
-		case 52u:
-
-		case 60u:
-		case 61u:
-		case 62u:
-
-		case 70u:
-		case 71u:
-		case 72u:
-
-		case 80u:
-		case 81u:
-		case 82u:
-
 		// bonuses
 		// apples -> add length and advance level
-		case 100u:
-		case 101u:
-		case 102u:
-		case 103u:
 			// cherries -> shorten
-		case 110u:
-		case 111u:
-		case 112u:
-		case 113u:
 			// bananas -> add length
-		case 120u:
-		case 121u:
-		case 122u:
-		case 123u:
 			// hearts -> add life
-		case 130u:
-		case 131u:
-		case 132u:
-		case 133u:
 			// diamonds -> reverse direction
-		case 140u:
-		case 141u:
-		case 142u:
-		case 143u:
 
 		default: oIcon = this->getCell(ubState); break;
 
@@ -528,7 +419,8 @@ QIcon IconEngine::getLevel(const quint8 ubLevel) {
 	// prepare vector of states we react to
 	quint8 ubState;
 	QVector<quint8> aCOIs;
-	for (ubState = 200u; ubState < 211u; ubState++) aCOIs.append(ubState);
+
+	for (ubState = L::WallVertical; ubState < 211u; ubState++) aCOIs.append(ubState);
 
 	int iPos = 0u;
 	quint8 ubColumns = 0u;
@@ -596,16 +488,13 @@ QIcon IconEngine::makeQuart(QIcon oIcon, const quint8 ubQuart) {
 
 	oP.setBackground(Qt::transparent);
 
-	if (0u == ubQuart) {
-		// nw
+	if (L::NorthWest == ubQuart) {
 		oP.drawPixmap(oRect, oIcon.pixmap(oSize), QRect(0, 0, iW, iH));
 
-	} else if (1u == ubQuart) {
-		// ne
+	} else if (L::NorthEast == ubQuart) {
 		oP.drawPixmap(oRect, oIcon.pixmap(oSize), QRect(iW, 0, iW, iH));
 
-	} else if (2u == ubQuart) {
-		// se
+	} else if (L::SouthEast == ubQuart) {
 		oP.drawPixmap(oRect, oIcon.pixmap(oSize), QRect(iW, iH, iW, iH));
 
 	} else {
@@ -665,7 +554,7 @@ QVector<quint8> IconEngine::statesTeleporterEntrances() {
 	if (!aStates.empty()) return aStates;
 
 	quint8 ubCount;
-	for (ubCount = 220u; ubCount < 240u; ubCount += 2u)
+	for (ubCount = L::TeleporterInA; ubCount <= L::TeleporterInJ; ubCount += 2u)
 		aStates.append(ubCount);
 
 	return aStates;
@@ -681,7 +570,7 @@ QVector<quint8> IconEngine::statesTeleporterExits() {
 	if (!aStates.empty()) return aStates;
 
 	quint8 ubCount;
-	for (ubCount = 221u; ubCount < 240u; ubCount += 2u)
+	for (ubCount = L::TeleporterOutA; ubCount <= L::TeleporterOutJ; ubCount += 2u)
 		aStates.append(ubCount);
 
 	return aStates;
@@ -697,7 +586,7 @@ QVector<quint8> IconEngine::statesFloors() {
 	if (!aStates.empty()) return aStates;
 
 	quint8 ubCount;
-	for (ubCount = 0u; ubCount < 10u; ++ubCount)
+	for (ubCount = L::FloorClean; ubCount <= L::FloorWet9; ++ubCount)
 		aStates.append(ubCount);
 
 	return aStates;
@@ -713,7 +602,7 @@ QVector<quint8> IconEngine::statesPickups() {
 	if (!aStates.empty()) return aStates;
 
 	quint8 ubCount;
-	for (ubCount = 100u; ubCount < 150u; ++ubCount)
+	for (ubCount = L::BonusApple; ubCount < 150u; ++ubCount)
 		aStates.append(ubCount);
 
 	return aStates;
@@ -724,7 +613,7 @@ QVector<quint8> IconEngine::statesPickups() {
 // static
 QVector<quint8> IconEngine::statesSnake(const quint8 ubSnake) {
 
-	quint8 ubState = 10u + (10u * ubSnake);
+	quint8 ubState = L::Player_1_Head + (10u * ubSnake);
 	quint8 ubLast = ubState + 9u;
 	QVector<quint8> aStates;
 
@@ -743,8 +632,8 @@ QVector<quint8> IconEngine::statesSnakes() {
 
 	if (!aStates.empty()) return aStates;
 
-	quint8 ubState = 10u;
-	quint8 ubLast = 89u;
+	quint8 ubState = L::Player_1_Head;
+	quint8 ubLast = L::Player_8_Tail;
 
 	for (; ubState <= ubLast; ++ubState)
 		aStates.append(ubState);
@@ -762,7 +651,7 @@ QVector<quint8> IconEngine::statesSpawns() {
 	if (!aStates.empty()) return aStates;
 
 	quint8 ubCount;
-	for (ubCount = 90u; ubCount < 94u; ++ubCount)
+	for (ubCount = L::SpawnHeadingNorth; ubCount <= L::SpawnHeadingEast; ++ubCount)
 		aStates.append(ubCount);
 
 	return aStates;
@@ -778,7 +667,7 @@ QVector<quint8> IconEngine::statesWalls() {
 	if (!aStates.empty()) return aStates;
 
 	quint8 ubCount;
-	for (ubCount = 200u; ubCount < 211u; ++ubCount)
+	for (ubCount = L::WallVertical; ubCount <= L::WallCross; ++ubCount)
 		aStates.append(ubCount);
 
 	return aStates;

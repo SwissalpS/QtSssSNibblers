@@ -21,7 +21,11 @@ private:
 protected:
 	bool bLevelStarted;
 	bool bPaused;
+	bool bUseFakes;
 	quint8 ubCountApplesLeft;
+	quint8 ubCountBonus;
+	quint8 ubCountBonusLeft;
+	quint8 ubCountBonusMissed;
 	quint8 ubCountDead;
 	quint8 ubCountLevels;
 	quint8 ubSpeedIndex;
@@ -36,11 +40,14 @@ protected:
 	QVector<Bonus *> apBonus;
 	QVector<Worm *> apWorms;
 	QTimer *pTimer;
+	QTimer *pTimerBonus;
 
+	virtual void addBonus(const bool bApple);
 	virtual void destroyBonus(Bonus *pBonus);
 
 protected slots:
 	virtual void onTick();
+	virtual void onTickBonus();
 
 public:
 	explicit Game(QObject *pParent = nullptr);
@@ -56,14 +63,14 @@ signals:
 	void debugMessage(const QString &sMessage) const;
 	void move() const;
 	void nextLevel() const;
-	void placeBonus(const quint8 ubBonus) const;
+	void placeBonus(const quint8 ubBonus, const bool bFake) const;
 	void spawnWorm(Worm *pWorm) const;
 	void statusMessage(const QString &sMessage) const;
 
 public slots:
-	void onBonusPlaced(const QVector<SurfaceCell *> apCells);
+	void onBonusPlaced(const QVector<SurfaceCell *> apCells, const bool bFake);
 	void onBonusTimedOut(Bonus *pBonus);
-	void onNoSpaceFoundForBonus(const quint8 ubBonus);
+	void onNoSpaceFoundForBonus(const quint8 ubBonus, const bool bFake);
 	void onPlayerCountChanged(const quint8 ubCountHumans,
 							  const quint8 ubCountAIs);
 	void onReset();

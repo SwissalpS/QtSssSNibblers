@@ -1,15 +1,18 @@
 #include "Bonus.h"
 
+#include <QTimer>
+
 
 
 namespace SwissalpS { namespace QtNibblers {
 
 
 
-Bonus::Bonus(QVector<SurfaceCell *> apCells, QObject *pParent) :
+Bonus::Bonus(QVector<SurfaceCell *> apCells, const bool bFake, QObject *pParent) :
 	QObject(pParent),
 	bExpired(false),
-	ubStateBase(0xFFu),
+	bFake(bFake),
+	ubStateBase(0xFCu),
 	uiTicks(0u),
 	apCells(apCells) {
 
@@ -35,18 +38,15 @@ void Bonus::defreezeCells() {
 		return;
 	} // if length insufficient
 
+	// I've checked these, they are not the cause for bonus not leaveing
 	SurfaceCell *pCell = this->apCells.first();
-	if (pCell->getState() == this->ubStateBase) { pCell->defrostState(); this->onDebugMessage("OK");}
-	else this->onDebugMessage("cell has other state " + QString::number(this->ubStateBase) + " " + QString::number(pCell->getState()));
+	if (pCell->getState() == this->ubStateBase) pCell->defrostState();
 	pCell = this->apCells.at(1);
-	if (pCell->getState() == this->ubStateBase + 1u) { pCell->defrostState(); this->onDebugMessage("OK.");}
-	else this->onDebugMessage("cell has other state." + QString::number(this->ubStateBase+1u) + " " + QString::number(pCell->getState()));
+	if (pCell->getState() == this->ubStateBase + 1u) pCell->defrostState();
 	pCell = this->apCells.at(2);
-	if (pCell->getState() == this->ubStateBase + 2u) { pCell->defrostState(); this->onDebugMessage("OK..");}
-	else this->onDebugMessage("cell has other state.." + QString::number(this->ubStateBase+2u) + " " + QString::number(pCell->getState()));
+	if (pCell->getState() == this->ubStateBase + 2u) pCell->defrostState();
 	pCell = this->apCells.last();
-	if (pCell->getState() == this->ubStateBase + 3u) { pCell->defrostState(); this->onDebugMessage("OK...");}
-	else this->onDebugMessage("cell has other state..." + QString::number(this->ubStateBase + 3u) + " " + QString::number(pCell->getState()));
+	if (pCell->getState() == this->ubStateBase + 3u) pCell->defrostState();
 
 } // defreezeCells
 
@@ -61,10 +61,26 @@ void Bonus::setStateBase(const quint8 &ubState) {
 void Bonus::onGotEaten() {
 
 	this->defreezeCells();
+	//QTimer::singleShot(0, this, SLOT(defreezeCells()));
 
 	Q_EMIT this->gotEaten();
 
 } // onGotEaten
+
+
+void Bonus::onTick() {
+
+	if (this->hasTimedOut()) return;
+
+	this->uiTicks--;
+
+	if (!this->hasTimedOut()) return;
+
+	this->defreezeCells();
+
+	Q_EMIT this->timedOut(this);
+
+} // onTick
 
 
 

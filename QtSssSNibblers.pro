@@ -33,6 +33,7 @@ SOURCES += \
 	IconEngine.cpp \
 	main.cpp \
 	MainWindow.cpp \
+	Map.cpp \
 	ScoreBoard.cpp \
 	SurfaceBuilder.cpp \
 	SurfaceCell.cpp \
@@ -51,6 +52,7 @@ HEADERS += \
 	IconEngine.h \
 	Lingo.h \
 	MainWindow.h \
+	Map.h \
 	ScoreBoard.h \
 	SurfaceBuilder.h \
 	SurfaceCell.h \
