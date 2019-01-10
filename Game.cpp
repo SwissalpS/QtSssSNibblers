@@ -10,6 +10,7 @@ namespace SwissalpS { namespace QtNibblers {
 
 Game::Game(QObject *pParent) :
 	QObject(pParent),
+	bGameStarted(false),
 	bLevelStarted(false),
 	bPaused(true),
 	bUseFakes(false),
@@ -19,6 +20,7 @@ Game::Game(QObject *pParent) :
 	ubCountBonusMissed(0u),
 	ubCountDead(0u),
 	ubCountLevels(0u),
+	ubCountNeedApple(6u),
 	ubSpeedIndex(0u),
 	uiApplesToGo(0u),
 	fFactorApple(1.0f),
@@ -33,7 +35,7 @@ Game::Game(QObject *pParent) :
 	this->apWorms.clear();
 
 	// init randomizer
-	qsrand(QTime::currentTime().msecsSinceStartOfDay());
+	qsrand(uint(QTime::currentTime().msecsSinceStartOfDay()));
 
 } // construct
 
@@ -52,6 +54,8 @@ Game::~Game() {
 } // dealloc
 
 
+// slightly adapted from nibbles-game.vala NibblesGame.add_bonus(bool)
+// chances of each should be compareable to gnome-nibbles and it's ancestors.
 void Game::addBonus(const bool bApple) {
 	// don't always create bonus if it's not an apple
 	if (!bApple) {
@@ -97,6 +101,8 @@ void Game::addBonus(const bool bApple) {
 
 		} // if add a fake
 
+		this->ubCountNeedApple = 6u;
+
 		Q_EMIT this->placeBonus(L::BonusApple, false);
 
 	} // if not apple
@@ -104,7 +110,35 @@ void Game::addBonus(const bool bApple) {
 } // addBonus
 
 
+// attempt to solve the mistery of strange bonus
+// behaviour. I'm pretty sure we won't need this
+// anymore
+void Game::clearExpiredBonuses() {
+
+	QVector<Bonus *> apExpired;
+	Bonus *pBonus;
+
+	for (int i = 0; i < this->apBonus.length(); ++i) {
+
+		pBonus = this->apBonus.at(i);
+		if (pBonus->hasExpired()) apExpired.append(pBonus);
+
+	} // loop looking for expired boni
+
+	for (int i = 0; i < apExpired.length(); ++i) {
+
+		pBonus = apExpired.at(i);
+		pBonus->onGotEaten();
+		this->apBonus.removeOne(pBonus);
+
+	} // loop
+
+} // clearExpiredBonuses
+
+
 void Game::destroyBonus(Bonus *pBonus) {
+
+	pBonus->onGotEaten();
 
 	this->disconnect(pBonus);
 	this->apBonus.removeOne(pBonus);
@@ -136,15 +170,6 @@ void Game::onBonusPlaced(const QVector<SurfaceCell *> apCells, const bool bFake)
 
 	Bonus *pBonus = new Bonus(apCells, bFake, this);
 
-	connect(this, SIGNAL(move()),
-			pBonus, SLOT(onTick()));
-
-	connect(pBonus, SIGNAL(debugMessage(QString)),
-			this, SLOT(onDebugMessage(QString)));
-
-	connect(pBonus, SIGNAL(timedOut(Bonus*)),
-			this, SLOT(onBonusTimedOut(Bonus*)));
-
 	this->apBonus.prepend(pBonus);
 
 	// wich kind? how many ticks until expired?
@@ -152,6 +177,8 @@ void Game::onBonusPlaced(const QVector<SurfaceCell *> apCells, const bool bFake)
 	switch (pBonus->getStateBase()) {
 
 		case L::BonusApple: // 100
+
+			if (!bFake) this->ubCountNeedApple = 0u;
 
 			uiTicks = SssS_Nibblers_Bonus_Apple_Lifetime;
 
@@ -190,6 +217,15 @@ void Game::onBonusPlaced(const QVector<SurfaceCell *> apCells, const bool bFake)
 
 	pBonus->start(uiTicks);
 
+	connect(this, SIGNAL(move()),
+			pBonus, SLOT(onTick()));
+
+	connect(pBonus, SIGNAL(debugMessage(QString)),
+			this, SLOT(onDebugMessage(QString)));
+
+	connect(pBonus, SIGNAL(timedOut(Bonus*)),
+			this, SLOT(onBonusTimedOut(Bonus*)));
+
 } // onBonusPlaced
 
 
@@ -221,10 +257,8 @@ void Game::onBonusTimedOut(Bonus *pBonus) {
 
 
 void Game::onNoSpaceFoundForBonus(const quint8 ubBonus, const bool bFake) {
-	Q_UNUSED(ubBonus)
-	Q_UNUSED(bFake)
 
-	// TODO:
+	if ((!bFake) && (L::BonusApple == ubBonus)) this->ubCountNeedApple = 6u;
 
 } // onNoSpaceFoundForBonus
 
@@ -237,40 +271,6 @@ void Game::onPlayerCountChanged(const quint8 ubCountHumans,
 	// TODO:
 
 } // onPlayerCountChanged
-
-
-void Game::onReset() {
-
-	this->pTimer->stop();
-	this->pTimerBonus->stop();
-
-	this->onSpeedChanged(this->pAS->get(AppSettings::sSettingGameSpeed).toUInt());
-
-	this->apBonus.clear();
-	this->ubCountBonus = 8 + this->apWorms.length();
-	this->ubCountApplesLeft = this->ubCountBonus;
-	this->ubCountBonusMissed = 0;
-
-	this->ubCountDead = 0u;
-	this->ubCountLevels = 1u;
-	this->bLevelStarted = false;
-
-	this->bUseFakes = this->pAS->get(AppSettings::sSettingGameFakeBonuses).toBool();
-
-	quint8 ubLives = this->pAS->get(AppSettings::sSettingGameStartLives).toUInt();
-
-	Worm *pWorm;
-	for (int i = 0; i < this->apWorms.length(); ++i) {
-
-		pWorm = this->apWorms.at(i);
-
-		pWorm->onSetLives(ubLives);
-		pWorm->onResetScore();
-		pWorm->startSpawning();
-
-	} // loop
-
-} // onReset
 
 
 void Game::onPauseResumeToggled() {
@@ -301,13 +301,16 @@ void Game::onPauseResumeToggled() {
 
 	} // if level already started
 
-	// not yet started
-	this->onReset();
-	this->ubCountLevels = 1u;
+	// has game started?
+	if (this->bGameStarted) {
+		// new level starts
+		this->onResetSoft();
+	} else {
+		// new game starts
+		this->onReset();
+		this->bGameStarted = true;
+	}
 	this->bLevelStarted = true;
-	this->bPaused = true;
-
-	Q_EMIT this->placeBonus(L::BonusApple, false);
 
 	for (int iCount = 0; iCount < this->apWorms.length(); ++iCount) {
 
@@ -320,9 +323,53 @@ void Game::onPauseResumeToggled() {
 } // onPauseResumeToggled
 
 
+void Game::onResetSoft() {
+
+	this->apBonus.clear();
+
+	this->bLevelStarted = false;
+	this->bPaused = true;
+	this->bUseFakes = this->pAS->get(AppSettings::sSettingGameFakeBonuses).toBool();
+
+	this->pTimer->stop();
+	this->pTimerBonus->stop();
+
+	this->ubCountBonus = 8u + quint8(this->apWorms.length());
+	this->ubCountApplesLeft = this->ubCountBonus;
+	this->ubCountBonusMissed = 0;
+
+} // onResetSoft
+
+
+void Game::onReset() {
+
+	this->onResetSoft();
+
+	this->onSpeedChanged(this->pAS->get(AppSettings::sSettingGameSpeed).toInt());
+
+	this->ubCountDead = 0u;
+	this->ubCountLevels = 1u;
+	this->bGameStarted = false;
+
+	quint8 ubLives = quint8(this->pAS->get(AppSettings::sSettingGameStartLives).toUInt());
+
+	Worm *pWorm;
+	for (int i = 0; i < this->apWorms.length(); ++i) {
+
+		pWorm = this->apWorms.at(i);
+
+		pWorm->onSetLives(ubLives);
+		pWorm->onResetScore();
+		pWorm->startSpawning();
+
+	} // loop
+
+} // onReset
+
+
 void Game::onSpeedChanged(const int iIndex) {
 
-	this->ubSpeedIndex = iIndex;
+	this->ubSpeedIndex = quint8(iIndex);
 
 	int iInterval;
 	int iIntervalBonus;
@@ -354,6 +401,8 @@ void Game::onSpeedChanged(const int iIndex) {
 
 void Game::onTick() {
 
+	//this->clearExpiredBonuses();
+
 	Q_EMIT this->move();
 
 } // onTick
@@ -361,6 +410,14 @@ void Game::onTick() {
 
 void Game::onTickBonus() {
 
+	// give time for space to appear for bonus apples
+	// which really need to be in existance or game stalls
+	if (this->ubCountNeedApple) {
+		this->ubCountNeedApple--;
+		if (0u == this->ubCountNeedApple) this->addBonus(true);
+	} // if counting down for next apple
+
+	// randomly add any other kind of bonus
 	this->addBonus(false);
 
 } // onTickBonus
@@ -368,12 +425,13 @@ void Game::onTickBonus() {
 
 void Game::onWormAteBonus(Worm *pWorm, SurfaceCell *pCell) {
 
-	//this->onDebugMessage("Worm ate bonus");
+	//this->onDebugMessage("Worm ate bonus at: " + QString::number(pCell->getColumn()) + ":" + QString::number(pCell->getRow()));
+
 	// which one is it? how many points or other actions?
 
 	// first find the bonus in our cache
 	quint8 ubState = 0u;
-	Bonus *pBonus;
+	Bonus *pBonus = nullptr;
 	for (int i = 0; i < this->apBonus.length(); ++i) {
 
 		pBonus = this->apBonus.at(i);
@@ -382,7 +440,22 @@ void Game::onWormAteBonus(Worm *pWorm, SurfaceCell *pCell) {
 		// found it, retrieve state
 		ubState = pBonus->getStateBase();
 
+		break;
+
 	} // loop
+
+	// for debugging bonus match
+//	QString sPos;
+//	SurfaceCell *pCell2;
+//	for (int i = 0; i < 4; ++i) {
+
+//		pCell2 = pBonus->getCells().at(i);
+//		sPos += "\ncell: " + QString::number(i) + " "
+//				+ QString::number(pCell2->getColumn())+ ":"
+//				+ QString::number(pCell2->getRow());
+
+//	} // loop
+//	this->onDebugMessage(sPos);
 
 	// didn't find any?
 	if (0u == ubState) {
@@ -407,6 +480,7 @@ void Game::onWormAteBonus(Worm *pWorm, SurfaceCell *pCell) {
 
 	this->onDebugMessage("cB " + QString::number(this->ubCountBonus)
 						 + " cAl " + QString::number(this->ubCountApplesLeft));
+
 	// now let's react to it with points and growth
 	switch (ubState) {
 
@@ -430,15 +504,16 @@ void Game::onWormAteBonus(Worm *pWorm, SurfaceCell *pCell) {
 				this->ubCountApplesLeft--;
 				if (0u == this->ubCountApplesLeft) {
 
+					this->bPaused = true;
 					this->pTimer->stop();
 					this->pTimerBonus->stop();
 					this->bLevelStarted = false;
-					Q_EMIT this->nextLevel();
+					Q_EMIT this->doLevelDone();
 
 				} else {
 					// TODO: keep track of apples as there may not be any space
 					// but there needs to be one as soon as space is available
-					Q_EMIT this->placeBonus(L::BonusApple, false);
+					this->addBonus(true);
 				} // if have apples or not
 
 			} // if can subtract at all
@@ -450,9 +525,10 @@ void Game::onWormAteBonus(Worm *pWorm, SurfaceCell *pCell) {
 			if (2 >= pWorm->targetLength()) break;
 
 			// add points
-			pWorm->onAddScore(0.5 * this->ubCountLevels * pWorm->targetLength());
+			pWorm->onAddScore(qint16(double(0.5) * double(this->ubCountLevels)
+								  * double(pWorm->targetLength())));
 			// grow
-			pWorm->addLength(-0.5 * pWorm->targetLength());
+			pWorm->addLength(int(double(-0.5) * double(pWorm->targetLength())));
 
 			this->fFactorCherry += 0.1f;
 			if (0.1f <= this->fFractionCherry) this->fFractionCherry -= 0.1f;
@@ -462,7 +538,7 @@ void Game::onWormAteBonus(Worm *pWorm, SurfaceCell *pCell) {
 		case L::BonusBanana:
 
 			// add points
-			pWorm->onAddScore(pWorm->targetLength() * this->ubCountLevels);
+			pWorm->onAddScore(qint16(pWorm->targetLength() * this->ubCountLevels));
 			// grow
 			pWorm->addLength(pWorm->targetLength());
 
@@ -534,6 +610,8 @@ void Game::onWormDied() {
 	if (this->isGameOver()) {
 
 		this->pTimer->stop();
+		this->pTimerBonus->stop();
+		this->bPaused = true;
 
 		Q_EMIT this->doGameOver();
 

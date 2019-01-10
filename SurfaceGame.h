@@ -40,6 +40,7 @@ private slots:
 	void on_buttonSR_clicked();
 
 protected:
+	bool bLevelDone;
 	bool bProtectPP;
 	QList<QList<SurfaceCell *> > aopRows;
 	QVector<SurfaceCell *> apSpawnPoints;
@@ -86,6 +87,7 @@ protected:
 	virtual QVector<quint8> nextPOIinDirection(SurfaceCell *pCell,
 											   const L::Heading eDirection);
 	virtual void pauseIfRunning();
+	virtual void randomizeSpawns();
 	virtual void resetButtons();
 	void resizeEvent(QResizeEvent *pEvent) override;
 	virtual void setCellState(SurfaceCell *pCell, const quint8 ubState,
@@ -93,6 +95,8 @@ protected:
 	virtual void setCellState(const quint8 ubColumn, const quint8 ubRow,
 							  const quint8 ubState, const bool bUpdate = true);
 
+	virtual void showStartCountDownFrame(const QString sMessage, const QString sButton = QString());
+	virtual void updateFrameStartCountdown();
 
 protected slots:
 	void countdownTick();
@@ -100,6 +104,7 @@ protected slots:
 	virtual void initKeys();
 	virtual void initCells();
 	virtual void initWorms();
+	inline virtual void onSCDFdone() { this->on_buttonPP_toggled(true); }
 
 public:
 	explicit SurfaceGame(QWidget *pParent = nullptr);
@@ -124,6 +129,7 @@ public slots:
 
 	void onColoursChanged(const QVector<quint8> aubColours);
 	void onDoGameOver();
+	void onDoLevelDone();
 	void onDoLevelStartCountdown();
 	void onMainTabChanged(const int iIndex);
 	void onMove();

@@ -20,6 +20,7 @@ namespace SwissalpS { namespace QtNibblers {
 SurfaceGame::SurfaceGame(QWidget *pParent) :
 	QFrame(pParent),
 	pUi(new Ui::SurfaceGame),
+	bLevelDone(false),
 	bProtectPP(false),
 	pAS(AppSettings::pAppSettings()),
 	pDialogLoad(nullptr),
@@ -133,6 +134,7 @@ void SurfaceGame::clearSurface() {
 
 			pCell = aRow.at(ubX);
 			this->setCellState(pCell, L::FloorClean, false);
+			pCell->freezeState();
 
 		} // loop columns
 
@@ -226,6 +228,12 @@ Map *SurfaceGame::currentMap() {
 void SurfaceGame::focusInEvent(QFocusEvent *pEvent) {
 
 	//this->onDebugMessage("todo: focus in");
+	if (nullptr != this->pStartCountDownFrame
+			&& this->pStartCountDownFrame->isVisible()) {
+
+		this->updateFrameStartCountdown();
+
+	}
 
 	QFrame::focusInEvent(pEvent);
 
@@ -251,9 +259,11 @@ void SurfaceGame::countdownTick() {
 	if (0 < iTick) {
 
 		QString sMessage = QString::number(iTick);
-		this->pStartCountDownFrame->onSetText(sMessage);
-		this->pStartCountDownFrame->update();
+
+		this->showStartCountDownFrame(sMessage);
+
 		this->pUi->buttonPP->setText(sMessage);
+
 		Q_EMIT this->statusMessage(sMessage);
 
 		QTimer::singleShot(1000, this, SLOT(countdownTick()));
@@ -263,10 +273,13 @@ void SurfaceGame::countdownTick() {
 	} // if still got ticks to go
 
 	this->pStartCountDownFrame->hide();
+
 	this->pUi->buttonPP->setChecked(true);
 	this->pUi->buttonPP->setEnabled(true);
+
 	this->pUi->buttonSR->setEnabled(true);
 	this->pUi->buttonPP->setText(tr("Pause"));
+
 	Q_EMIT this->statusMessage(tr("Go, Go, Goooooh!"));
 
 	Q_EMIT this->pauseResumeToggled();
@@ -544,16 +557,17 @@ void SurfaceGame::aiMove(Worm *pWorm) {
 
 		} // if introduce noise
 
-		if (iLen < iBestYet) {
+		if (ilLen < ilBestYet) {
 
-			iBestYet = iLen;
-			ibDirectionBest = pWorm->currentDirection();
+			ilBestYet = ilLen;
+			ubDirectionBest = pWorm->currentDirection();
 
 		} // if better found
 
 	} // loop 3 directions
 
-	if (0 < ibDirectionBest) pWorm->setHeading(L::headingOfUint(ibDirectionBest));
+	// turn worm into next best direction
+	if (0u < ubDirectionBest) pWorm->setHeading(L::headingOfUint(ubDirectionBest));
 
 	/* Make sure we are at least avoiding walls.
 	 * Mostly other snakes should avoid our head.
@@ -694,6 +708,7 @@ bool SurfaceGame::aiWander(const QPoint oStart, const QPoint oStop,
 } // aiWander
 
 
+// old method that wasn't quite completed
 void SurfaceGame::findNextMovesForWorm(Worm *pWorm) {
 
 	static QVector<quint8> aStatesPickups = IconEngine::statesPickups();
@@ -962,9 +977,9 @@ void SurfaceGame::initWorms() {
 
 	quint8 ubColour;
 	quint8 ubCount;
-	quint8 ubCountAIs = this->pAS->get(AppSettings::sSettingGameCountAIs).toUInt();
-	quint8 ubCountHumans = this->pAS->get(AppSettings::sSettingGameCountHumans).toUInt();
-	quint8 ubLives = this->pAS->get(AppSettings::sSettingGameStartLives).toUInt();
+	quint8 ubCountAIs = quint8(this->pAS->get(AppSettings::sSettingGameCountAIs).toUInt());
+	quint8 ubCountHumans = quint8(this->pAS->get(AppSettings::sSettingGameCountHumans).toUInt());
+	quint8 ubLives = quint8(this->pAS->get(AppSettings::sSettingGameStartLives).toUInt());
 
 	QVector<SurfaceCell *> aUsedSpawns;
 	SurfaceCell *pCell;
@@ -981,9 +996,11 @@ void SurfaceGame::initWorms() {
 
 	} // if not enough start points
 
+	// random spawn point distribution
+	this->randomizeSpawns();
+
 	for (ubCount = 0u; ubCount < ubCountAll; ++ubCount) {
 
-		// TODO: random spawn point distribution
 		pCell = this->apSpawnPoints.at(ubCount);
 
 		ubColour = this->pAS->getPlayerColour(ubCount);
@@ -1021,7 +1038,15 @@ void SurfaceGame::initWorms() {
 		Q_EMIT this->wormCreated(pWorm);
 
 		pWorm->onSetLives(ubLives);
-		pWorm->onSetName(tr("Player ") + QString::number(ubCount + 1u));
+		if (pWorm->isAI()) {
+
+			pWorm->onSetName(tr("AI ") + QString::number(ubCount + 1u - ubCountHumans));
+
+		} else {
+
+			pWorm->onSetName(tr("Player ") + QString::number(ubCount + 1u));
+
+		} // if AI or human
 
 	} // loop worms
 
@@ -1059,6 +1084,7 @@ void SurfaceGame::keyPressEvent(QKeyEvent *pEvent) {
 
 void SurfaceGame::loadCurrentLevel() {
 
+	QString sMessage;
 	QString sPath = this->pAS->getDataPathLevelFile(this->ubCurrentLevel);
 
 	this->pUi->labelLevel->setText(tr("Level ") + QString::number(this->ubCurrentLevel));
@@ -1068,7 +1094,11 @@ void SurfaceGame::loadCurrentLevel() {
 	QFileInfo oFI = QFileInfo(sPath);
 	if (!(oFI.exists() && oFI.isFile())) {
 
-		this->onDebugMessage("KO: failed to find: " + sPath);
+		sMessage = tr("KO: failed to find: ") + sPath;
+
+		this->onDebugMessage(sMessage);
+		Q_EMIT this->statusMessage(sMessage);
+
 		return;
 
 	} // if file does not exist
@@ -1076,7 +1106,11 @@ void SurfaceGame::loadCurrentLevel() {
 	QFile oFile(sPath);
 	if (!oFile.open(QFile::ReadOnly)) {
 
-		this->onDebugMessage("KO: failed to open: " + sPath);
+		sMessage = tr("KO: failed to open: ") + sPath;
+
+		this->onDebugMessage(sMessage);
+		Q_EMIT this->statusMessage(sMessage);
+
 		return;
 
 	} // if failed to open
@@ -1087,7 +1121,11 @@ void SurfaceGame::loadCurrentLevel() {
 	if ((SssS_Nibblers_Surface_Height * SssS_Nibblers_Surface_Width)
 			> aFile.length()) {
 
-		this->onDebugMessage("invalid length (too short)");
+		sMessage = tr("invalid length (too short) ") + sPath;
+
+		this->onDebugMessage(sMessage);
+		Q_EMIT this->statusMessage(sMessage);
+
 		return;
 
 	} // if invalid length
@@ -1129,7 +1167,7 @@ void SurfaceGame::loadCurrentLevel() {
 
 			} // if special state we need to keep track of (new state)
 
-			this->setCellState(pCell, ubState);
+			this->setCellState(pCell, ubState, false);
 			pCell->freezeState();
 
 			iPos++;
@@ -1221,24 +1259,41 @@ QVector<quint8> SurfaceGame::nextPOIinDirection(SurfaceCell *pCell,
 } // nextPOIinDirection
 
 
-void SurfaceGame::on_buttonPP_toggled(bool bChecked) {
+void SurfaceGame::on_buttonPP_toggled(bool bStartPlaying) {
 
-	this->pUi->buttonPP->setText(bChecked ? tr("Pause") : tr("Play"));
+	this->onDebugMessage("bPP startPlaying? " + QString::number(bStartPlaying)
+						 + " protected? " + QString::number(this->bProtectPP));
+
+	this->pUi->buttonPP->setText(bStartPlaying ? tr("Pause") : tr("Play"));
 
 	if (this->bProtectPP) return;
 
-	if (this->pStartCountDownFrame) {
-	if (!bChecked) {
-		this->pStartCountDownFrame->onSetText(tr("Paused"));
-		this->pStartCountDownFrame->setGeometry(this->pUi->frameSurface->geometry());
-		this->pStartCountDownFrame->move(mapToGlobal(QPoint(this->pUi->frameSurface->geometry().left(), this->pUi->frameSurface->geometry().top())));//, this->pUi->buttonPP->height() + 12);
-		this->pStartCountDownFrame->show();
-		} else this->pStartCountDownFrame->hide();
-	}
+	if (bStartPlaying) {
+
+		// starting or resuming?
+
+		// no matter hide cover frame
+		if (this->pStartCountDownFrame) this->pStartCountDownFrame->hide();
+
+		// and give us focus for keystrokes
+		this->setFocus();
+
+		if (this->bLevelDone) {
+
+			this->onNextLevel();
+
+			return;
+
+		} // if level complete -> starting new one
+
+	} else {
+
+		// going into paused state
+		this->showStartCountDownFrame(tr("Paused"));
+
+	} // starting/resuming or pausing
 
 	Q_EMIT this->pauseResumeToggled();
-
-	if (bChecked) this->setFocus();
 
 } // on_buttonPP_toggled
 
@@ -1291,13 +1346,43 @@ void SurfaceGame::onDoGameOver() {
 	}
 
 	// show game over dialog
+	this->pStartCountDownFrame->onSetText(tr("Game Over"));
+	this->pStartCountDownFrame->setGeometry(this->pUi->frameSurface->geometry());
+	this->pStartCountDownFrame->move(mapToGlobal(QPoint(this->pUi->frameSurface->geometry().left(), this->pUi->frameSurface->geometry().top())));//, this->pUi->buttonPP->height() + 12);
+	this->pStartCountDownFrame->show();
 
-	Q_EMIT this->statusMessage("Game Over");
+	Q_EMIT this->statusMessage(tr("Game Over"));
 
 } // onDoGameOver
 
 
+void SurfaceGame::onDoLevelDone() {
+
+	this->bLevelDone = true;
+
+	QString sButton = tr("Start Next Level");
+	QString sMessage = tr("Level Done");
+	QPushButton *pButton = this->pUi->buttonPP;
+	// button is probably showing "Pause"
+	if (pButton->isChecked()) {
+		this->bProtectPP = true;
+		pButton->setChecked(false);
+		this->bProtectPP = false;
+	}
+	pButton->setEnabled(true);
+	pButton->setText(sButton);
+
+	// show level done dialog
+	this->showStartCountDownFrame(sMessage, sButton);
+
+	Q_EMIT this->statusMessage(sMessage);
+
+} // onDoLevelDone
+
+
 void SurfaceGame::onDoLevelStartCountdown() {
+
+	this->bLevelDone = false;
 
 	// go 5 steps in original direction
 	this->onMove();
@@ -1307,17 +1392,7 @@ void SurfaceGame::onDoLevelStartCountdown() {
 	this->onMove();
 
 	// open count-down dialog
-	if (nullptr == this->pStartCountDownFrame) {
-
-		FrameStartCountdown *pF = new FrameStartCountdown();
-		this->pStartCountDownFrame = pF;
-		pF->setWindowFlags(Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint);
-
-	} // if first time
-
-	this->pStartCountDownFrame->onSetText("3");
-	this->pStartCountDownFrame->setGeometry(this->window()->geometry());
-	this->pStartCountDownFrame->show();
+	this->showStartCountDownFrame("3");
 
 	this->pUi->buttonPP->setText("3");
 	this->pUi->buttonPP->setEnabled(false);
@@ -1369,11 +1444,12 @@ void SurfaceGame::onMove() {
 
 		if (pWorm->isImmune()) {
 
-			addCrashPotential(hppCrashPotential, apCrashedWorms, pCell, pWorm);
+			// others may crash? Maybe better not
+			//addCrashPotential(hppCrashPotential, apCrashedWorms, pCell, pWorm);
 			pWorm->advanceTo(pCell);
 			continue;
 
-		} //
+		} // if immune worm
 
 		ubState = pCell->getState();
 
@@ -1384,7 +1460,9 @@ void SurfaceGame::onMove() {
 			apCrashedWorms.append(pWorm);
 			continue;
 
-		} else if (aStatesTeleporterEntrances.contains(ubState)) {
+		} // if crashed
+
+		if (aStatesTeleporterEntrances.contains(ubState)) {
 
 			// enter teleporter
 			if (this->hpTeleporterExits.contains(ubState + 1u)) {
@@ -1403,23 +1481,28 @@ void SurfaceGame::onMove() {
 
 			} // if matching exit exists
 
-		} // if not empty
+		} // if teleporter entrance encountered
 
 		if (aStatesPickups.contains(ubState)) {
 
 			// let Game figure out which bonus it is
+			//this->onDebugMessage("Bonus Eaten at: " + QString::number(pCell->getColumn()) + ":" + QString::number(pCell->getRow()));
 			Q_EMIT this->wormAteBonus(pWorm, pCell);
 
 			// mark bloatedness on worm
 			pCell->addBloatedHeading(pWorm->currentDirection());
 			pWorm->advanceTo(pCell);
 			//pWorm->setNextBloatHeading(L::oppositeHeading(pWorm->currentDirection()));
+
+		} else {
+
+			// any free cell
+			pWorm->advanceTo(pCell);
+
+			SurfaceGame::addCrashPotential(hppCrashPotential, apCrashedWorms,
+										   pCell, pWorm);
+
 		} // if picked up something
-
-		pWorm->advanceTo(pCell);
-
-		SurfaceGame::addCrashPotential(hppCrashPotential, apCrashedWorms,
-									   pCell, pWorm);
 
 	} // loop
 
@@ -1435,6 +1518,14 @@ void SurfaceGame::onMove() {
 	} // loop crashed worms
 
 	// do AI-moves
+	// check how messy map has become
+	if (222u <= this->ubAIcountDeadendRun) {
+
+		this->pAImap->fillAll(L::FloorClean);
+		this->ubAIcountDeadendRun = 1u;
+
+	} // if time to clean up shadow-map aka Worm::deadend_board
+
 	for (int i = 0; i < this->apWorms.length(); ++i) {
 
 		pWorm = this->apWorms.at(i);
@@ -1459,6 +1550,15 @@ void SurfaceGame::onNextLevel() {
 	this->loadCurrentLevel();
 
 	// distribute spawn points. this could be done by Game
+	this->randomizeSpawns();
+
+	for (int i = 0; i < this->apWorms.length(); ++i) {
+
+		this->apWorms.at(i)->onSetSpawnCell(this->apSpawnPoints.at(i));
+
+	} // loop worms
+
+	this->onDoLevelStartCountdown();
 
 } // onNextLevel
 
@@ -1609,6 +1709,22 @@ void SurfaceGame::pauseIfRunning() {
 } // pauseIfRunning
 
 
+void SurfaceGame::randomizeSpawns() {
+
+	int iPos;
+	QVector<SurfaceCell *> apNew;
+	while(this->apSpawnPoints.length()) {
+
+		iPos = qrand() % this->apSpawnPoints.length();
+		apNew.append(this->apSpawnPoints.takeAt(iPos));
+
+	} // loop all out
+
+	this->apSpawnPoints = apNew;
+
+} // randomizeSpawns
+
+
 void SurfaceGame::resetButtons() {
 
 	this->bProtectPP = true;
@@ -1678,11 +1794,53 @@ void SurfaceGame::setCellState(const quint8 ubColumn, const quint8 ubRow,
 } // setCellState
 
 
+void SurfaceGame::showStartCountDownFrame(const QString sMessage,
+										  const QString sButton) {
+
+	FrameStartCountdown *pFrame = this->pStartCountDownFrame;
+	if (nullptr == pFrame) {
+
+		pFrame = new FrameStartCountdown();
+		pFrame->setWindowFlags(Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint);
+
+		this->pStartCountDownFrame = pFrame;
+
+		connect(pFrame, SIGNAL(debugMessage(QString)),
+				this, SLOT(onDebugMessage(QString)));
+
+		connect(pFrame, SIGNAL(done()),
+				this, SLOT(onSCDFdone()));
+
+	} // if first time
+
+	pFrame->onSetText(sMessage, sButton);
+	pFrame->show();
+	this->updateFrameStartCountdown();
+
+} // showStartCountDownFrame
+
+
 QSize SurfaceGame::sizeHint() const {
 
 	return QFrame::sizeHint();
 
 } // sizeHint
+
+
+void SurfaceGame::updateFrameStartCountdown() {
+
+	FrameStartCountdown *pFrame = this->pStartCountDownFrame;
+	if (nullptr == pFrame) return;
+	if (pFrame->isHidden()) return;
+
+	QRect oRect = this->pUi->frameSurface->geometry();
+	pFrame->setGeometry(oRect);
+	pFrame->move(mapToGlobal(QPoint(oRect.left(), oRect.top())));
+	pFrame->show();
+	pFrame->raise();
+	pFrame->update();
+
+} // updateFrameStartCountdown
 
 
 

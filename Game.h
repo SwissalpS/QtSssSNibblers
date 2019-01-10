@@ -19,6 +19,7 @@ class Game : public QObject {
 private:
 
 protected:
+	bool bGameStarted;
 	bool bLevelStarted;
 	bool bPaused;
 	bool bUseFakes;
@@ -28,6 +29,7 @@ protected:
 	quint8 ubCountBonusMissed;
 	quint8 ubCountDead;
 	quint8 ubCountLevels;
+	quint8 ubCountNeedApple;
 	quint8 ubSpeedIndex;
 	quint16 uiApplesToGo;
 	float fFactorApple;
@@ -43,6 +45,7 @@ protected:
 	QTimer *pTimerBonus;
 
 	virtual void addBonus(const bool bApple);
+	virtual void clearExpiredBonuses();
 	virtual void destroyBonus(Bonus *pBonus);
 
 protected slots:
@@ -59,6 +62,7 @@ public:
 
 signals:
 	void doGameOver() const;
+	void doLevelDone() const;
 	void doLevelStartCountdown() const;
 	void debugMessage(const QString &sMessage) const;
 	void move() const;
@@ -70,18 +74,21 @@ signals:
 public slots:
 	void onBonusPlaced(const QVector<SurfaceCell *> apCells, const bool bFake);
 	void onBonusTimedOut(Bonus *pBonus);
+
+	inline void onDebugMessage(const QString &sMessage) const {
+		Q_EMIT this->debugMessage("G:" + sMessage); }
+
 	void onNoSpaceFoundForBonus(const quint8 ubBonus, const bool bFake);
+	void onPauseResumeToggled();
 	void onPlayerCountChanged(const quint8 ubCountHumans,
 							  const quint8 ubCountAIs);
 	void onReset();
+	void onResetSoft();
 	void onSpeedChanged(const int iIndex);
 	void onWormAteBonus(Worm *pWorm, SurfaceCell *pCell);
 	void onWormCrashed(Worm *pWorm);
 	void onWormCreated(Worm *pWorm);
 	void onWormDied(); //Worm *pWorm);
-	inline void onDebugMessage(const QString &sMessage) const {
-		Q_EMIT this->debugMessage("G:" + sMessage); }
-	void onPauseResumeToggled();
 
 }; // Game
 

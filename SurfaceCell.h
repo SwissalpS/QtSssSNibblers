@@ -23,6 +23,7 @@ namespace SwissalpS { namespace QtNibblers {
 
 
 class SurfaceCell : public QFrame {
+
 	Q_OBJECT
 
 private:
@@ -43,9 +44,9 @@ protected:
 
 
 public:
-	explicit SurfaceCell(QWidget *pParent = 0);
+	explicit SurfaceCell(QWidget *pParent = nullptr);
 	explicit SurfaceCell(bool bBuilder, quint8 ubState,
-						 quint8 ubColumn, quint8 ubRow, QWidget *pParent = 0);
+						 quint8 ubColumn, quint8 ubRow, QWidget *pParent = nullptr);
 	~SurfaceCell();
 
 	inline virtual void addBloatedHeading(const L::Heading eHeading) {
@@ -54,14 +55,16 @@ public:
 	virtual void defrostState();
 	virtual void desnakeState();
 	inline virtual void freezeState() { this->ubStateFrozen = this->ubState; }
-	inline virtual quint8 getColumn() { return this->ubColumn; }
-	inline virtual QPoint getPos() { return QPoint(this->ubColumn, this->ubRow); }
-	inline virtual quint8 getRow() { return this->ubRow; }
-	inline virtual quint8 getState() { return this->ubState; }
-	inline virtual quint8 getStateFrozen() { return this->ubStateFrozen; }
-	inline virtual bool isNull() { return nullptr == this->pUi; }
+	inline virtual quint8 getColumn() const { return this->ubColumn; }
+	inline virtual QPoint getPos() const { return QPoint(this->ubColumn, this->ubRow); }
+	inline virtual quint8 getRow() const { return this->ubRow; }
+	inline virtual quint8 getState() const { return this->ubState; }
+	inline virtual quint8 getStateFrozen() const { return this->ubStateFrozen; }
+	inline virtual bool isNull() const { return nullptr == this->pUi; }
 
 	inline virtual void setState(const quint8 ubState) { this->ubState = ubState; }
+
+	bool operator ==(SurfaceCell *pOther) const;
 
 signals:
 	void clicked(const quint8 ubColumn, const quint8 ubRow, bool bShift,
