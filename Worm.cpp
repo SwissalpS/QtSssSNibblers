@@ -16,7 +16,8 @@ Worm::Worm(SurfaceCell *pCell, const quint8 ubColour,
 	ubLives(0u),
 	ubSpawnSafetyTicks(0u),
 	ulScore(0u),
-	pCellSpawn(pCell) {
+	pCellSpawn(pCell),
+	eNextBloat(L::Nowhere) {
 
 	this->onSetSpawnCell(pCell);
 
@@ -63,6 +64,13 @@ void Worm::advanceTo(SurfaceCell *pCell) {
 
 	// make old head a mid-section
 	this->apCells.first()->setState(this->midState());
+
+	if (L::Nowhere != this->eNextBloat) {
+
+		pCell->addBloatedHeading(this->eNextBloat);
+		this->eNextBloat = L::Nowhere;
+
+	} // if add bloat
 
 	// attach new head
 	this->apCells.prepend(pCell);
@@ -423,6 +431,7 @@ void Worm::startSpawning() {
 
 	this->aeNextHeadings.clear();
 	this->eCurrentHeading = this->eSpawnHeading;
+	this->eNextBloat = L::Nowhere;
 
 } // startSpawning
 

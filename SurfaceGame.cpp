@@ -1410,6 +1410,10 @@ void SurfaceGame::onMove() {
 			// let Game figure out which bonus it is
 			Q_EMIT this->wormAteBonus(pWorm, pCell);
 
+			// mark bloatedness on worm
+			pCell->addBloatedHeading(pWorm->currentDirection());
+			pWorm->advanceTo(pCell);
+			//pWorm->setNextBloatHeading(L::oppositeHeading(pWorm->currentDirection()));
 		} // if picked up something
 
 		pWorm->advanceTo(pCell);

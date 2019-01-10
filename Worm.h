@@ -31,6 +31,7 @@ protected:
 	QVector<L::Heading> aeNextHeadings;
 	L::Heading eCurrentHeading;
 	L::Heading eSpawnHeading;
+	L::Heading eNextBloat;
 
 	void doNextTurn();
 
@@ -67,6 +68,7 @@ public:
 	virtual QPoint rightPoint();
 	virtual void setColourIndex(const quint8 ubIndex);
 	inline virtual void setHeading(const L::Heading eDirection) { this->eCurrentHeading = eDirection; }
+	inline virtual void setNextBloatHeading(const L::Heading eDirection) { this->eNextBloat = eDirection; }
 	inline virtual void setUseRelativeControls(bool bUse) { this->bUseRelativeControls = bUse; }
 	virtual void startSpawning();
 	// cell that comes last

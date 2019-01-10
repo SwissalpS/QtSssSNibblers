@@ -235,6 +235,8 @@ QColor SurfaceCell::colour() const {
 
 void SurfaceCell::defrostState() {
 
+	this->aeHeadingsBloated.clear();
+
 	this->ubState = this->ubStateFrozen;
 
 	this->update();
@@ -302,24 +304,40 @@ void SurfaceCell::paintEvent(QPaintEvent *pEvent) {
 		// draw snake
 		QColor oColour = this->colour();
 
-		int iA = 1;
-		QRect oRect = this->rect().adjusted(iA, iA, -1 * iA, -1 * iA);
+		oP.fillRect(this->rect(), Qt::black);
+
+		QRect oRect;
+		int iA = 2;
+		if (this->aeHeadingsBloated.length()) {
+
+			oRect = this->rect();
+			oColour = oColour.darker(115);
+
+		} else {
+
+			oRect = this->rect().adjusted(iA, iA, -1 * iA, -1 * iA);
+
+		} // if bloated
+
 		oP.fillRect(oRect, oColour);
+
+		return;
 
 		//		oP.setBrush(oColour);
 		//		oP.setPen(Qt::black);
 				//oP.drawRoundedRect(oRect, oRect.width() * 0.32,
 				//				   oRect.height() * 0.32);
 
-		int iBh = this->height() * 0.42 + 1;
-		int iBw = this->width() * 0.42 + 1;
+		// this 'works' but it didn't look good enough
+		int iBh = int(double(this->height() * 0.42) + 1);
+		int iBw = int(double(this->width() * 0.42) + 1);
 
 		int iSpan;
 		int iStart;
 		L::Heading eHeading;
 
-		oP.setBrush(oColour);
-		oP.setPen(oColour);
+		oP.setBrush(oColour.darker(125));
+		oP.setPen(oColour.darker(120));
 
 		for (int i = 0; i < this->aeHeadingsBloated.length(); ++i) {
 

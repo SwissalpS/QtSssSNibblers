@@ -47,6 +47,10 @@ public:
 	explicit SurfaceCell(bool bBuilder, quint8 ubState,
 						 quint8 ubColumn, quint8 ubRow, QWidget *pParent = 0);
 	~SurfaceCell();
+
+	inline virtual void addBloatedHeading(const L::Heading eHeading) {
+		this->aeHeadingsBloated.append(eHeading); }
+
 	virtual void defrostState();
 	virtual void desnakeState();
 	inline virtual void freezeState() { this->ubStateFrozen = this->ubState; }
