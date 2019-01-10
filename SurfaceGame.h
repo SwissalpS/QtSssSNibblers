@@ -53,7 +53,7 @@ protected:
 	FrameStartCountdown *pStartCountDownFrame;
 	quint8 ubCurrentLevel;
 	mutable int iLastHeight;
-	uint uiAIdeadendRunnumber;
+	quint8 ubAIcountDeadendRun;
 	Map *pAImap;
 
 	static void addCrashPotential(QHash<SurfaceCell *, Worm *> &hppCrashPotential,
@@ -61,14 +61,14 @@ protected:
 								   SurfaceCell *pCell, Worm *pWorm);
 
 	virtual bool aiCanMoveTo(Worm *pWorm);
-	virtual int aiDeadend(const QPoint oStart, qint16 iLen);
-	virtual int aiDeadendAfter(Worm *pWorm, const qint16 iLen);
+	virtual qint32 aiDeadend(const QPoint oStart, qint32 ilLen);
+	virtual qint32 aiDeadendAfter(Worm *pWorm, const qint32 ilLen);
 	virtual void aiMove(Worm *pWorm);
 	virtual bool aiTooClose(Worm *pWorm);
 	virtual bool aiWander(const QPoint oStart, const QPoint oStop,
 								 const L::Heading eDirection);
 
-	void changeEvent(QEvent *pEvent);
+	void changeEvent(QEvent *pEvent) override;
 	virtual void clearSurface();
 	virtual void clearSurfaceOf(const quint8 ubState);
 	virtual void clearSurfaceOf(const QVector<quint8>aStates);
@@ -77,8 +77,8 @@ protected:
 	virtual Map *currentMap();
 	virtual quint16 findNextGood(const QPoint oStart, const L::Heading eDirection);
 	virtual void findNextMovesForWorm(Worm *pWorm);
-	virtual void focusInEvent(QFocusEvent *pEvent);
-	virtual void focusOutEvent(QFocusEvent *pEvent);
+	virtual void focusInEvent(QFocusEvent *pEvent) override;
+	virtual void focusOutEvent(QFocusEvent *pEvent) override;
 	virtual SurfaceCell* getCell(const QPoint oPoint);
 	virtual SurfaceCell* getCell(const quint8 ubColumn, const quint8 ubRow);
 	virtual void keyPressEvent(QKeyEvent *pEvent) override;
@@ -87,7 +87,7 @@ protected:
 											   const L::Heading eDirection);
 	virtual void pauseIfRunning();
 	virtual void resetButtons();
-	void resizeEvent(QResizeEvent *pEvent);
+	void resizeEvent(QResizeEvent *pEvent) override;
 	virtual void setCellState(SurfaceCell *pCell, const quint8 ubState,
 							  const bool bUpdate = true);
 	virtual void setCellState(const quint8 ubColumn, const quint8 ubRow,
@@ -97,15 +97,15 @@ protected:
 protected slots:
 	void countdownTick();
 	virtual void dialogLoadFinished(const int iResult);
-	void initKeys();
-	void initCells();
-	void initWorms();
+	virtual void initKeys();
+	virtual void initCells();
+	virtual void initWorms();
 
 public:
-	explicit SurfaceGame(QWidget *pParent = 0);
-	~SurfaceGame();
+	explicit SurfaceGame(QWidget *pParent = nullptr);
+	~SurfaceGame() override;
 	virtual void init();
-	virtual QSize sizeHint() const;
+	virtual QSize sizeHint() const override;
 
 signals:
 	void bonusPlaced(QVector<SurfaceCell *> apCells, const bool bFake) const;

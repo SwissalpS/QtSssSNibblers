@@ -82,7 +82,7 @@ void Worm::advanceTo(SurfaceCell *pCell) {
 
 		// revert to normal game state
 		this->apCells.last()->desnakeState();
-		this->apCells.remove(this->apCells.length() - 1);
+		this->apCells.removeLast();
 
 	} // loop
 
@@ -243,8 +243,7 @@ QPoint Worm::leftPoint() {
 
 	SurfaceCell *pCell = this->apCells.first();
 
-	return L::warpPoint(pCell->getColumn(), pCell->getRow(),
-						this->headingLeft());
+	return L::warpPoint(pCell->getPos(), this->headingLeft());
 
 } // leftPoint
 
@@ -263,7 +262,7 @@ QPoint Worm::nextPoint() {
 
 	SurfaceCell *pCell = this->apCells.first();
 
-	return L::warpPoint(pCell->getColumn(), pCell->getRow(), this->eCurrentHeading);
+	return L::warpPoint(pCell->getPos(), this->eCurrentHeading);
 
 } // nextPoint
 
@@ -307,16 +306,50 @@ void Worm::onReverse() {
 	QVector<SurfaceCell *> apOld(this->apCells);
 	this->apCells.clear();
 
-	for (int i = apOld.length() - 1; i >= 0 ; ++i) {
+	while (apOld.length()) {
 
-		this->apCells.append(apOld.at(i));
+		this->apCells.append(apOld.takeLast());
 
-	} // loop
+	} // loop cells in backwards
 
 	this->headCell()->setState(this->headState());
 	this->tailCell()->setState(this->tailState());
 
-	this->eCurrentHeading = L::oppositeHeading(this->eCurrentHeading);
+	bool bSolveWithHeadOnly = false;
+	L::Heading eNewHeading = this->eCurrentHeading;
+
+	// check the first two segments to determine the heading
+	if (2 <= this->apCells.length()) {
+
+		// try with the first 2 cells to find direction
+		eNewHeading = L::oppositeHeading(this->apCells.first()->getPos(),
+										 this->apCells.at(1)->getPos());
+
+		// did that work?
+		if (L::Nowhere == eNewHeading) {
+
+			// try again with 2nd and 3rd cells
+			if (3 <= this->apCells.length()) {
+
+				eNewHeading = L::oppositeHeading(this->apCells.at(1)->getPos(),
+												 this->apCells.at(2)->getPos());
+
+				if (L::Nowhere == eNewHeading) bSolveWithHeadOnly = true;
+
+			} else {
+
+				// pick random direction or opposite of what head is doing now
+				bSolveWithHeadOnly = true;
+
+			} // if got at least 3 cells or not
+
+		} // if teleporter
+
+	} else bSolveWithHeadOnly = true;
+
+	if (bSolveWithHeadOnly)
+		this->eCurrentHeading = L::oppositeHeading(this->eCurrentHeading);
+	else this->eCurrentHeading = eNewHeading;
 
 } // onReverse
 
@@ -396,7 +429,7 @@ QPoint Worm::rightPoint() {
 
 	SurfaceCell *pCell = this->apCells.first();
 
-	return L::warpPoint(pCell->getColumn(), pCell->getRow(), this->headingRight());
+	return L::warpPoint(pCell->getPos(), this->headingRight());
 
 } // rightPoint
 
