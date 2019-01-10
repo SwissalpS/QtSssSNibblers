@@ -366,7 +366,7 @@ void SurfaceCell::paintEvent(QPaintEvent *pEvent) {
 
 			} else { // must be West
 
-				iStart = 0;
+				iStart = 90;
 				iSpan = -180;
 				oRect = QRect(0, 0,
 							  iBw + 1, this->height());
