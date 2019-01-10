@@ -250,6 +250,27 @@ public:
 	} // headingOfUint
 
 
+	// used to determine the heading when snake is reversed
+	// first point is new head and 2nd point is the new neck
+	inline static Heading oppositeHeading(const QPoint oPointLast,
+										  const QPoint oPoint2ndLast) {
+		int iDx = oPointLast.x() - oPoint2ndLast.x();
+		int iDy = oPointLast.y() - oPoint2ndLast.y();
+		if (0 == iDx) {
+			// same column
+			if (oPointLast.y() < oPoint2ndLast.y()) return North;
+			else return South;
+		} else if (0 == iDy) {
+			// same row
+			if (oPointLast.x() < oPoint2ndLast.x()) return West;
+			else return East;
+		} else {
+			// teleporter (or diagonal which doesn't happen)
+			return Nowhere;
+		} // switch horizontal, vertical or other
+	} // oppositeHeading
+
+
 	inline static Heading oppositeHeading(const Heading eDirection) {
 		switch (eDirection) {
 			case North: return South;
