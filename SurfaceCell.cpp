@@ -50,6 +50,13 @@ SurfaceCell::~SurfaceCell() {
 } // dealloc
 
 
+bool SurfaceCell::operator==(SurfaceCell *pOther) const {
+
+	return pOther->getPos() == this->getPos();
+
+} // operator==
+
+
 void SurfaceCell::changeEvent(QEvent *pEvent) {
 
 	QFrame::changeEvent(pEvent);
