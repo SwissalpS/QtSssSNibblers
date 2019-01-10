@@ -24,6 +24,9 @@ Bonus::Bonus(QVector<SurfaceCell *> apCells, const bool bFake, QObject *pParent)
 Bonus::~Bonus() {
 
 	this->apCells.clear();
+	this->bExpired = true;
+	this->ubStateBase = 0xFCu;
+	this->uiTicks = 0u;
 
 } // dealloc
 
@@ -61,7 +64,6 @@ void Bonus::setStateBase(const quint8 &ubState) {
 void Bonus::onGotEaten() {
 
 	this->defreezeCells();
-	//QTimer::singleShot(0, this, SLOT(defreezeCells()));
 
 	Q_EMIT this->gotEaten();
 

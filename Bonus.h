@@ -33,6 +33,7 @@ public:
 	inline virtual bool contains(SurfaceCell *pCell) const { return this->apCells.contains(pCell); }
 	inline virtual QVector<SurfaceCell *> getCells() const { return this->apCells; }
 	inline virtual quint8 getStateBase() const { return this->ubStateBase; }
+	inline virtual bool hasExpired() const { return this->bExpired; }
 	inline virtual bool hasTimedOut() const { return 0 == this->uiTicks;}
 	inline virtual bool isFake() const { return this->bFake; }
 	virtual void setStateBase(const quint8 &ubState);
