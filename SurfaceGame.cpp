@@ -456,10 +456,10 @@ qint32 SurfaceGame::aiDeadendAfter(Worm *pWorm, const qint32 ilLen) {
 
 		if (oHeadOther.x() != ubX || oHeadOther.y() != ubY) {
 
-			if (0 < iCx) this->pAImap->setTile(iCx - 1, iCy, this->uiAIdeadendRunnumber);
-			if (0 < iCy) this->pAImap->setTile(iCx, iCy - 1, this->uiAIdeadendRunnumber);
-			if ((SssS_Nibblers_Surface_Width - 1) > iCx) this->pAImap->setTile(iCx + 1, iCy, this->uiAIdeadendRunnumber);
-			if ((SssS_Nibblers_Surface_Height -1) > iCy) this->pAImap->setTile(iCx, iCy + 1, this->uiAIdeadendRunnumber);
+			this->pAImap->setTile(L::warpPoint(oHeadOther, L::North), this->ubAIcountDeadendRun);
+			this->pAImap->setTile(L::warpPoint(oHeadOther, L::West), this->ubAIcountDeadendRun);
+			this->pAImap->setTile(L::warpPoint(oHeadOther, L::South), this->ubAIcountDeadendRun);
+			this->pAImap->setTile(L::warpPoint(oHeadOther, L::East), this->ubAIcountDeadendRun);
 
 		} // if
 
