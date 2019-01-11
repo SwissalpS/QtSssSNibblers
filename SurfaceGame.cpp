@@ -1533,14 +1533,15 @@ void SurfaceGame::onMove() {
 
 		if (aStatesPickups.contains(ubState)) {
 
+			// mark bloatedness on worm
+			pCell->addBloatedHeading(pWorm->currentDirection());
+			//pWorm->setNextBloatHeading(L::oppositeHeading(pWorm->currentDirection()));
+			pWorm->advanceTo(pCell);
+
 			// let Game figure out which bonus it is
 			//this->onDebugMessage("Bonus Eaten at: " + QString::number(pCell->getColumn()) + ":" + QString::number(pCell->getRow()));
 			Q_EMIT this->wormAteBonus(pWorm, pCell);
 
-			// mark bloatedness on worm
-			pCell->addBloatedHeading(pWorm->currentDirection());
-			pWorm->advanceTo(pCell);
-			//pWorm->setNextBloatHeading(L::oppositeHeading(pWorm->currentDirection()));
 
 		} else {
 
