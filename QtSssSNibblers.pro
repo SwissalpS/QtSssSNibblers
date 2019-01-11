@@ -8,6 +8,8 @@ QT		+= core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
+qtHaveModule(multimedia): QT += multimedia
+
 TARGET = QtSssSNibblers
 TEMPLATE = app
 
@@ -29,6 +31,7 @@ SOURCES += \
 	DialogLoad.cpp \
 	DialogSave.cpp \
 	FrameStartCountdown.cpp \
+	Fx.cpp \
 	Game.cpp \
 	IconEngine.cpp \
 	main.cpp \
@@ -48,6 +51,7 @@ HEADERS += \
 	DialogLoad.h \
 	DialogSave.h \
 	FrameStartCountdown.h \
+	Fx.h \
 	Game.h \
 	IconEngine.h \
 	Lingo.h \
@@ -70,5 +74,4 @@ FORMS += \
 	SurfaceCell.ui \
 	SurfaceGame.ui
 
-RESOURCES += \
-	QtSssSNibblers.qrc
+RESOURCES += QtSssSNibblers.qrc

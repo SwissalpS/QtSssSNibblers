@@ -1,5 +1,7 @@
 #include "Game.h"
 
+#include "Fx.h"
+
 #include <QTime>
 
 
@@ -220,6 +222,8 @@ void Game::onBonusPlaced(const QVector<SurfaceCell *> apCells, const bool bFake)
 	Bonus *pBonus = new Bonus(apCells, bFake, this);
 
 	this->apBonus.prepend(pBonus);
+
+	if (L::BonusApple != pBonus->getStateBase()) Fx::play(Fx::Appear);
 
 	// wich kind? how many ticks until expired?
 	quint16 uiTicks = 0u;
@@ -541,6 +545,8 @@ void Game::onWormAteBonus(Worm *pWorm, SurfaceCell *pCell) {
 
 	if (pBonus->isFake()) {
 
+		Fx::play(Fx::Reverse);
+
 		pWorm->onReverse();
 		this->destroyBonus(pBonus);
 		return;
@@ -557,6 +563,8 @@ void Game::onWormAteBonus(Worm *pWorm, SurfaceCell *pCell) {
 	switch (ubState) {
 
 		case L::BonusApple:
+
+			Fx::play(Fx::Gobble);
 
 			// add points
 			pWorm->onAddScore((this->ubCountBonus - this->ubCountApplesLeft)
@@ -593,6 +601,8 @@ void Game::onWormAteBonus(Worm *pWorm, SurfaceCell *pCell) {
 
 		case L::BonusCherry:
 
+			Fx::play(Fx::Bonus);
+
 			if (2 >= pWorm->targetLength()) break;
 
 			// add points
@@ -608,6 +618,8 @@ void Game::onWormAteBonus(Worm *pWorm, SurfaceCell *pCell) {
 
 		case L::BonusBanana:
 
+			Fx::play(Fx::Bonus);
+
 			// add points
 			pWorm->onAddScore(qint16(pWorm->targetLength() * this->ubCountLevels));
 			// grow
@@ -620,6 +632,8 @@ void Game::onWormAteBonus(Worm *pWorm, SurfaceCell *pCell) {
 
 		case L::BonusHeart:
 
+			Fx::play(Fx::Life);
+
 			// no points
 			// no growth
 
@@ -628,6 +642,8 @@ void Game::onWormAteBonus(Worm *pWorm, SurfaceCell *pCell) {
 		break;
 
 		case L::BonusDiamond:
+
+			Fx::play(Fx::Reverse);
 
 			// no points
 			// no growth
@@ -655,6 +671,8 @@ void Game::onWormAteBonus(Worm *pWorm, SurfaceCell *pCell) {
 
 
 void Game::onWormCrashed(Worm *pWorm) {
+
+	Fx::play(Fx::Crash);
 
 	pWorm->onSubtractLife();
 

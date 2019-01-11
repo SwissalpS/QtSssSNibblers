@@ -57,5 +57,13 @@
 		<file>Levels/Level_24</file>
 		<file>Levels/Level_25</file>
 		<file>Levels/Level_26</file>
+		<file>Sounds/appear.wav</file>
+		<file>Sounds/bonus.wav</file>
+		<file>Sounds/crash.wav</file>
+		<file>Sounds/gameover.wav</file>
+		<file>Sounds/gobble.wav</file>
+		<file>Sounds/life.wav</file>
+		<file>Sounds/reverse.wav</file>
+		<file>Sounds/teleport.wav</file>
 	</qresource>
 </RCC>

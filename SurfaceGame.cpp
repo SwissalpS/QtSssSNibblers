@@ -2,6 +2,7 @@
 #include "ui_SurfaceGame.h"
 
 #include "definitions.h"
+#include "Fx.h"
 #include "IconEngine.h"
 #include <QDir>
 #include <QFile>
@@ -1375,6 +1376,8 @@ void SurfaceGame::onDoGameOver() {
 
 	this->onDebugMessage("onDoGameOver");
 
+	Fx::play(Fx::GameOver);
+
 	// button is probably showing "Pause"
 	if (this->pUi->buttonPP->isChecked()) {
 		this->bProtectPP = true;
@@ -1509,6 +1512,8 @@ void SurfaceGame::onMove() {
 
 			// enter teleporter
 			if (this->hpTeleporterExits.contains(ubState + 1u)) {
+
+				Fx::play(Fx::Teleport);
 
 				// add both entrance and exit to crash potentials
 				addCrashPotential(hppCrashPotential, apCrashedWorms,
