@@ -9,6 +9,8 @@
 #define SssS_Nibblers_Surface_Height quint8(66u)
 #define SssS_Nibblers_Surface_Width quint8(92u)
 
+#define SssS_Nibblers_Game_Start_Countdown quint8(3u)
+#define SssS_Nibblers_Bonus_Delay_Ticks quint8(2u)
 #define SssS_Nibblers_Speed_Base int(35)
 #define SssS_Nibblers_Speed_Bonus_Base int(100)
 

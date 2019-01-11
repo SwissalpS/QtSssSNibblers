@@ -99,7 +99,7 @@ protected:
 	virtual void updateFrameStartCountdown();
 
 protected slots:
-	void countdownTick();
+	virtual void countdownTick();
 	virtual void dialogLoadFinished(const int iResult);
 	virtual void initKeys();
 	virtual void initCells();

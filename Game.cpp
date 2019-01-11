@@ -20,7 +20,7 @@ Game::Game(QObject *pParent) :
 	ubCountBonusMissed(0u),
 	ubCountDead(0u),
 	ubCountLevels(0u),
-	ubCountNeedApple(6u),
+	ubCountNeedApple(SssS_Nibblers_Bonus_Delay_Ticks),
 	ubSpeedIndex(0u),
 	uiApplesToGo(0u),
 	fFactorApple(1.0f),
@@ -57,6 +57,7 @@ Game::~Game() {
 // slightly adapted from nibbles-game.vala NibblesGame.add_bonus(bool)
 // chances of each should be compareable to gnome-nibbles and it's ancestors.
 void Game::addBonus(const bool bApple) {
+
 	// don't always create bonus if it's not an apple
 	if (!bApple) {
 
@@ -101,7 +102,7 @@ void Game::addBonus(const bool bApple) {
 
 		} // if add a fake
 
-		this->ubCountNeedApple = 6u;
+		this->ubCountNeedApple = SssS_Nibblers_Bonus_Delay_Ticks;
 
 		Q_EMIT this->placeBonus(L::BonusApple, false);
 
@@ -232,25 +233,13 @@ void Game::onBonusPlaced(const QVector<SurfaceCell *> apCells, const bool bFake)
 void Game::onBonusTimedOut(Bonus *pBonus) {
 
 	bool bWasApple = L::BonusApple == pBonus->getStateBase();
-	if (!bWasApple) this->ubCountBonusMissed++;
-
 	if (pBonus->isFake()) bWasApple = false;
-
-	// TODO:
-	// what kind? do we need to place it again?
-
-	qint16 iPenalty = -1 * SssS_Nibblers_Bonus_Penalty_Miss
-					  * this->ubCountLevels	* this->ubSpeedIndex;
-
-	for (int i = 0; i < this->apWorms.length(); ++i) {
-
-		this->apWorms.at(i)->onAddScore(iPenalty);
-
-	} // loop worms
+	if (bWasApple) this->ubCountBonusMissed++;
 
 	// destroy Bonus
 	this->destroyBonus(pBonus);
 
+	// spawn another if it was an apple
 	if (bWasApple) this->addBonus(true);
 
 } // onBonusTimedOut
@@ -258,7 +247,10 @@ void Game::onBonusTimedOut(Bonus *pBonus) {
 
 void Game::onNoSpaceFoundForBonus(const quint8 ubBonus, const bool bFake) {
 
-	if ((!bFake) && (L::BonusApple == ubBonus)) this->ubCountNeedApple = 6u;
+	this->onDebugMessage("onNoSpaceFoundForBonus");
+
+	if ((!bFake) && (L::BonusApple == ubBonus))
+		this->ubCountNeedApple = SssS_Nibblers_Bonus_Delay_Ticks;
 
 } // onNoSpaceFoundForBonus
 
@@ -275,11 +267,17 @@ void Game::onPlayerCountChanged(const quint8 ubCountHumans,
 
 void Game::onPauseResumeToggled() {
 
+//	this->onDebugMessage("onPRT bP: " + QString::number(this->bPaused)
+//						 + " bGO: " + QString::number(this->isGameOver())
+//						 + " bLS: " + QString::number(this->bLevelStarted)
+//						 + " bGS: " + QString::number(this->bGameStarted)
+//						 );
+
 	if (this->isGameOver()) return;
 
-	this->bPaused = !this->bPaused;
-
 	if (this->bLevelStarted) {
+
+		this->bPaused = !this->bPaused;
 
 		if (this->bPaused) {
 
@@ -323,7 +321,10 @@ void Game::onPauseResumeToggled() {
 } // onPauseResumeToggled
 
 
+// aka onResetLevel
 void Game::onResetSoft() {
+
+	//this->onDebugMessage("onResetSoft");
 
 	this->apBonus.clear();
 
@@ -337,11 +338,15 @@ void Game::onResetSoft() {
 	this->ubCountBonus = 8u + quint8(this->apWorms.length());
 	this->ubCountApplesLeft = this->ubCountBonus;
 	this->ubCountBonusMissed = 0;
+	this->ubCountNeedApple = SssS_Nibblers_Bonus_Delay_Ticks;
 
 } // onResetSoft
 
 
+// aka onResetGame
 void Game::onReset() {
+
+	//this->onDebugMessage("onReset");
 
 	this->onResetSoft();
 
@@ -401,7 +406,25 @@ void Game::onSpeedChanged(const int iIndex) {
 
 void Game::onTick() {
 
-	//this->clearExpiredBonuses();
+	// penalty for having missed bonuses
+	if (SssS_Nibblers_Bonus_Max_Missed < this->ubCountBonusMissed) {
+
+		qint16 iPenalty = -1 * SssS_Nibblers_Bonus_Penalty_Miss;
+
+		Worm *pWorm;
+		for (int i = 0; i < this->apWorms.length(); ++i) {
+
+			pWorm = this->apWorms.at(i);
+
+			// no penalty for dead worms
+			// gnome-nibbles does not regard this
+			if (pWorm->isDead()) continue;
+
+			pWorm->onAddScore(iPenalty);
+
+		} // loop worms
+
+	} // if penalty
 
 	Q_EMIT this->move();
 
@@ -508,11 +531,10 @@ void Game::onWormAteBonus(Worm *pWorm, SurfaceCell *pCell) {
 					this->pTimer->stop();
 					this->pTimerBonus->stop();
 					this->bLevelStarted = false;
+					this->onDebugMessage("level done");
 					Q_EMIT this->doLevelDone();
 
 				} else {
-					// TODO: keep track of apples as there may not be any space
-					// but there needs to be one as soon as space is available
 					this->addBonus(true);
 				} // if have apples or not
 
@@ -586,6 +608,12 @@ void Game::onWormAteBonus(Worm *pWorm, SurfaceCell *pCell) {
 void Game::onWormCrashed(Worm *pWorm) {
 
 	pWorm->onSubtractLife();
+
+	if (1 < this->apWorms.length()) {
+
+		pWorm->onMultiplyScore(0.7f);
+
+	} // if more than one player -> penalty points
 
 	if (!pWorm->isDead()) Q_EMIT this->spawnWorm(pWorm);
 

@@ -136,6 +136,9 @@ void MainWindow::initGame() {
 			this, SLOT(onStatusMessage(QString)));
 
 
+	connect(pGame, SIGNAL(doLevelDone()),
+			pSurface, SLOT(onDoLevelDone()));
+
 	connect(pGame, SIGNAL(doGameOver()),
 			pSurface, SLOT(onDoGameOver()));
 

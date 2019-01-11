@@ -227,6 +227,8 @@ Map *SurfaceGame::currentMap() {
 
 void SurfaceGame::focusInEvent(QFocusEvent *pEvent) {
 
+	this->onDebugMessage("focusInEvent");
+
 	//this->onDebugMessage("todo: focus in");
 	if (nullptr != this->pStartCountDownFrame
 			&& this->pStartCountDownFrame->isVisible()) {
@@ -242,6 +244,8 @@ void SurfaceGame::focusInEvent(QFocusEvent *pEvent) {
 
 void SurfaceGame::focusOutEvent(QFocusEvent *pEvent) {
 
+	this->onDebugMessage("focusOutEvent");
+
 	if (this->pUi->buttonPP->hasFocus()) return;
 	if (this->pStartCountDownFrame->isVisible()) return;
 
@@ -253,6 +257,8 @@ void SurfaceGame::focusOutEvent(QFocusEvent *pEvent) {
 
 
 void SurfaceGame::countdownTick() {
+
+	//this->onDebugMessage("countdownTick");
 
 	int iTick = this->pUi->buttonPP->text().toInt() - 1;
 
@@ -274,14 +280,17 @@ void SurfaceGame::countdownTick() {
 
 	this->pStartCountDownFrame->hide();
 
+	this->bProtectPP = true;
 	this->pUi->buttonPP->setChecked(true);
 	this->pUi->buttonPP->setEnabled(true);
 
 	this->pUi->buttonSR->setEnabled(true);
 	this->pUi->buttonPP->setText(tr("Pause"));
+	this->bProtectPP = false;
 
 	Q_EMIT this->statusMessage(tr("Go, Go, Goooooh!"));
 
+	//this->onDebugMessage("countdown over!! onPRT--->)))");
 	Q_EMIT this->pauseResumeToggled();
 
 } // countdownTick
@@ -1056,11 +1065,10 @@ void SurfaceGame::initWorms() {
 void SurfaceGame::keyPressEvent(QKeyEvent *pEvent) {
 
 	QKeySequence oKSin(pEvent->key());
-	QKeySequence oKey2(" ");
+//	QKeySequence oKey2(" ");
 
-	if (oKSin == oKey2) this->onDebugMessage("Matched K");
-//	else
-	this->onDebugMessage(QString::number(pEvent->key()));
+//	if (oKSin == oKey2) this->onDebugMessage("Matched K");
+//	else this->onDebugMessage(QString::number(pEvent->key()));
 
 	quint8 ubWorm;
 	QHash<QKeySequence, L::Heading> hKeys;
@@ -1083,6 +1091,8 @@ void SurfaceGame::keyPressEvent(QKeyEvent *pEvent) {
 
 
 void SurfaceGame::loadCurrentLevel() {
+
+	this->onDebugMessage("loadCurrentLevel");
 
 	QString sMessage;
 	QString sPath = this->pAS->getDataPathLevelFile(this->ubCurrentLevel);
@@ -1261,12 +1271,11 @@ QVector<quint8> SurfaceGame::nextPOIinDirection(SurfaceCell *pCell,
 
 void SurfaceGame::on_buttonPP_toggled(bool bStartPlaying) {
 
-	this->onDebugMessage("bPP startPlaying? " + QString::number(bStartPlaying)
-						 + " protected? " + QString::number(this->bProtectPP));
-
 	this->pUi->buttonPP->setText(bStartPlaying ? tr("Pause") : tr("Play"));
 
 	if (this->bProtectPP) return;
+
+	//this->onDebugMessage("bPP startPlaying? " + QString::number(bStartPlaying) + " protected? " + QString::number(this->bProtectPP));
 
 	if (bStartPlaying) {
 
@@ -1282,23 +1291,28 @@ void SurfaceGame::on_buttonPP_toggled(bool bStartPlaying) {
 
 			this->onNextLevel();
 
-			return;
+			//return;
 
 		} // if level complete -> starting new one
 
 	} else {
+
+		this->onDebugMessage("pausing");
 
 		// going into paused state
 		this->showStartCountDownFrame(tr("Paused"));
 
 	} // starting/resuming or pausing
 
+	//this->onDebugMessage("onPRT----->)))");
 	Q_EMIT this->pauseResumeToggled();
 
 } // on_buttonPP_toggled
 
 
 void SurfaceGame::on_buttonSR_clicked() {
+
+	this->onDebugMessage("on_buttonSR_clicked");
 
 	// pause game if running
 	this->pauseIfRunning();
@@ -1337,6 +1351,8 @@ void SurfaceGame::onColoursChanged(const QVector<quint8> aubColours) {
 
 void SurfaceGame::onDoGameOver() {
 
+	this->onDebugMessage("onDoGameOver");
+
 	// button is probably showing "Pause"
 	if (this->pUi->buttonPP->isChecked()) {
 		this->bProtectPP = true;
@@ -1357,6 +1373,8 @@ void SurfaceGame::onDoGameOver() {
 
 
 void SurfaceGame::onDoLevelDone() {
+
+	this->onDebugMessage("onDoLevelDone");
 
 	this->bLevelDone = true;
 
@@ -1382,6 +1400,8 @@ void SurfaceGame::onDoLevelDone() {
 
 void SurfaceGame::onDoLevelStartCountdown() {
 
+	this->onDebugMessage("onDoLevelStartCountdown");
+
 	this->bLevelDone = false;
 
 	// go 5 steps in original direction
@@ -1392,13 +1412,14 @@ void SurfaceGame::onDoLevelStartCountdown() {
 	this->onMove();
 
 	// open count-down dialog
-	this->showStartCountDownFrame("3");
+	QString sCount = QString::number(SssS_Nibblers_Game_Start_Countdown);
+	this->showStartCountDownFrame(sCount);
 
-	this->pUi->buttonPP->setText("3");
+	this->pUi->buttonPP->setText(sCount);
 	this->pUi->buttonPP->setEnabled(false);
 	this->pUi->buttonSR->setEnabled(false);
 
-	Q_EMIT this->statusMessage(tr("Get Ready: 3..."));
+	Q_EMIT this->statusMessage(tr("Get Ready: ") + sCount + "...");
 
 	QTimer::singleShot(1000, this, SLOT(countdownTick()));
 
@@ -1544,10 +1565,21 @@ void SurfaceGame::onMove() {
 
 void SurfaceGame::onNextLevel() {
 
+	this->onDebugMessage("onNextLevel");
+
 	if (0xFFu == this->ubCurrentLevel) this->ubCurrentLevel = 0u;
 	else this->ubCurrentLevel++;
 
 	this->loadCurrentLevel();
+
+	// check that there are enough spawn points
+	if (this->apWorms.length() > this->apSpawnPoints.length()) {
+
+		this->pUi->buttonPP->setEnabled(false);
+		Q_EMIT this->statusMessage(tr("Level does not have sufficient spawn-points. Bailling."));
+		return;
+
+	} // if not enough start points
 
 	// distribute spawn points. this could be done by Game
 	this->randomizeSpawns();
@@ -1558,12 +1590,14 @@ void SurfaceGame::onNextLevel() {
 
 	} // loop worms
 
-	this->onDoLevelStartCountdown();
+	//this->onDoLevelStartCountdown();
 
 } // onNextLevel
 
 
 void SurfaceGame::onPlaceBonus(const quint8 ubBonus, const bool bFake) {
+
+	//this->onDebugMessage("onPlaceBonus");
 
 	// find 4 adjacent cells that are not occupied
 
@@ -1680,6 +1714,8 @@ void SurfaceGame::onQuitting() {
 
 void SurfaceGame::onSpawnWorm(Worm *pWorm) {
 
+	this->onDebugMessage("onSpawnWorm");
+
 	pWorm->startSpawning();
 
 } // onSpawnWorm
@@ -1701,6 +1737,8 @@ void SurfaceGame::onSpawnWorms() {
 
 
 void SurfaceGame::pauseIfRunning() {
+
+	this->onDebugMessage("pauseIfRunning");
 
 	// pause game if running
 	if (this->pUi->buttonPP->isChecked())
@@ -1726,6 +1764,8 @@ void SurfaceGame::randomizeSpawns() {
 
 
 void SurfaceGame::resetButtons() {
+
+	this->onDebugMessage("resetButtons");
 
 	this->bProtectPP = true;
 	this->pUi->buttonPP->setChecked(false);
@@ -1796,6 +1836,8 @@ void SurfaceGame::setCellState(const quint8 ubColumn, const quint8 ubRow,
 
 void SurfaceGame::showStartCountDownFrame(const QString sMessage,
 										  const QString sButton) {
+
+	this->onDebugMessage("showStartCountDownFrame");
 
 	FrameStartCountdown *pFrame = this->pStartCountDownFrame;
 	if (nullptr == pFrame) {

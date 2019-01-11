@@ -91,6 +91,7 @@ public slots:
 	void onAddScore(const qint16 iScore);
 	inline void onDebugMessage(const QString &sMessage) const {
 		Q_EMIT this->debugMessage("Worm:" + sMessage); }
+	inline void onMultiplyScore(const float fFactor) { this->ulScore *= fFactor; }
 	inline void onResetScore() { this->ulScore = 0u; Q_EMIT this->updateScore(0u);}
 	void onReverse();
 	void onSetLives(const quint8 ubLives);
