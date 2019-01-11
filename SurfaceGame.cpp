@@ -95,285 +95,6 @@ void SurfaceGame::addCrashPotential(QHash<SurfaceCell *, Worm *> &hppCrashPotent
 } // addCrashPotential
 
 
-void SurfaceGame::changeEvent(QEvent *pEvent) {
-
-	QFrame::changeEvent(pEvent);
-
-	switch (pEvent->type()) {
-
-		case QEvent::LanguageChange:
-			this->pUi->retranslateUi(this);
-		break;
-
-		default:
-		break;
-
-	} // switch
-
-} // changeEvent
-
-
-void SurfaceGame::clearSurface() {
-
-	this->apSpawnPoints.clear();
-	this->hpTeleporterEntrances.clear();
-	this->hpTeleporterExits.clear();
-
-	quint8 ubRows = this->aopRows.count();
-	quint8 ubColumns = this->aopRows.first().count();
-	quint8 ubX = 0u;
-	quint8 ubY = 0u;
-	QList<SurfaceCell*> aRow;
-	SurfaceCell *pCell;
-
-	for (ubY = 0u; ubY < ubRows; ubY++) {
-
-		aRow = this->aopRows.at(ubY);
-
-		for (ubX = 0u; ubX < ubColumns; ubX++) {
-
-			pCell = aRow.at(ubX);
-			this->setCellState(pCell, L::FloorClean, false);
-			pCell->freezeState();
-
-		} // loop columns
-
-	} // loop rows
-
-	this->update();
-
-} // clearSurface
-
-
-void SurfaceGame::clearSurfaceOf(const quint8 ubState) {
-
-	QVector<quint8> aStates;
-	aStates.append(ubState);
-
-	this->clearSurfaceOf(aStates);
-
-} // clearSurfaceOf(single)
-
-
-void SurfaceGame::clearSurfaceOf(const QVector<quint8> aStates) {
-
-	quint8 ubRows = this->aopRows.count();
-	quint8 ubColumns = this->aopRows.first().count();
-	quint8 ubX = 0u;
-	quint8 ubY = 0u;
-	QList<SurfaceCell*> aRow;
-	SurfaceCell *pCell;
-
-	for (ubY = 0u; ubY < ubRows; ubY++) {
-
-		aRow = this->aopRows.at(ubY);
-
-		for (ubX = 0u; ubX < ubColumns; ubX++) {
-
-			pCell = aRow.at(ubX);
-
-			if (aStates.contains(pCell->getState())) {
-
-				this->setCellState(pCell, L::FloorClean, false);
-
-			} // if one to clear
-
-		} // loop columns
-
-	} // loop rows
-
-	this->update();
-
-} // clearSurfaceOf(vector)
-
-
-void SurfaceGame::clearSurfaceOfWorm(const quint8 ubWormColourIndex) {
-
-	this->clearSurfaceOf(IconEngine::statesSnake(ubWormColourIndex));
-
-} // clearSurfaceOfWorm
-
-
-void SurfaceGame::clearSurfaceOfWorms() {
-
-	this->clearSurfaceOf(IconEngine::statesSnakes());
-
-} // clearSurfaceOfWorms
-
-
-Map *SurfaceGame::currentMap() {
-
-	quint8 ubRows = this->aopRows.count();
-	quint8 ubColumns = this->aopRows.first().count();
-	quint8 ubX = 0u;
-	quint8 ubY = 0u;
-
-	Map *pMap = new Map(ubColumns, ubRows, this);
-
-	for (ubY = 0u; ubY < ubRows; ubY++) {
-
-		for (ubX = 0u; ubX < ubColumns; ubX++) {
-
-			pMap->setTile(ubX, ubY, this->aopRows.at(ubY).at(ubX)->getState());
-
-		} // loop columns
-
-	} // loop rows
-
-	return pMap;
-
-} // currentMap
-
-
-void SurfaceGame::focusInEvent(QFocusEvent *pEvent) {
-
-	this->onDebugMessage("focusInEvent");
-
-	//this->onDebugMessage("todo: focus in");
-	if (nullptr != this->pStartCountDownFrame
-			&& this->pStartCountDownFrame->isVisible()) {
-
-		this->updateFrameStartCountdown();
-
-	}
-
-	QFrame::focusInEvent(pEvent);
-
-} // focusInEvent
-
-
-void SurfaceGame::focusOutEvent(QFocusEvent *pEvent) {
-
-	this->onDebugMessage("focusOutEvent");
-
-	if (this->pUi->buttonPP->hasFocus()) return;
-	if (this->pStartCountDownFrame->isVisible()) return;
-
-	this->pauseIfRunning();
-
-	QFrame::focusOutEvent(pEvent);
-
-} // focusOutEvent
-
-
-void SurfaceGame::countdownTick() {
-
-	//this->onDebugMessage("countdownTick");
-
-	int iTick = this->pUi->buttonPP->text().toInt() - 1;
-
-	if (0 < iTick) {
-
-		QString sMessage = QString::number(iTick);
-
-		this->showStartCountDownFrame(sMessage);
-
-		this->pUi->buttonPP->setText(sMessage);
-
-		Q_EMIT this->statusMessage(sMessage);
-
-		QTimer::singleShot(1000, this, SLOT(countdownTick()));
-
-		return;
-
-	} // if still got ticks to go
-
-	this->pStartCountDownFrame->hide();
-
-	this->bProtectPP = true;
-	this->pUi->buttonPP->setChecked(true);
-	this->pUi->buttonPP->setEnabled(true);
-
-	this->pUi->buttonSR->setEnabled(true);
-	this->pUi->buttonPP->setText(tr("Pause"));
-	this->bProtectPP = false;
-
-	Q_EMIT this->statusMessage(tr("Go, Go, Goooooh!"));
-
-	//this->onDebugMessage("countdown over!! onPRT--->)))");
-	Q_EMIT this->pauseResumeToggled();
-
-} // countdownTick
-
-
-void SurfaceGame::dialogLoadFinished(const int iResult) {
-
-	// canceled
-	if (0 == iResult) return;
-
-	this->onDebugMessage("dialogLoadFinished");
-
-	this->ubCurrentLevel = quint8(this->pDialogLoad->getSelected());
-
-	// save as next first?
-	if (this->pAS->get(AppSettings::sSettingGameLoadSetsStartLevel).toBool())
-		this->pAS->setValue(AppSettings::sSettingGameStartLevel, this->ubCurrentLevel);
-
-	this->loadCurrentLevel();
-
-	// check that there are enough spawn points
-	if (this->apWorms.length() > this->apSpawnPoints.length()) {
-
-		this->pUi->buttonPP->setEnabled(false);
-		Q_EMIT this->statusMessage(tr("Level does not have sufficient spawn-points. Bailling."));
-		return;
-
-	} // if not enough start points
-
-	// distribute spawn points. this could be done by Game
-	this->randomizeSpawns();
-
-	for (int i = 0; i < this->apWorms.length(); ++i) {
-
-		this->apWorms.at(i)->onSetSpawnCell(this->apSpawnPoints.at(i));
-
-	} // loop worms
-
-	Q_EMIT this->resetGame();
-
-	this->resetButtons();
-
-} // dialogLoadFinished
-
-
-quint16 SurfaceGame::findNextGood(const QPoint oStart, const L::Heading eDirection) {
-
-	static QVector<quint8> aStatesPickups = IconEngine::statesPickups();
-	//static QVector<quint8> aStatesTeleporterEntrances = IconEngine::statesTeleporterEntrances();
-	//static QVector<quint8> aStatesTeleporterExits = IconEngine::statesTeleporterExits();
-	static QVector<quint8> aStatesToAvoid =
-			IconEngine::statesSnakes() + IconEngine::statesWalls();
-
-	SurfaceCell *pCell;
-
-	quint8 ubState;
-	quint16 uiDistance = 0u;
-	QPoint oNext(oStart);
-
-	while (0xFFFFu > uiDistance) {
-
-		pCell = this->getCell(oNext);
-		if (pCell->isNull()) return 0xFFFFu;
-
-		ubState = pCell->getState();
-		if (aStatesToAvoid.contains(ubState)) return 0xFFFFu;
-
-		if (aStatesPickups.contains(ubState)) return uiDistance;
-
-		oNext = L::warpPoint(oNext, eDirection);
-
-		// gone around field?
-		if (oNext == oStart) return 0xFFFFu;
-
-		uiDistance++;
-
-	} // loop 0xFFFFu > uiDistance
-
-	return uiDistance;
-
-} // findNextGood
-
-
 // virtual copy of worm.vala Worm.can_move_to(....)
 bool SurfaceGame::aiCanMoveTo(Worm *pWorm) {
 
@@ -738,6 +459,255 @@ bool SurfaceGame::aiWander(const QPoint oStart, const QPoint oStop,
 } // aiWander
 
 
+void SurfaceGame::changeEvent(QEvent *pEvent) {
+
+	QFrame::changeEvent(pEvent);
+
+	switch (pEvent->type()) {
+
+		case QEvent::LanguageChange:
+			this->pUi->retranslateUi(this);
+		break;
+
+		default:
+		break;
+
+	} // switch
+
+} // changeEvent
+
+
+void SurfaceGame::clearSurface() {
+
+	this->apSpawnPoints.clear();
+	this->hpTeleporterEntrances.clear();
+	this->hpTeleporterExits.clear();
+
+	quint8 ubRows = this->aopRows.count();
+	quint8 ubColumns = this->aopRows.first().count();
+	quint8 ubX = 0u;
+	quint8 ubY = 0u;
+	QList<SurfaceCell*> aRow;
+	SurfaceCell *pCell;
+
+	for (ubY = 0u; ubY < ubRows; ubY++) {
+
+		aRow = this->aopRows.at(ubY);
+
+		for (ubX = 0u; ubX < ubColumns; ubX++) {
+
+			pCell = aRow.at(ubX);
+			this->setCellState(pCell, L::FloorClean, false);
+			pCell->freezeState();
+
+		} // loop columns
+
+	} // loop rows
+
+	this->update();
+
+} // clearSurface
+
+
+void SurfaceGame::clearSurfaceOf(const quint8 ubState) {
+
+	QVector<quint8> aStates;
+	aStates.append(ubState);
+
+	this->clearSurfaceOf(aStates);
+
+} // clearSurfaceOf(single)
+
+
+void SurfaceGame::clearSurfaceOf(const QVector<quint8> aStates) {
+
+	quint8 ubRows = this->aopRows.count();
+	quint8 ubColumns = this->aopRows.first().count();
+	quint8 ubX = 0u;
+	quint8 ubY = 0u;
+	QList<SurfaceCell*> aRow;
+	SurfaceCell *pCell;
+
+	for (ubY = 0u; ubY < ubRows; ubY++) {
+
+		aRow = this->aopRows.at(ubY);
+
+		for (ubX = 0u; ubX < ubColumns; ubX++) {
+
+			pCell = aRow.at(ubX);
+
+			if (aStates.contains(pCell->getState())) {
+
+				this->setCellState(pCell, L::FloorClean, false);
+
+			} // if one to clear
+
+		} // loop columns
+
+	} // loop rows
+
+	this->update();
+
+} // clearSurfaceOf(vector)
+
+
+void SurfaceGame::clearSurfaceOfWorm(const quint8 ubWormColourIndex) {
+
+	this->clearSurfaceOf(IconEngine::statesSnake(ubWormColourIndex));
+
+} // clearSurfaceOfWorm
+
+
+void SurfaceGame::clearSurfaceOfWorms() {
+
+	this->clearSurfaceOf(IconEngine::statesSnakes());
+
+} // clearSurfaceOfWorms
+
+
+void SurfaceGame::countdownTick() {
+
+	//this->onDebugMessage("countdownTick");
+
+	int iTick = this->pUi->buttonPP->text().toInt() - 1;
+
+	if (0 < iTick) {
+
+		QString sMessage = QString::number(iTick);
+
+		this->showStartCountDownFrame(sMessage);
+
+		this->pUi->buttonPP->setText(sMessage);
+
+		Q_EMIT this->statusMessage(sMessage);
+
+		QTimer::singleShot(1000, this, SLOT(countdownTick()));
+
+		return;
+
+	} // if still got ticks to go
+
+	this->pStartCountDownFrame->hide();
+
+	this->bProtectPP = true;
+	this->pUi->buttonPP->setChecked(true);
+	this->pUi->buttonPP->setEnabled(true);
+
+	this->pUi->buttonSR->setEnabled(true);
+	this->pUi->buttonPP->setText(tr("Pause"));
+	this->bProtectPP = false;
+
+	Q_EMIT this->statusMessage(tr("Go, Go, Goooooh!"));
+
+	//this->onDebugMessage("countdown over!! onPRT--->)))");
+	Q_EMIT this->pauseResumeToggled();
+
+} // countdownTick
+
+
+Map *SurfaceGame::currentMap() {
+
+	quint8 ubRows = this->aopRows.count();
+	quint8 ubColumns = this->aopRows.first().count();
+	quint8 ubX = 0u;
+	quint8 ubY = 0u;
+
+	Map *pMap = new Map(ubColumns, ubRows, this);
+
+	for (ubY = 0u; ubY < ubRows; ubY++) {
+
+		for (ubX = 0u; ubX < ubColumns; ubX++) {
+
+			pMap->setTile(ubX, ubY, this->aopRows.at(ubY).at(ubX)->getState());
+
+		} // loop columns
+
+	} // loop rows
+
+	return pMap;
+
+} // currentMap
+
+
+void SurfaceGame::dialogLoadFinished(const int iResult) {
+
+	// canceled
+	if (0 == iResult) return;
+
+	this->onDebugMessage("dialogLoadFinished");
+
+	this->ubCurrentLevel = quint8(this->pDialogLoad->getSelected());
+
+	// save as next first?
+	if (this->pAS->get(AppSettings::sSettingGameLoadSetsStartLevel).toBool())
+		this->pAS->setValue(AppSettings::sSettingGameStartLevel, this->ubCurrentLevel);
+
+	this->loadCurrentLevel();
+
+	// check that there are enough spawn points
+	if (this->apWorms.length() > this->apSpawnPoints.length()) {
+
+		this->pUi->buttonPP->setEnabled(false);
+		Q_EMIT this->statusMessage(tr("Level does not have sufficient spawn-points. Bailling."));
+		return;
+
+	} // if not enough start points
+
+	// distribute spawn points. this could be done by Game
+	this->randomizeSpawns();
+
+	for (int i = 0; i < this->apWorms.length(); ++i) {
+
+		this->apWorms.at(i)->onSetSpawnCell(this->apSpawnPoints.at(i));
+
+	} // loop worms
+
+	Q_EMIT this->resetGame();
+
+	this->resetButtons();
+
+} // dialogLoadFinished
+
+
+// old method
+quint16 SurfaceGame::findNextGood(const QPoint oStart, const L::Heading eDirection) {
+
+	static QVector<quint8> aStatesPickups = IconEngine::statesPickups();
+	//static QVector<quint8> aStatesTeleporterEntrances = IconEngine::statesTeleporterEntrances();
+	//static QVector<quint8> aStatesTeleporterExits = IconEngine::statesTeleporterExits();
+	static QVector<quint8> aStatesToAvoid =
+			IconEngine::statesSnakes() + IconEngine::statesWalls();
+
+	SurfaceCell *pCell;
+
+	quint8 ubState;
+	quint16 uiDistance = 0u;
+	QPoint oNext(oStart);
+
+	while (0xFFFFu > uiDistance) {
+
+		pCell = this->getCell(oNext);
+		if (pCell->isNull()) return 0xFFFFu;
+
+		ubState = pCell->getState();
+		if (aStatesToAvoid.contains(ubState)) return 0xFFFFu;
+
+		if (aStatesPickups.contains(ubState)) return uiDistance;
+
+		oNext = L::warpPoint(oNext, eDirection);
+
+		// gone around field?
+		if (oNext == oStart) return 0xFFFFu;
+
+		uiDistance++;
+
+	} // loop 0xFFFFu > uiDistance
+
+	return uiDistance;
+
+} // findNextGood
+
+
 // old method that wasn't quite completed
 void SurfaceGame::findNextMovesForWorm(Worm *pWorm) {
 
@@ -892,6 +862,37 @@ void SurfaceGame::findNextMovesForWorm(Worm *pWorm) {
 	} // switch ubIndex
 
 } // findNextMovesForWorm
+
+
+void SurfaceGame::focusInEvent(QFocusEvent *pEvent) {
+
+	this->onDebugMessage("focusInEvent");
+
+	//this->onDebugMessage("todo: focus in");
+	if (nullptr != this->pStartCountDownFrame
+			&& this->pStartCountDownFrame->isVisible()) {
+
+		this->updateFrameStartCountdown();
+
+	}
+
+	QFrame::focusInEvent(pEvent);
+
+} // focusInEvent
+
+
+void SurfaceGame::focusOutEvent(QFocusEvent *pEvent) {
+
+	this->onDebugMessage("focusOutEvent");
+
+	if (this->pUi->buttonPP->hasFocus()) return;
+	if (this->pStartCountDownFrame->isVisible()) return;
+
+	this->pauseIfRunning();
+
+	QFrame::focusOutEvent(pEvent);
+
+} // focusOutEvent
 
 
 SurfaceCell *SurfaceGame::getCell(const QPoint oPoint) {

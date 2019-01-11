@@ -14,6 +14,7 @@ namespace SwissalpS { namespace QtNibblers {
 
 
 class Game : public QObject {
+
 	Q_OBJECT
 
 private:
@@ -90,7 +91,7 @@ public slots:
 	void onWormAteBonus(Worm *pWorm, SurfaceCell *pCell);
 	void onWormCrashed(Worm *pWorm);
 	void onWormCreated(Worm *pWorm);
-	void onWormDied(const bool bAI); //Worm *pWorm);
+	void onWormDied(const bool bAI);
 
 }; // Game
 

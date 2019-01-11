@@ -112,7 +112,7 @@ namespace SwissalpS { namespace QtNibblers {
 
 
 
-IconEngine *IconEngine::pSingelton = 0;
+IconEngine *IconEngine::pSingelton = nullptr;
 
 
 IconEngine::IconEngine(QObject *pParent) :

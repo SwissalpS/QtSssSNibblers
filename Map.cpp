@@ -48,6 +48,7 @@ void Map::fillAll(const quint8 ubState) {
 
 
 QPixmap Map::pixmap(const bool bSimple) const {
+	Q_UNUSED(bSimple)
 
 	// prepare vector of states we react to
 	quint8 ubState;

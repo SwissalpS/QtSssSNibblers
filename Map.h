@@ -31,11 +31,11 @@ public:
 	virtual QPixmap pixmap(const bool bSimple = true) const;
 	virtual void setTile(const quint8 ubColumn, const quint8 ubRow, quint8 ubState);
 	inline virtual void setTile(const QPoint oPoint, quint8 ubState) {
-		this->setTile(oPoint.x(), oPoint.y(), ubState); }
+		this->setTile(quint8(oPoint.x()), quint8(oPoint.y()), ubState); }
 
 	virtual quint8 tile(const quint8 ubColumn, const quint8 ubRow) const;
 	inline virtual quint8 tile(const QPoint oPoint) const {
-		return this->tile(oPoint.x(), oPoint.y()); }
+		return this->tile(quint8(oPoint.x()), quint8(oPoint.y())); }
 
 signals:
 	void debugMessage(const QString &sMessage) const;

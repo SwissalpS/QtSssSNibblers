@@ -11,6 +11,7 @@ namespace SwissalpS { namespace QtNibblers {
 
 
 class Bonus : public QObject {
+
 	Q_OBJECT
 
 private:
@@ -27,7 +28,8 @@ protected slots:
 	virtual void defreezeCells();
 
 public:
-	explicit Bonus(QVector<SurfaceCell *> apCells, const bool bFake, QObject *pParent = nullptr);
+	explicit Bonus(QVector<SurfaceCell *> apCells, const bool bFake,
+				   QObject *pParent = nullptr);
 	virtual ~Bonus();
 
 	inline virtual bool contains(SurfaceCell *pCell) const { return this->apCells.contains(pCell); }

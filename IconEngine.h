@@ -21,7 +21,7 @@ private:
 
 	// keep this private as we want only one instance
 	// read; http://www.qtcentre.org/wiki/index.php?title=Singleton_pattern
-	explicit IconEngine(QObject *pParent = 0);
+	explicit IconEngine(QObject *pParent = nullptr);
 
 	// hide copy constructor or use Q_DISABLE_COPY(IconEngine)
 	//explicit IconEngine(const IconEngine &other);
