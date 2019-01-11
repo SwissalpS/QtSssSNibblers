@@ -249,7 +249,7 @@ void SurfaceBuilder::dialogLoadFinished(const int iResult) {
 	// canceled
 	if (0 == iResult) return;
 
-	this->ubCurrentLevel = this->pDialogLoad->getSelected();
+	this->ubCurrentLevel = quint8(this->pDialogLoad->getSelected());
 	this->pAS->setValue(AppSettings::sSettingBuilderLastLevel,
 						this->ubCurrentLevel);
 

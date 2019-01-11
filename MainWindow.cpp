@@ -187,8 +187,8 @@ void MainWindow::initGame() {
 
 void MainWindow::initSettings() {
 
-	quint8 ubAIs = this->pAS->get(AppSettings::sSettingGameCountAIs).toUInt();
-	quint8 ubHumans = this->pAS->get(AppSettings::sSettingGameCountHumans).toUInt();
+	quint8 ubAIs = quint8(this->pAS->get(AppSettings::sSettingGameCountAIs).toUInt());
+	quint8 ubHumans = quint8(this->pAS->get(AppSettings::sSettingGameCountHumans).toUInt());
 
 	if (0u == ubAIs) this->pUi->buttonAP0->setChecked(true);
 	else if (1u == ubAIs) this->pUi->buttonAP1->setChecked(true);
@@ -229,9 +229,9 @@ void MainWindow::initSettings() {
 
 	QComboBox *pBox = this->pUi->selectStartLevel;
 	QComboBox *pBoxLives = this->pUi->selectStartLives;
-	for (int i = 0; i < 256; ++i) {
+	for (quint16 i = 0; i < 256; ++i) {
 
-		pBox->addItem(IconEngine::level(i), QString::number(i));
+		pBox->addItem(IconEngine::level(quint8(i)), QString::number(i));
 		pBoxLives->addItem(QString::number(i));
 
 	} // loop
