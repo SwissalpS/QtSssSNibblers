@@ -1848,7 +1848,7 @@
       </widget>
       <widget class="QWidget" name="tabPlay">
        <attribute name="title">
-        <string>Play</string>
+        <string>          Play         </string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_5"/>
       </widget>
