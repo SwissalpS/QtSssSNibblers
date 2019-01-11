@@ -28,6 +28,8 @@ protected:
 	quint8 ubCountBonusLeft;
 	quint8 ubCountBonusMissed;
 	quint8 ubCountDead;
+	quint8 ubCountDeadHumans;
+	quint8 ubCountHumans;
 	quint8 ubCountLevels;
 	quint8 ubCountNeedApple;
 	quint8 ubSpeedIndex;
@@ -57,7 +59,7 @@ public:
 	virtual ~Game();
 
 	void init();
-	inline virtual bool isGameOver() { return this->ubCountDead >= this->apWorms.length(); }
+	virtual bool isGameOver();
 	inline virtual bool isPaused() { return this->bPaused; }
 
 signals:
@@ -88,7 +90,7 @@ public slots:
 	void onWormAteBonus(Worm *pWorm, SurfaceCell *pCell);
 	void onWormCrashed(Worm *pWorm);
 	void onWormCreated(Worm *pWorm);
-	void onWormDied(); //Worm *pWorm);
+	void onWormDied(const bool bAI); //Worm *pWorm);
 
 }; // Game
 

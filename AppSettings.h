@@ -26,7 +26,7 @@ private:
 
 	// keep this private as we want only one instance
 	// read; http://www.qtcentre.org/wiki/index.php?title=Singleton_pattern
-	explicit AppSettings(QObject *pParent = 0);
+	explicit AppSettings(QObject *pParent = nullptr);
 
 	// hide copy constructor or use Q_DISABLE_COPY(AppSettings)
 	//explicit AppSettings(const AppSettings &other);
@@ -46,12 +46,14 @@ public:
 	static const QString sSettingGameKeyRight;
 	static const QString sSettingGameKeyUp;
 	static const QString sSettingGameFakeBonuses;
+	static const QString sSettingGameOverOnLastDead;
 	static const QString sSettingGameRelative;
 	static const QString sSettingGameSound;
 	static const QString sSettingGameSpeed;
 	static const QString sSettingGameStartLevel;
 	static const QString sSettingGameStartLives;
 	static const QString sSettingGameUseMouse;
+	static const QString sSettingGameLoadSetsStartLevel;
 	static const QString sSettingPowerUser;
 	static const QString sSettingTabMainIndex;
 	static const QString sSettingTabSettingIndex;
@@ -64,10 +66,12 @@ public:
 	static const quint8 ubSettingGameCountAIsDefault;
 	static const quint8 ubSettingGameCountHumansDefault;
 	static const bool bSettingGameFakeBonusesDefault;
+	static const bool bSettingGameOverOnLastDeadDefault;
 	static const bool bSettingGameSoundDefault;
 	static const quint8 ubSettingGameStartLevelDefault;
 	static const quint8 ubSettingGameStartLivesDefault;
 	static const qint8 iSettingGameSpeedDefault;
+	static const bool bSettingGameLoadSetsStartLevelDefault;
 	static const bool bSettingPowerUserDefault;
 	static const qint8 iSettingTabMainIndexDefault;
 	static const qint8 iSettingTabSettingIndexDefault;

@@ -6,18 +6,21 @@
 #define SssS_Nibblers_App_Org_QString QStringLiteral("SwissalpS")
 #define SssS_Nibblers_App_Version_QString QStringLiteral("0_1")
 
-#define SssS_Nibblers_Surface_Height quint8(66u)
-#define SssS_Nibblers_Surface_Width quint8(92u)
+#define SssS_Nibblers_Bonus_Delay_Ticks quint8(2u)
 
 #define SssS_Nibblers_Game_Start_Countdown quint8(3u)
-#define SssS_Nibblers_Bonus_Delay_Ticks quint8(2u)
-#define SssS_Nibblers_Speed_Base int(35)
-#define SssS_Nibblers_Speed_Bonus_Base int(100)
 
 #define SssS_Nibblers_Max_Key_Cache quint8(64u)
 #define SssS_Nibblers_Max_Lives_Per_Row quint8(8u)
 #define SssS_Nibblers_Max_Players quint8(8u)
 #define SssS_Nibblers_Max_Teleporters quint8(10u)
+
+#define SssS_Nibblers_Speed_Base int(35)
+#define SssS_Nibblers_Speed_Bonus_Base int(100)
+
+#define SssS_Nibblers_Surface_Height quint8(66u)
+#define SssS_Nibblers_Surface_Minimum_Cell_Side quint8(7u)
+#define SssS_Nibblers_Surface_Width quint8(92u)
 
 #define SssS_Nibblers_Bonus_Penalty_Miss quint8(1u)
 #define SssS_Nibblers_Bonus_Max_Missed quint8(2u)

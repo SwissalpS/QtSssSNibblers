@@ -12,7 +12,7 @@ namespace SwissalpS { namespace QtNibblers {
 
 
 
-AppSettings *AppSettings::pSingelton = 0;
+AppSettings *AppSettings::pSingelton = nullptr;
 
 const QString AppSettings::sSettingBuilderLastBrushIndex = "iBuilderLastBrushIndex";
 const QString AppSettings::sSettingBuilderLastLevel = "ubBuilderLastLevel";
@@ -24,6 +24,8 @@ const QString AppSettings::sSettingGameKeyLeft = "aGameKeyLeft";
 const QString AppSettings::sSettingGameKeyRight = "aGameKeyRight";
 const QString AppSettings::sSettingGameKeyUp = "aGameKeyUp";
 const QString AppSettings::sSettingGameFakeBonuses = "bGameFakeBonuses";
+const QString AppSettings::sSettingGameLoadSetsStartLevel = "bGameLoadSetsStartLevel";
+const QString AppSettings::sSettingGameOverOnLastDead = "bGameOverOnLastDead";
 const QString AppSettings::sSettingGameRelative = "aGameRelative";
 const QString AppSettings::sSettingGameSound = "bGameSound";
 const QString AppSettings::sSettingGameSpeed = "iGameSpeed0-3";
@@ -41,10 +43,12 @@ const quint8 AppSettings::ubSettingBuilderLastLevelDefault = 0x0u;
 const quint8 AppSettings::ubSettingGameCountAIsDefault = 0x4u;
 const quint8 AppSettings::ubSettingGameCountHumansDefault = 0x0u;
 const bool AppSettings::bSettingGameFakeBonusesDefault = false;
+const bool AppSettings::bSettingGameOverOnLastDeadDefault = true;
 const bool AppSettings::bSettingGameSoundDefault = true;
 const qint8 AppSettings::iSettingGameSpeedDefault = 0u;
 const quint8 AppSettings::ubSettingGameStartLevelDefault = 0x1u;
 const quint8 AppSettings::ubSettingGameStartLivesDefault = 0x7u;
+const bool AppSettings::bSettingGameLoadSetsStartLevelDefault = true;
 const bool AppSettings::bSettingPowerUserDefault = false;
 const qint8 AppSettings::iSettingTabMainIndexDefault = 1u;
 const qint8 AppSettings::iSettingTabSettingIndexDefault = 0u;
@@ -90,6 +94,7 @@ AppSettings::AppSettings(QObject *parent) :
 	pS->setValue(sSettingGameCountAIs, this->get(sSettingGameCountAIs));
 	pS->setValue(sSettingGameCountHumans, this->get(sSettingGameCountHumans));
 	pS->setValue(sSettingGameFakeBonuses, this->get(sSettingGameFakeBonuses));
+	pS->setValue(sSettingGameOverOnLastDead, this->get(sSettingGameOverOnLastDead));
 
 	// make sure key-binding arrays exist
 	// Down
@@ -171,6 +176,7 @@ AppSettings::AppSettings(QObject *parent) :
 
 	} // if not valid length
 
+	pS->setValue(sSettingGameLoadSetsStartLevel, this->get(sSettingGameLoadSetsStartLevel));
 	pS->setValue(sSettingTabMainIndex, this->get(sSettingTabMainIndex));
 	pS->setValue(sSettingTabSettingIndex, this->get(sSettingTabSettingIndex));
 	pS->setValue(sSettingWindowMainPosition, this->get(sSettingWindowMainPosition));
@@ -286,7 +292,7 @@ void AppSettings::drop() {
 	oMutex.lock();
 
 	delete pSingelton;
-	pSingelton = 0;
+	pSingelton = nullptr;
 
 	oMutex.unlock();
 
@@ -319,6 +325,10 @@ QVariant AppSettings::get(const QString sKey) const {
 
 		return this->pSettings->value(sKey, bSettingGameFakeBonusesDefault);
 
+	} else if (sSettingGameOverOnLastDead == sKey) {
+
+		return this->pSettings->value(sKey, bSettingGameOverOnLastDeadDefault);
+
 	} else if (sSettingGameRelative == sKey) {
 
 		return this->pSettings->value(sKey);
@@ -342,6 +352,10 @@ QVariant AppSettings::get(const QString sKey) const {
 	} else if (sSettingGameUseMouse == sKey) {
 
 		return this->pSettings->value(sKey);
+
+	} else if (sSettingGameLoadSetsStartLevel == sKey) {
+
+		return this->pSettings->value(sKey, bSettingGameLoadSetsStartLevelDefault);
 
 	} else if (sSettingTabMainIndex == sKey) {
 

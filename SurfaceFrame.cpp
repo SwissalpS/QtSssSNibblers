@@ -8,6 +8,9 @@ SurfaceFrame::SurfaceFrame(QWidget *pParent) :
 
 	this->iLastHeight = this->height();
 
+	this->setMinimumHeight(SssS_Nibblers_Surface_Minimum_Cell_Side * SssS_Nibblers_Surface_Width);
+	this->setMinimumWidth(SssS_Nibblers_Surface_Minimum_Cell_Side * SssS_Nibblers_Surface_Width);
+
 } // construct
 
 

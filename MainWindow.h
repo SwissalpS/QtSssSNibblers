@@ -45,6 +45,8 @@ private slots:
 	void on_buttonAP7_clicked();
 	void on_buttonAP8_clicked();
 	void on_cbFakeBonuses_stateChanged(int iState);
+	void on_cbGameOverOnLastDead_stateChanged(int iState);
+	void on_cbLoadSetsStartLevel_stateChanged(int iState);
 	void on_cbRelative1_toggled(bool bChecked);
 	void on_cbRelative2_toggled(bool bChecked);
 	void on_cbRelative3_toggled(bool bChecked);
@@ -82,6 +84,7 @@ private slots:
 	void on_selectStartLevel_currentIndexChanged(int iIndex);
 	void on_selectStartLives_currentIndexChanged(int iIndex);
 	void on_tabWidgetMain_currentChanged(int iIndex);
+
 
 protected:
 	AppSettings *pAS;

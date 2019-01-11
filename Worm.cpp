@@ -360,7 +360,7 @@ void Worm::onSetLives(const quint8 ubLives) {
 
 	Q_EMIT this->updateLives(this->ubLives);
 
-	if (this->isDead()) Q_EMIT this->died();
+	if (this->isDead()) Q_EMIT this->died(this->bAmAI);
 
 } // onSetLives
 
@@ -396,7 +396,7 @@ void Worm::onSubtractLife() {
 
 	Q_EMIT this->updateLives(this->ubLives);
 
-	if (this->isDead()) Q_EMIT this->died();
+	if (this->isDead()) Q_EMIT this->died(this->bAmAI);
 
 } // onSubtractLife
 

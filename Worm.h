@@ -79,7 +79,7 @@ public:
 
 signals:
 	void debugMessage(const QString &sMessage) const;
-	void died() const;
+	void died(const bool bAI) const;
 	void fart() const;
 	void updateColour(const quint8 ubColour) const;
 	void updateLives(const quint8 ubLives) const;

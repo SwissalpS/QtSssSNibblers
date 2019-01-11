@@ -301,12 +301,33 @@ void SurfaceGame::dialogLoadFinished(const int iResult) {
 	// canceled
 	if (0 == iResult) return;
 
-	this->ubCurrentLevel = this->pDialogLoad->getSelected();
+	this->onDebugMessage("dialogLoadFinished");
 
-	// TODO: make checkbox in settings for this feature
-	this->pAS->setValue(AppSettings::sSettingGameStartLevel, this->ubCurrentLevel);
+	this->ubCurrentLevel = quint8(this->pDialogLoad->getSelected());
+
+	// save as next first?
+	if (this->pAS->get(AppSettings::sSettingGameLoadSetsStartLevel).toBool())
+		this->pAS->setValue(AppSettings::sSettingGameStartLevel, this->ubCurrentLevel);
 
 	this->loadCurrentLevel();
+
+	// check that there are enough spawn points
+	if (this->apWorms.length() > this->apSpawnPoints.length()) {
+
+		this->pUi->buttonPP->setEnabled(false);
+		Q_EMIT this->statusMessage(tr("Level does not have sufficient spawn-points. Bailling."));
+		return;
+
+	} // if not enough start points
+
+	// distribute spawn points. this could be done by Game
+	this->randomizeSpawns();
+
+	for (int i = 0; i < this->apWorms.length(); ++i) {
+
+		this->apWorms.at(i)->onSetSpawnCell(this->apSpawnPoints.at(i));
+
+	} // loop worms
 
 	Q_EMIT this->resetGame();
 

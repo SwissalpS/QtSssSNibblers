@@ -19,6 +19,8 @@ Game::Game(QObject *pParent) :
 	ubCountBonusLeft(0u),
 	ubCountBonusMissed(0u),
 	ubCountDead(0u),
+	ubCountDeadHumans(0u),
+	ubCountHumans(0u),
 	ubCountLevels(0u),
 	ubCountNeedApple(SssS_Nibblers_Bonus_Delay_Ticks),
 	ubSpeedIndex(0u),
@@ -165,6 +167,52 @@ void Game::init() {
 	this->onSpeedChanged(this->pAS->get(AppSettings::sSettingGameSpeed).toInt());
 
 } // init
+
+
+bool Game::isGameOver() {
+
+	bool bUseLastDeadMethod = this->pAS->get(AppSettings::sSettingGameOverOnLastDead).toBool();
+
+	if (this->ubCountHumans) {
+
+		// got humans
+
+		if (bUseLastDeadMethod) {
+
+			// a la SwissalpS
+			// last human dead -> game over
+			return (this->ubCountDeadHumans >= this->ubCountHumans);
+
+		} else {
+
+			// a la gnome-nibbles
+			// first human dead -> game over
+			return (0 != this->ubCountDeadHumans);
+
+		} // if using SwissalpS or gnome-nibbles way of detecting game over
+
+	} else {
+
+		// all AI
+		// this is not possible with gnome-nibbles but we still offer the option
+
+		if (bUseLastDeadMethod) {
+
+			// a la SwissalpS
+			// last dead -> game over
+			return this->ubCountDead >= this->apWorms.length();
+
+		} else {
+
+			// a la gnome-nibbles
+			// first dead -> game over
+			return 0u != this->ubCountDead;
+
+		} // if using SwissalpS or gnome-nibbles way of detecting game over
+
+	} // if have humans at all or all AI
+
+} // isGameOver
 
 
 void Game::onBonusPlaced(const QVector<SurfaceCell *> apCells, const bool bFake) {
@@ -353,6 +401,7 @@ void Game::onReset() {
 	this->onSpeedChanged(this->pAS->get(AppSettings::sSettingGameSpeed).toInt());
 
 	this->ubCountDead = 0u;
+	this->ubCountDeadHumans = 0u;
 	this->ubCountLevels = 1u;
 	this->bGameStarted = false;
 
@@ -624,22 +673,25 @@ void Game::onWormCreated(Worm *pWorm) {
 
 	this->apWorms.append(pWorm);
 
-	connect(pWorm, SIGNAL(died()),
-			this, SLOT(onWormDied()));
+	if (!pWorm->isAI()) this->ubCountHumans++;
+
+	connect(pWorm, SIGNAL(died(bool)),
+			this, SLOT(onWormDied(bool)));
 
 } // onWormCreated
 
 
-void Game::onWormDied() {
-
-	// TODO: count dead humans if any human players...
+void Game::onWormDied(const bool bAI) {
 
 	++this->ubCountDead;
+	if (!bAI) ++this->ubCountDeadHumans;
+
 	if (this->isGameOver()) {
 
 		this->pTimer->stop();
 		this->pTimerBonus->stop();
 		this->bPaused = true;
+		//this->bGameStarted = false;
 
 		Q_EMIT this->doGameOver();
 

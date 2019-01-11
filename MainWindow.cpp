@@ -221,6 +221,9 @@ void MainWindow::initSettings() {
 	this->pUi->cbSound->setChecked(
 				this->pAS->get(AppSettings::sSettingGameSound).toBool());
 
+	this->pUi->cbGameOverOnLastDead->setChecked(
+				this->pAS->get(AppSettings::sSettingGameOverOnLastDead).toBool());
+
 	this->pUi->selectSpeed->setCurrentIndex(
 				this->pAS->get(AppSettings::sSettingGameSpeed).toInt());
 
@@ -234,6 +237,9 @@ void MainWindow::initSettings() {
 	} // loop
 	pBox->setCurrentIndex(
 				this->pAS->get(AppSettings::sSettingGameStartLevel).toInt());
+
+	this->pUi->cbLoadSetsStartLevel->setChecked(
+				this->pAS->get(AppSettings::sSettingGameLoadSetsStartLevel).toBool());
 
 	pBoxLives->setCurrentIndex(
 				this->pAS->get(AppSettings::sSettingGameStartLives).toInt());
@@ -413,6 +419,20 @@ void MainWindow::on_cbFakeBonuses_stateChanged(int iState) {
 	this->pAS->setValue(AppSettings::sSettingGameFakeBonuses, 0 < iState);
 
 } // on_cbFakeBonuses_stateChanged
+
+
+void MainWindow::on_cbGameOverOnLastDead_stateChanged(int iState) {
+
+	this->pAS->setValue(AppSettings::sSettingGameOverOnLastDead, 0 < iState);
+
+} // on_cbGameOverOnLastDead_stateChanged
+
+
+void MainWindow::on_cbLoadSetsStartLevel_stateChanged(int iState) {
+
+	this->pAS->setValue(AppSettings::sSettingGameLoadSetsStartLevel, 0 < iState);
+
+} // on_cbLoadSetsStartLevel_stateChanged
 
 
 void MainWindow::on_cbRelative1_toggled(bool bChecked) {
