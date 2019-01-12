@@ -414,6 +414,27 @@ void MainWindow::on_buttonHP4_clicked() {
 } // on_buttonHP4_clicked
 
 
+void MainWindow::on_buttonZap0_clicked() {
+
+	this->pUi->selectStartLevel->setCurrentIndex(0);
+
+} // on_buttonZap0_clicked
+
+
+void MainWindow::on_buttonZap128_clicked() {
+
+	this->pUi->selectStartLevel->setCurrentIndex(128);
+
+} // on_buttonZap128_clicked
+
+
+void MainWindow::on_buttonZap255_clicked() {
+
+	this->pUi->selectStartLevel->setCurrentIndex(255);
+
+} // on_buttonZap255_clicked
+
+
 void MainWindow::on_cbFakeBonuses_stateChanged(int iState) {
 
 	this->pAS->setValue(AppSettings::sSettingGameFakeBonuses, 0 < iState);
@@ -633,8 +654,8 @@ void MainWindow::onPlayerColourChanged(const quint8 ubWorm, const quint8 ubIndex
 	this->pAS->setPlayerColour(ubWormOldHolder, ubIndexOld);
 
 	QVector<quint8> aubColours;
-	for (int i = 0; i < 8; ++i)
-		aubColours.append(this->pAS->getPlayerColour(i));
+	for (quint8 ubCount = 0u; ubCount < 8u; ++ubCount)
+		aubColours.append(this->pAS->getPlayerColour(ubCount));
 
 	Q_EMIT this->settingsPlayerColoursChanged(aubColours);
 
@@ -742,6 +763,26 @@ void MainWindow::onPlayerUseMouseToggled(const quint8 ubWorm, const bool bChecke
 	//Q_EMIT this->settingsPlayerMouseChanged(ubWorm, bChecked);
 
 } // onPlayerUseMouseToggled
+
+
+void MainWindow::on_radioNetClient_toggled(bool bChecked) {
+
+} // on_radioNetClient_toggled
+
+
+void MainWindow::on_radioNetOff_toggled(bool bChecked) {
+
+	if (!bChecked) return;
+
+	// set setting to off
+	// kill any connections
+
+} // on_radioNetOff_toggled
+
+
+void MainWindow::on_radioNetServer_toggled(bool bChecked) {
+
+} // on_radioNetServer_toggled
 
 
 void MainWindow::on_selectColour1_currentIndexChanged(int iIndex) {

@@ -115,9 +115,10 @@ public:
 signals:
 	void bonusPlaced(QVector<SurfaceCell *> apCells, const bool bFake) const;
 	void debugMessage(const QString &sMessage) const;
+	void levelIsMissingSpawnPoints() const;
 	void noSpaceFoundForBonus(const quint8 ubBonus, const bool bFake) const;
 	void pauseResumeToggled() const;
-	void resetGame() const;
+	void resetGame(const bool bInvalidateWorms) const;
 	void statusMessage(const QString &sMessage) const;
 	void wormAteBonus(Worm *pWorm, SurfaceCell *pCell) const;
 	void wormCrashed(Worm *pWorm) const;

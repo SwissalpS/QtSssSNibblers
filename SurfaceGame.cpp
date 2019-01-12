@@ -649,6 +649,7 @@ void SurfaceGame::dialogLoadFinished(const int iResult) {
 	if (this->apWorms.length() > this->apSpawnPoints.length()) {
 
 		this->pUi->buttonPP->setEnabled(false);
+		Q_EMIT this->levelIsMissingSpawnPoints();
 		Q_EMIT this->statusMessage(tr("Level does not have sufficient spawn-points. Bailling."));
 		return;
 
@@ -1542,7 +1543,6 @@ void SurfaceGame::onMove() {
 			//this->onDebugMessage("Bonus Eaten at: " + QString::number(pCell->getColumn()) + ":" + QString::number(pCell->getRow()));
 			Q_EMIT this->wormAteBonus(pWorm, pCell);
 
-
 		} else {
 
 			// any free cell
@@ -1604,6 +1604,7 @@ void SurfaceGame::onNextLevel() {
 	if (this->apWorms.length() > this->apSpawnPoints.length()) {
 
 		this->pUi->buttonPP->setEnabled(false);
+		Q_EMIT this->levelIsMissingSpawnPoints();
 		Q_EMIT this->statusMessage(tr("Level does not have sufficient spawn-points. Bailling."));
 		return;
 
