@@ -31,6 +31,19 @@ Bonus::~Bonus() {
 } // dealloc
 
 
+bool Bonus::contains(const QPoint oPoint) const {
+
+	for (int i = 0; i < this->apCells.length(); ++i) {
+
+		if (oPoint == this->apCells.at(i)->getPos()) return true;
+
+	} // loop
+
+	return false;
+
+} // contains(QPoint)
+
+
 void Bonus::defreezeCells() {
 
 	this->bExpired = true;

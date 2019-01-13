@@ -246,6 +246,8 @@ void SurfaceCell::defrostState() {
 
 	this->ubState = this->ubStateFrozen;
 
+	this->onChanged();
+
 	this->update();
 
 } // defrostState

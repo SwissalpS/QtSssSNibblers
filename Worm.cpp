@@ -7,7 +7,7 @@ namespace SwissalpS { namespace QtNibblers {
 
 
 
-Worm::Worm(SurfaceCell *pCell, const quint8 ubColour,
+Worm::Worm(const QPoint oPoint, const quint8 ubState, const quint8 ubColour,
 		   const bool bAI, QObject *pParent) :
 	QObject(pParent),
 	bAmAI(bAI),
@@ -16,10 +16,10 @@ Worm::Worm(SurfaceCell *pCell, const quint8 ubColour,
 	ubLives(0u),
 	ubSpawnSafetyTicks(0u),
 	ulScore(0u),
-	pCellSpawn(pCell),
+	oPointSpawn(oPoint),
 	eNextBloat(L::Nowhere) {
 
-	this->onSetSpawnCell(pCell);
+	this->onSetSpawnPoint(oPoint, ubState);
 
 	this->startSpawning();
 
@@ -63,7 +63,8 @@ void Worm::addLength(int iLength) {
 void Worm::advanceTo(SurfaceCell *pCell) {
 
 	// make old head a mid-section
-	this->apCells.first()->setState(this->midState());
+	if (this->apCells.length())
+		this->apCells.first()->setState(this->midState());
 
 	if (L::Nowhere != this->eNextBloat) {
 
@@ -365,9 +366,14 @@ void Worm::onSetLives(const quint8 ubLives) {
 } // onSetLives
 
 
+// old way
 void Worm::onSetSpawnCell(SurfaceCell *pCell) {
 
+	this->onDebugMessage("OLD !!!!!!!!! onSetSpawnCell  ");
+	return ;
+
 	this->pCellSpawn = pCell;
+	this->oPointSpawn = pCell->getPos();
 
 	// determine initial heading from spawn-cell
 	switch (this->pCellSpawn->getState()) {
@@ -384,6 +390,27 @@ void Worm::onSetSpawnCell(SurfaceCell *pCell) {
 	this->eSpawnHeading = this->eCurrentHeading;
 
 } // onSetSpawnCell
+
+
+void Worm::onSetSpawnPoint(const QPoint oPoint, const quint8 ubState) {
+
+	this->oPointSpawn = oPoint;
+
+	// determine initial heading from spawn-points state
+	switch (ubState) {
+		case L::SpawnHeadingNorth: this->eCurrentHeading = L::North; break;
+		case L::SpawnHeadingWest: this->eCurrentHeading = L::West; break;
+		case L::SpawnHeadingSouth: this->eCurrentHeading = L::South; break;
+		case L::SpawnHeadingEast:
+		default:
+			this->eCurrentHeading = L::East;
+		break;
+
+	} // switch ubState
+
+	this->eSpawnHeading = this->eCurrentHeading;
+
+} // onSetSpawnPoint
 
 
 void Worm::onSubtractLife() {
@@ -457,7 +484,7 @@ void Worm::setColourIndex(const quint8 ubIndex) {
 void Worm::startSpawning() {
 
 	this->apCells.clear();
-	this->apCells.prepend(this->pCellSpawn);
+	//this->apCells.prepend(this->pCellSpawn);
 
 	this->uiTargetLength = 5u;
 	this->ubSpawnSafetyTicks = 7u;

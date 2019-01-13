@@ -32,6 +32,7 @@ public:
 				   QObject *pParent = nullptr);
 	virtual ~Bonus();
 
+	virtual bool contains(const QPoint oPoint) const;
 	inline virtual bool contains(SurfaceCell *pCell) const { return this->apCells.contains(pCell); }
 	inline virtual QVector<SurfaceCell *> getCells() const { return this->apCells; }
 	inline virtual quint8 getStateBase() const { return this->ubStateBase; }

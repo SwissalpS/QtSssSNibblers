@@ -37,12 +37,14 @@ SOURCES += \
 	main.cpp \
 	MainWindow.cpp \
 	Map.cpp \
+	MapGame.cpp \
 	ScoreBoard.cpp \
 	SurfaceBuilder.cpp \
 	SurfaceCell.cpp \
 	SurfaceFrame.cpp \
 	SurfaceGame.cpp \
-	Worm.cpp
+	Worm.cpp \
+	WormAI.cpp
 
 HEADERS += \
 	AppSettings.h \
@@ -57,12 +59,14 @@ HEADERS += \
 	Lingo.h \
 	MainWindow.h \
 	Map.h \
+	MapGame.h \
 	ScoreBoard.h \
 	SurfaceBuilder.h \
 	SurfaceCell.h \
 	SurfaceFrame.h \
 	SurfaceGame.h \
-	Worm.h
+	Worm.h \
+	WormAI.h
 
 FORMS += \
 	DialogLoad.ui \

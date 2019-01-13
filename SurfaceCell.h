@@ -62,16 +62,21 @@ public:
 	inline virtual quint8 getStateFrozen() const { return this->ubStateFrozen; }
 	inline virtual bool isNull() const { return nullptr == this->pUi; }
 
-	inline virtual void setState(const quint8 ubState) { this->ubState = ubState; }
+	inline virtual void setState(const quint8 ubState) {
+		this->ubState = ubState; this->onChanged(); }
 
 	bool operator ==(SurfaceCell *pOther) const;
 
 signals:
+	void changed(const QPoint oPoint, const quint8 ubState) const;
 	void clicked(const quint8 ubColumn, const quint8 ubRow, bool bShift,
 				 SurfaceCell *pCell);
 	void debugMessage(const QString &sMessage) const;
 
 public slots:
+	inline void onChanged() const {
+		Q_EMIT this->changed(this->getPos(), this->ubState); }
+
 	inline void onDebugMessage(const QString &sMessage) const {
 		Q_EMIT this->debugMessage("SurfaceCell:" + sMessage); }
 

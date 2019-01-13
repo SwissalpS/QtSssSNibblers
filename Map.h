@@ -27,6 +27,7 @@ public:
 	explicit Map(const quint8 ubColumns, const quint8 ubRows, QObject *pParent = nullptr);
 	virtual ~Map();
 
+	inline bool isNull() { return (0 == this->ubTotalColumns) || (0 == this->ubTotalRows); }
 	virtual void fillAll(const quint8 ubState = L::FloorClean);
 	virtual QPixmap pixmap(const bool bSimple = true) const;
 	virtual void setTile(const quint8 ubColumn, const quint8 ubRow, quint8 ubState);

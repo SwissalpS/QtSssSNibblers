@@ -26,6 +26,7 @@ protected:
 	quint8 ubLives;
 	quint8 ubSpawnSafetyTicks;
 	quint32 ulScore;
+	QPoint oPointSpawn;
 	SurfaceCell *pCellSpawn;
 	QVector<SurfaceCell *> apCells;
 	QVector<L::Heading> aeNextHeadings;
@@ -37,7 +38,8 @@ protected:
 
 public:
 
-	explicit Worm(SurfaceCell *pCell, const quint8 ubColour, const bool bAI,
+	explicit Worm(const QPoint oPoint, const quint8 ubState,
+				  const quint8 ubColour, const bool bAI,
 				  QObject *pParent = nullptr);
 	virtual ~Worm();
 
@@ -70,6 +72,7 @@ public:
 	inline virtual void setHeading(const L::Heading eDirection) { this->eCurrentHeading = eDirection; }
 	inline virtual void setNextBloatHeading(const L::Heading eDirection) { this->eNextBloat = eDirection; }
 	inline virtual void setUseRelativeControls(bool bUse) { this->bUseRelativeControls = bUse; }
+	inline virtual QPoint spawnPoint() const { return this->oPointSpawn; }
 	virtual void startSpawning();
 	// cell that comes last
 	virtual SurfaceCell *tailCell();
@@ -97,6 +100,7 @@ public slots:
 	void onSetLives(const quint8 ubLives);
 	inline void onSetName(const QString sName) { Q_EMIT this->updateName(sName); }
 	void onSetSpawnCell(SurfaceCell *pCell);
+	void onSetSpawnPoint(const QPoint oPoint, const quint8 ubState);
 	void onSubtractLife();
 	void onTurn(const L::Heading eDirection);
 	void onTurnLeft();
