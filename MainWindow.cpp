@@ -139,8 +139,8 @@ void MainWindow::initGame() {
 	connect(pGame, SIGNAL(bonusPlaced(QVector<QPoint>,quint8,bool)),
 			pSurface, SLOT(onBonusPlaced(QVector<QPoint>,quint8,bool)));
 
-	connect(pGame, SIGNAL(doGameOver()),
-			pSurface, SLOT(onDoGameOver()));
+	connect(pGame, SIGNAL(doGameOver(QString)),
+			pSurface, SLOT(onDoGameOver(QString)));
 
 	connect(pGame, SIGNAL(doLevelDone()),
 			pSurface, SLOT(onDoLevelDone()));
