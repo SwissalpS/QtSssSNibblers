@@ -7,7 +7,7 @@ namespace SwissalpS { namespace QtNibblers {
 
 
 
-QHash<const Fx::Sounds, QSoundEffect*> Fx::aoSounds;// = QVector<QSoundEffect>();
+QHash<const Fx::Sounds, QSoundEffect*> Fx::aoSounds;
 
 
 Fx::Fx(QObject *pParent) :
