@@ -23,7 +23,7 @@ Worm::Worm(const QPoint oPoint, const quint8 ubState, const quint8 ubColour,
 
 	this->onSetSpawnPoint(oPoint, ubState);
 
-	this->startSpawning();
+	//this->startSpawning();
 
 } // construct
 
@@ -59,7 +59,7 @@ void Worm::addLength(int iLength) {
 
 	this->tailCell()->setState(this->tailState());
 
-} // dealloc
+} // addLength
 
 
 void Worm::advanceTo(SurfaceCell *pCell) {
