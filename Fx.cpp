@@ -23,7 +23,7 @@ Fx::~Fx() {
 
 // static
 void Fx::play(const Sounds eSound) {
-
+#ifdef QT_MULTIMEDIA_LIB
 	static AppSettings *pAS = AppSettings::pAppSettings();
 
 	// don't bother if muted
@@ -77,6 +77,7 @@ void Fx::play(const Sounds eSound) {
 
 	Fx::aoSounds.value(eSound)->play();
 
+#endif
 } // play
 
 

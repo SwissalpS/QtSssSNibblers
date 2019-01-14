@@ -30,8 +30,9 @@ public:
 	Q_ENUM(Sounds)
 
 private:
+#ifdef QT_MULTIMEDIA_LIB
 	static QHash<const Sounds, QSoundEffect*>aoSounds;
-
+#endif
 	// hide constructor as this is an all static class
 	explicit Fx(QObject *pParent = nullptr);
 
