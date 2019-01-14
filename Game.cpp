@@ -413,6 +413,100 @@ void Game::loadCurrentLevel() {
 } // loadCurrentLevel
 
 
+QVector<Worm *> Game::makeRanking() {
+
+	QVector<Worm *> apRest = this->apWorms;
+	QVector<Worm *> apRanks;
+	Worm *pWorm;
+	Worm *pWormHighest;
+	quint16 uiHighestScore;
+
+	// sort by highest score
+	while (apRest.length()) {
+
+		uiHighestScore = 0;
+		pWormHighest = apRest.first();
+		for (int i = 0; i < apRest.length(); ++i) {
+
+			pWorm = apRest.at(i);
+			if (pWorm->score() > uiHighestScore) {
+
+				uiHighestScore = pWorm->score();
+				pWormHighest = pWorm;
+
+			} // if found a higher score
+
+		} // loop rest
+
+		if (uiHighestScore) {
+
+			// move worm into other array
+			apRanks.append(pWormHighest);
+			apRest.removeOne(pWorm);
+
+		} else {
+
+			// can this happen?
+
+			this->onDebugMessage("unusual in makeRanking");
+			// avoid infinite loop
+			apRanks += apRest;
+			apRest.clear();
+
+		} // if got highest or not
+
+	} // loop apRest.length()
+
+	// sort those with same scores by lives lost
+	bool bFound = true;
+	while (bFound) {
+
+		bFound = false;
+		apRest = apRanks;
+		apRanks.clear();
+		while (apRest.length()) {
+
+			if (2 > apRest.length()) {
+				// nothing to compare to
+				apRanks += apRest;
+				apRest.clear();
+				break;
+			} // if only one left
+
+			pWorm = apRest.first();
+			pWormHighest = apRest.at(1);
+
+			if (pWorm->score() == pWormHighest->score()) {
+
+				if (pWorm->livesLost() > pWormHighest->livesLost()) {
+
+					bFound = true;
+					apRanks.append(pWormHighest);
+					apRest.removeAt(1);
+
+				} else {
+
+					apRanks.append(pWorm);
+					apRest.removeFirst();
+
+				} // if first is worse off than second
+
+			} else {
+
+				apRanks.append(pWorm);
+				apRest.removeFirst();
+
+			} // if found identical scores or not
+
+		} // loop apRest.length()
+
+	} // loop bFound
+
+	return apRanks;
+
+} // makeRanking
+
+
 void Game::onBonusPlaced(const QVector<SurfaceCell *> apCells, const bool bFake) {
 
 //	this->onDebugMessage("\n" + QString::number(apCells.at(0)->getPos().x())
@@ -953,7 +1047,20 @@ void Game::onWormDied(const bool bAI) {
 		this->pTimerBonus->stop();
 		this->bPaused = true;
 
-		Q_EMIT this->doGameOver();
+		Worm *pWorm;
+		QString sOut;
+		QVector<Worm *> apRanks = this->makeRanking();
+		for (int i = 0; i < apRanks.length(); ++i) {
+
+			pWorm = apRanks.at(i);
+			sOut += QString::number(i + 1) + ". " + pWorm->name() + ": "
+					+ QString::number(pWorm->score())
+					//+ " " + QString::number(pWorm->livesLost())
+					+ (((i+1) < apRanks.length()) ? "\n" : "");
+
+		} // loop
+
+		Q_EMIT this->doGameOver(sOut);
 
 	} // if all have died
 
@@ -1033,6 +1140,7 @@ void Game::wormAteBonus(Worm *pWorm, const QPoint oPoint) {
 	this->destroyBonus(pBonus);
 
 	// now let's react to it with points and growth
+	quint16 uiScore;
 	switch (ubState) {
 
 		case L::BonusApple:
@@ -1042,8 +1150,9 @@ void Game::wormAteBonus(Worm *pWorm, const QPoint oPoint) {
 			this->onDebugMessage("cB " + QString::number(this->ubCountBonus) + " cAl " + QString::number(this->ubCountApplesLeft));
 
 			// add points
-			pWorm->onAddScore((this->ubCountBonus - this->ubCountApplesLeft)
-							  * this->ubCountLevels);
+			uiScore = qMax(1, (this->ubCountBonus - this->ubCountApplesLeft)
+						   * this->ubCountLevels);
+			pWorm->onAddScore(uiScore);
 			// grow
 			pWorm->addLength(4 * (this->ubCountBonus - this->ubCountApplesLeft));
 
@@ -1081,8 +1190,9 @@ void Game::wormAteBonus(Worm *pWorm, const QPoint oPoint) {
 			if (2 >= pWorm->targetLength()) break;
 
 			// add points
-			pWorm->onAddScore(qint16(double(0.5) * double(this->ubCountLevels)
-								  * double(pWorm->targetLength())));
+			uiScore = qMax(qint16(1), qint16(double(0.5) * double(this->ubCountLevels)
+									 * double(pWorm->targetLength())));
+			pWorm->onAddScore(uiScore);
 			// grow
 			pWorm->addLength(int(double(-0.5) * double(pWorm->targetLength())));
 
@@ -1094,7 +1204,8 @@ void Game::wormAteBonus(Worm *pWorm, const QPoint oPoint) {
 			Fx::play(Fx::Bonus);
 
 			// add points
-			pWorm->onAddScore(qint16(pWorm->targetLength() * this->ubCountLevels));
+			uiScore = qMax(qint16(1), qint16(pWorm->targetLength() * this->ubCountLevels));
+			pWorm->onAddScore(uiScore);
 			// grow
 			pWorm->addLength(pWorm->targetLength());
 

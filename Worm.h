@@ -24,10 +24,12 @@ protected:
 	quint16 uiTargetLength;
 	quint8 ubColourIndex;
 	quint8 ubLives;
+	quint8 ubLivesLost;
 	quint8 ubSpawnSafetyTicks;
 	quint32 ulScore;
 	QPoint oPointSpawn;
 	SurfaceCell *pCellSpawn;
+	QString sName;
 	QVector<SurfaceCell *> apCells;
 	QVector<L::Heading> aeNextHeadings;
 	L::Heading eCurrentHeading;
@@ -66,8 +68,11 @@ public:
 	// cell that comes after the head (2nd)
 	virtual SurfaceCell *neckCell();
 	virtual QPoint leftPoint();
+	inline virtual quint8 livesLost() const { return this->ubLivesLost; }
+	inline virtual QString name() const { return this->sName; }
 	virtual QPoint nextPoint();
 	virtual QPoint rightPoint();
+	inline virtual quint32 score() const { return this->ulScore; }
 	virtual void setColourIndex(const quint8 ubIndex);
 	inline virtual void setHeading(const L::Heading eDirection) { this->eCurrentHeading = eDirection; }
 	inline virtual void setNextBloatHeading(const L::Heading eDirection) { this->eNextBloat = eDirection; }
@@ -99,7 +104,7 @@ public slots:
 	inline void onResetScore() { this->ulScore = 0u; Q_EMIT this->updateScore(0u);}
 	void onReverse();
 	void onSetLives(const quint8 ubLives);
-	inline void onSetName(const QString sName) { Q_EMIT this->updateName(sName); }
+	inline void onSetName(const QString sName) { this->sName = sName; Q_EMIT this->updateName(sName); }
 	QT_DEPRECATED void onSetSpawnCell(SurfaceCell *pCell);
 	void onSetSpawnPoint(const QPoint oPoint, const quint8 ubState);
 	void onSubtractLife();

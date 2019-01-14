@@ -530,7 +530,7 @@ void SurfaceGame::onColoursChanged(const QVector<quint8> aubColours) {
 } // onColoursChanged
 
 
-void SurfaceGame::onDoGameOver() {
+void SurfaceGame::onDoGameOver(const QString &sRanking) {
 
 	this->onDebugMessage("onDoGameOver");
 
@@ -544,7 +544,7 @@ void SurfaceGame::onDoGameOver() {
 
 	// show game over dialog
 	QString sMessage = tr("Game Over");
-	this->showStartCountDownFrame(sMessage);
+	this->showStartCountDownFrame(sMessage + "\n" + sRanking);
 
 	Q_EMIT this->statusMessage(sMessage);
 

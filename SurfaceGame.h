@@ -116,7 +116,7 @@ public slots:
 		if (!this->bLevelLoading) Q_EMIT this->tileChanged(oPoint, ubState); }
 
 	virtual void onColoursChanged(const QVector<quint8> aubColours);
-	virtual void onDoGameOver();
+	virtual void onDoGameOver(const QString &sRanking);
 	virtual void onDoLevelDone();
 	virtual void onDoLevelIsMissingSpawnPoints(const quint8 ubMissing);
 	virtual void onDoLevelLoadError();

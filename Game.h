@@ -56,6 +56,7 @@ protected:
 	virtual void destructWorms();
 	virtual void initWorms();
 	virtual void loadCurrentLevel();
+	virtual QVector<Worm *> makeRanking();
 	virtual void placeBonus(const quint8 ubBonus, const bool bFake);
 	virtual void wormAteBonus(Worm *pWorm, const QPoint oPoint);
 
@@ -74,7 +75,7 @@ public:
 signals:
 	void advanceWormTo(Worm *pWorm, const QPoint oPoint) const;
 	void bonusPlaced(const QVector<QPoint> aoPoints, const quint8 ubBonus, const bool bFake);
-	void doGameOver() const;
+	void doGameOver(const QString &sRanking) const;
 	void doLevelDone() const;
 	void doLevelIsMissingSpawnPoints(const quint8 ubMissing) const;
 	void doLevelLoadError() const;

@@ -14,9 +14,11 @@ Worm::Worm(const QPoint oPoint, const quint8 ubState, const quint8 ubColour,
 	uiTargetLength(5u),
 	ubColourIndex(ubColour),
 	ubLives(0u),
+	ubLivesLost(0u),
 	ubSpawnSafetyTicks(0u),
 	ulScore(0u),
 	oPointSpawn(oPoint),
+	sName("Worm"),
 	eNextBloat(L::Nowhere) {
 
 	this->onSetSpawnPoint(oPoint, ubState);
@@ -415,6 +417,8 @@ void Worm::onSetSpawnPoint(const QPoint oPoint, const quint8 ubState) {
 
 void Worm::onSubtractLife() {
 
+	this->ubLivesLost++;
+
 	if (this->isDead()) return;
 
 	this->ubLives--;
@@ -422,6 +426,7 @@ void Worm::onSubtractLife() {
 	this->ulScore *= 7 / 10;
 
 	Q_EMIT this->updateLives(this->ubLives);
+	Q_EMIT this->updateScore(this->ulScore);
 
 	if (this->isDead()) Q_EMIT this->died(this->bAmAI);
 
