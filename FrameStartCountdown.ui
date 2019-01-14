@@ -31,7 +31,7 @@
      <property name="font">
       <font>
        <family>Noto Sans</family>
-       <pointsize>64</pointsize>
+       <pointsize>44</pointsize>
        <weight>75</weight>
        <bold>true</bold>
       </font>
@@ -480,7 +480,7 @@
       </palette>
      </property>
      <property name="text">
-      <string> </string>
+      <string/>
      </property>
      <property name="flat">
       <bool>true</bool>
