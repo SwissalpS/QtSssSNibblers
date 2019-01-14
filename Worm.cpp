@@ -428,6 +428,7 @@ void Worm::onSubtractLife() {
 } // onSubtractLife
 
 
+// key press entrance
 void Worm::onTurn(const L::Heading eDirection) {
 
 	if (SssS_Nibblers_Max_Key_Cache > this->aeNextHeadings.length())

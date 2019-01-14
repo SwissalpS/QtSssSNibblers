@@ -119,7 +119,6 @@ QColor SurfaceCell::colour() const {
 		case L::TeleporterOutI: // exit I
 		case L::TeleporterOutJ: // exit J
 			return QColor(Qt::black);//transparent); // black
-		break;
 
 		// also common -> walls
 		case L::WallVertical:
@@ -133,40 +132,40 @@ QColor SurfaceCell::colour() const {
 		case L::WallTwest:
 		case L::WallTsouth:
 		case L::WallCross:
-			return QColor(Qt::white); break;
+			return QColor(Qt::white);
 
 		// players
 		case 10u: case 11u: case 12u: case 13u: case 14u:
 		case 15u: case 16u: case 17u: case 18u: case 19u:
-			return QColor(SssS_Nibblers_Colour_0); break;
+			return QColor(SssS_Nibblers_Colour_0);
 
 		case 20u: case 21u: case 22u: case 23u: case 24u:
 		case 25u: case 26u: case 27u: case 28u: case 29u:
-			return QColor(SssS_Nibblers_Colour_1); break;
+			return QColor(SssS_Nibblers_Colour_1);
 
 		case 30u: case 31u: case 32u: case 33u: case 34u:
 		case 35u: case 36u: case 37u: case 38u: case 39u:
-			return QColor(SssS_Nibblers_Colour_2); break;
+			return QColor(SssS_Nibblers_Colour_2);
 
 		case 40u: case 41u: case 42u: case 43u: case 44u:
 		case 45u: case 46u: case 47u: case 48u: case 49u:
-			return QColor(SssS_Nibblers_Colour_3); break;
+			return QColor(SssS_Nibblers_Colour_3);
 
 		case 50u: case 51u: case 52u: case 53u: case 54u:
 		case 55u: case 56u: case 57u: case 58u: case 59u:
-			return QColor(SssS_Nibblers_Colour_4); break;
+			return QColor(SssS_Nibblers_Colour_4);
 
 		case 60u: case 61u: case 62u: case 63u: case 64u:
 		case 65u: case 66u: case 67u: case 68u: case 69u:
-			return QColor(SssS_Nibblers_Colour_5); break;
+			return QColor(SssS_Nibblers_Colour_5);
 
 		case 70u: case 71u: case 72u: case 73u: case 74u:
 		case 75u: case 76u: case 77u: case 78u: case 79u:
-			return QColor(SssS_Nibblers_Colour_6); break;
+			return QColor(SssS_Nibblers_Colour_6);
 
 		case 80u: case 81u: case 82u: case 83u: case 84u:
 		case 85u: case 86u: case 87u: case 88u: case 89u:
-			return QColor(SssS_Nibblers_Colour_7); break;
+			return QColor(SssS_Nibblers_Colour_7);
 
 		// teleporter entrances
 		case L::TeleporterInA: // entrance A
@@ -179,36 +178,36 @@ QColor SurfaceCell::colour() const {
 		case L::TeleporterInH: // entrance H
 		case L::TeleporterInI: // entrance I
 		case L::TeleporterInJ: // entrance J
-			return QColor(Qt::darkGray); break;
+			return QColor(Qt::darkGray);
 
 		// bonuses
 		// apples -> add length and advance level
 		case L::BonusAppleNW:
 		case L::BonusAppleNE:
 		case L::BonusAppleSE:
-		case L::BonusAppleSW: return QColor(Qt::cyan); break;
+		case L::BonusAppleSW: return QColor(Qt::cyan);
 			// cherries -> shorten
 		case L::BonusCherryNW:
 		case L::BonusCherryNE:
 		case L::BonusCherrySE:
-		case L::BonusCherrySW: return QColor(Qt::magenta); break;
+		case L::BonusCherrySW: return QColor(Qt::magenta);
 			// bananas -> add length
 		case L::BonusBananaNW:
 		case L::BonusBananaNE:
 		case L::BonusBananaSE:
-		case L::BonusBananaSW: return QColor(Qt::darkCyan); break;
+		case L::BonusBananaSW: return QColor(Qt::darkCyan);
 			// hearts -> add life
 		case L::BonusHeartNW:
 		case L::BonusHeartNE:
 		case L::BonusHeartSE:
-		case L::BonusHeartSW: return QColor(Qt::darkMagenta); break;
+		case L::BonusHeartSW: return QColor(Qt::darkMagenta);
 			// diamonds -> reverse direction
 		case L::BonusDiamondNW:
 		case L::BonusDiamondNE:
 		case L::BonusDiamondSE:
-		case L::BonusDiamondSW: return QColor(Qt::gray); break;
+		case L::BonusDiamondSW: return QColor(Qt::gray);
 
-		default: return QColor(Qt::lightGray); break;
+		default: return QColor(Qt::lightGray);
 
 	} // switch this->ubState
 

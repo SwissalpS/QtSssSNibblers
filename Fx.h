@@ -30,27 +30,16 @@ public:
 	Q_ENUM(Sounds)
 
 private:
-	static Fx *pFx;
-
-	QHash<const Sounds, QSoundEffect*>hSounds;
 	static QHash<const Sounds, QSoundEffect*>aoSounds;
 
-
-protected:
+	// hide constructor as this is an all static class
+	explicit Fx(QObject *pParent = nullptr);
 
 public:
-	explicit Fx(QObject *pParent = nullptr);
 	virtual ~Fx();
 
-signals:
-	void debugMessage(const QString &sMessage) const;
-
 public slots:
-	inline virtual void onDebugMessage(const QString &sMessage) const {
-		Q_EMIT this->debugMessage("Fx:" + sMessage); }
-
 	static void play(const Sounds eSound);
-	virtual void playSound(const Sounds eSound);
 
 }; // Fx
 

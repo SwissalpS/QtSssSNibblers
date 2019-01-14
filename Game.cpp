@@ -29,7 +29,6 @@ Game::Game(QObject *pParent) :
 	ubCountNeedApple(SssS_Nibblers_Bonus_Delay_Ticks),
 	ubCurrentLevel(0u),
 	ubSpeedIndex(0u),
-	uiApplesToGo(0u),
 	pAS(AppSettings::pAppSettings()),
 	pMapGame(nullptr),
 	pWormAI(nullptr) {
@@ -37,6 +36,7 @@ Game::Game(QObject *pParent) :
 	this->apBonus.clear();
 	this->apWorms.clear();
 
+	// init 'AI'
 	this->pWormAI = new WormAI(this);
 
 	// init randomizer
@@ -47,14 +47,28 @@ Game::Game(QObject *pParent) :
 
 Game::~Game() {
 
-	this->apBonus.clear();
-	this->apWorms.clear();
+	this->destructBonuses();
+	this->destructWorms();
+
+	this->pAS = nullptr;
+
+	delete this->pMapGame;
+	this->pMapGame = nullptr;
 
 	if (this->pTimer) {
 		this->pTimer->stop();
-		this->pTimer = nullptr;
 		delete this->pTimer;
+		this->pTimer = nullptr;
 	}
+
+	if (this->pTimerBonus) {
+		this->pTimerBonus->stop();
+		delete this->pTimerBonus;
+		this->pTimerBonus = nullptr;
+	}
+
+	delete this->pWormAI;
+	this->pWormAI = nullptr;
 
 } // dealloc
 
@@ -142,36 +156,9 @@ void Game::addCrashPotential(QHash<QString, Worm *> &hppCrashPotential,
 } // addCrashPotential
 
 
-// attempt to solve the mistery of strange bonus
-// behaviour. I'm pretty sure we won't need this
-// anymore
-void Game::clearExpiredBonuses() {
-
-	this->onDebugMessage("OLD !!!!!!!!! clearExpiredBonuses  ");
-	return ;
-
-	QVector<Bonus *> apExpired;
-	Bonus *pBonus;
-
-	for (int i = 0; i < this->apBonus.length(); ++i) {
-
-		pBonus = this->apBonus.at(i);
-		if (pBonus->hasExpired()) apExpired.append(pBonus);
-
-	} // loop looking for expired boni
-
-	for (int i = 0; i < apExpired.length(); ++i) {
-
-		pBonus = apExpired.at(i);
-		pBonus->onGotEaten();
-		this->apBonus.removeOne(pBonus);
-
-	} // loop
-
-} // clearExpiredBonuses
-
-
 void Game::destroyBonus(Bonus *pBonus) {
+
+	//this->onDebugMessage("destroyBonus");
 
 	pBonus->onGotEaten();
 
@@ -182,7 +169,41 @@ void Game::destroyBonus(Bonus *pBonus) {
 } // destroyBonus
 
 
+void Game::destructBonuses() {
+
+	//this->onDebugMessage("destructBonuses");
+
+	Bonus *pBonus;
+	while (this->apBonus.length()) {
+
+		pBonus = this->apBonus.takeLast();
+		delete pBonus;
+
+	} // loop this->apBonus.length()
+
+} // destructBonuses
+
+
+void Game::destructWorms() {
+
+	//this->onDebugMessage("destructWorms");
+
+	Q_EMIT this->wormsInvalidated();
+
+	Worm *pWorm;
+	while (this->apWorms.length()) {
+
+		pWorm = this->apWorms.takeLast();
+		delete pWorm;
+
+	} // loop this->apWorms.length()
+
+} // destructWorms
+
+
 void Game::init() {
+
+	this->onDebugMessage("init");
 
 	this->pTimer = new QTimer(this);
 	this->pTimer->setSingleShot(false);
@@ -208,15 +229,13 @@ void Game::init() {
 
 void Game::initWorms() {
 
-	Q_EMIT this->wormsInvalidated();
+	this->onDebugMessage("initWorms");
 
-	Worm *pWorm;
-	while (this->apWorms.length()) {
+	this->destructWorms();
 
-		pWorm = this->apWorms.takeLast();
-		delete pWorm;
-
-	} // loop all worms
+	if (nullptr == this->pMapGame) {
+		this->onDebugMessage("initWorms no map!");
+	} // if no map, should not happen
 
 	quint8 ubColour;
 	quint8 ubCount;
@@ -229,6 +248,15 @@ void Game::initWorms() {
 	if (this->ubCountAllPlayers > this->pMapGame->spawnPoints().length()) {
 
 		Q_EMIT this->statusMessage(tr("Level does not have sufficient spawn-points. Bailling."));
+		Q_EMIT this->doLevelIsMissingSpawnPoints(
+					this->ubCountAllPlayers
+					- this->pMapGame->spawnPoints().length());
+
+		this->ubCountDead = 0xFFu;
+		this->ubCountDeadHumans = 0xFFu;
+
+		delete this->pMapGame;
+		this->pMapGame = nullptr;
 
 		return;
 
@@ -239,6 +267,7 @@ void Game::initWorms() {
 
 	QPoint oPoint;
 	quint8 ubState;
+	Worm *pWorm;
 	for (ubCount = 0u; ubCount < this->ubCountAllPlayers; ++ubCount) {
 
 		oPoint = this->pMapGame->spawnPoints().at(ubCount);
@@ -248,7 +277,8 @@ void Game::initWorms() {
 
 		pWorm = new Worm(oPoint, ubState, ubColour, (ubCount >= ubCountHumans), this);
 
-		pWorm->setUseRelativeControls(this->pAS->getPlayerRelative(ubCount));
+		if (!pWorm->isAI())
+			pWorm->setUseRelativeControls(this->pAS->getPlayerRelative(ubCount));
 
 		connect(pWorm, SIGNAL(debugMessage(QString)),
 				this, SLOT(onDebugMessage(QString)));
@@ -279,7 +309,10 @@ void Game::initWorms() {
 
 bool Game::isGameOver() {
 
-	bool bUseLastDeadMethod = this->pAS->get(AppSettings::sSettingGameOverOnLastDead).toBool();
+	//this->onDebugMessage("isGameOver");
+
+	bool bUseLastDeadMethod = this->pAS->get(
+								  AppSettings::sSettingGameOverOnLastDead).toBool();
 
 	if (this->ubCountHumans) {
 
@@ -461,6 +494,8 @@ void Game::onBonusPlaced(const QVector<SurfaceCell *> apCells, const bool bFake)
 
 void Game::onBonusTimedOut(Bonus *pBonus) {
 
+	this->onDebugMessage("onBonusTimedOut" + QString::number(pBonus->getStateBase()) + " " + QString::number(pBonus->getCells().at(0)->getColumn()) + ":" + QString::number(pBonus->getCells().at(0)->getRow()) + " " + QString::number(pBonus->isFake()));
+
 	bool bWasApple = L::BonusApple == pBonus->getStateBase();
 	if (pBonus->isFake()) bWasApple = false;
 	if (bWasApple) this->ubCountBonusMissed++;
@@ -480,13 +515,20 @@ void Game::onLevelIsLoaded() {
 
 	if (0 == this->apWorms.length()) {
 
+		this->onDebugMessage("no worms");
+
 		this->initWorms();
 
 		return;
 
 	} // if new game
 
-	this->onDebugMessage("onLevelIsLoaded 2");
+	if (nullptr == this->pMapGame) {
+		this->onDebugMessage("no map");
+		return;
+	}
+
+	this->onDebugMessage("really check again? didn't we check when loading?");
 
 	// check that there are enough spawn points
 	if (this->apWorms.length() > this->pMapGame->spawnPoints().length()) {
@@ -497,7 +539,7 @@ void Game::onLevelIsLoaded() {
 
 	} // if not enough start points
 
-	this->onDebugMessage("onLevelIsLoaded 3");
+	this->onDebugMessage("OK, got enough spawn points");
 
 	// random spawn point distribution
 	this->pMapGame->randomizeSpawnOrder();
@@ -531,22 +573,12 @@ void Game::onNextLevel() {
 } // onNextLevel
 
 
-void Game::onNoSpaceFoundForBonus(const quint8 ubBonus, const bool bFake) {
-
-	this->onDebugMessage("onNoSpaceFoundForBonus");
-
-	if ((!bFake) && (L::BonusApple == ubBonus))
-		this->ubCountNeedApple = SssS_Nibblers_Bonus_Delay_Ticks;
-
-} // onNoSpaceFoundForBonus
-
-
 void Game::onPlayerCountChanged(const quint8 ubCountHumans,
 								const quint8 ubCountAIs) {
 	Q_UNUSED(ubCountAIs)
 	Q_UNUSED(ubCountHumans)
 
-	// TODO:
+	// nothing to do, covered when restarting game
 
 } // onPlayerCountChanged
 
@@ -619,9 +651,14 @@ void Game::onResetSoft() {
 	this->ubCountBonusMissed = 0;
 	this->ubCountNeedApple = SssS_Nibblers_Bonus_Delay_Ticks;
 
+	Worm *pWorm;
 	for (int iCount = 0; iCount < this->apWorms.length(); ++iCount) {
 
-		Q_EMIT this->spawnWorm(this->apWorms.at(iCount));
+		pWorm = this->apWorms.at(iCount);
+
+		if (pWorm->isDead()) continue;
+
+		Q_EMIT this->spawnWorm(pWorm);
 
 	} // loop
 
@@ -650,6 +687,8 @@ void Game::onReset() {
 
 
 void Game::onSpeedChanged(const int iIndex) {
+
+	//this->onDebugMessage("onSpeedChanged");
 
 	this->ubSpeedIndex = quint8(iIndex);
 
@@ -684,6 +723,9 @@ void Game::onSpeedChanged(const int iIndex) {
 void Game::onStartNewGame(const quint8 ubLevel) {
 
 	this->onDebugMessage("onStartNewGame");
+
+	if (this->pAS->get(AppSettings::sSettingGameLoadSetsStartLevel).toBool())
+		this->pAS->setValue(AppSettings::sSettingGameStartLevel, ubLevel);
 
 	this->ubCurrentLevel = ubLevel;
 	this->ubCountDead = 0u;
@@ -896,64 +938,16 @@ void Game::onTickBonus() {
 } // onTickBonus
 
 
-// did not work with signal/slot system
-// so SurfaceGame is keeping track of Worms only to steer them
-void Game::onTurnWorm(const quint8 ubWorm, const L::Heading eDirection) {
-
-	this->onDebugMessage("OLD !!!!!!!!!  onTurnWorm ");
-	return ;
-
-	if (this->apWorms.length() <= ubWorm) return;
-	if (ubWorm >= this->ubCountHumans) return;
-
-	this->apWorms.at(ubWorm)->onTurn(eDirection);
-
-} // onTurnWorm
-
-
-// old
-void Game::onWormCrashed(Worm *pWorm) {
-
-	this->onDebugMessage("OLD !!!!!!!!! onWormCrashed  ");
-	return ;
-
-	Fx::play(Fx::Crash);
-
-	pWorm->onSubtractLife();
-
-	if (1 < this->apWorms.length()) {
-
-		pWorm->onMultiplyScore(0.7f);
-
-	} // if more than one player -> penalty points
-
-	if (!pWorm->isDead()) Q_EMIT this->spawnWorm(pWorm);
-
-} // onWormCrashed
-
-
-// old
-void Game::onWormCreated(Worm *pWorm) {
-
-	this->onDebugMessage("OLD !!!!!!!!! onWormCreated  ");
-	return ;
-
-	this->apWorms.append(pWorm);
-
-	if (!pWorm->isAI()) this->ubCountHumans++;
-
-	connect(pWorm, SIGNAL(died(bool)),
-			this, SLOT(onWormDied(bool)));
-
-} // onWormCreated
-
-
 void Game::onWormDied(const bool bAI) {
+
+	this->onDebugMessage("onWormDied");
 
 	++this->ubCountDead;
 	if (!bAI) ++this->ubCountDeadHumans;
 
 	if (this->isGameOver()) {
+
+		Fx::play(Fx::GameOver);
 
 		this->pTimer->stop();
 		this->pTimerBonus->stop();
@@ -986,20 +980,6 @@ void Game::placeBonus(const quint8 ubBonus, const bool bFake) {
 
 	} // if no space for bonus
 
-//	this->pMapGame->setTile(aoPoints.first(), ubBonus);
-//	this->pMapGame->setTile(aoPoints.at(1), ubBonus + 1u);
-//	this->pMapGame->setTile(aoPoints.at(2), ubBonus + 2u);
-//	this->pMapGame->setTile(aoPoints.last(), ubBonus + 3u);
-
-//	this->onDebugMessage("\n" + QString::number(aoPoints.at(0).x())
-//						 + ":" + QString::number(aoPoints.at(0).y()) + " " + QString::number(ubBonus)
-//						 + " " + QString::number(aoPoints.at(1).x())
-//						 + ":" + QString::number(aoPoints.at(1).y()) + " " + QString::number(ubBonus + 1u)
-//						 + " " + QString::number(aoPoints.at(2).x())
-//						 + ":" + QString::number(aoPoints.at(2).y()) + " " + QString::number(ubBonus + 2u)
-//						 + " " + QString::number(aoPoints.at(3).x())
-//						 + ":" + QString::number(aoPoints.at(3).y()) + " " + QString::number(ubBonus + 3u));
-
 	Q_EMIT this->bonusPlaced(aoPoints, ubBonus, bFake);
 
 } // placeBonus
@@ -1014,15 +994,9 @@ void Game::wormAteBonus(Worm *pWorm, const QPoint oPoint) {
 	// first find the bonus in our cache
 	quint8 ubState = 0u;
 	Bonus *pBonus = nullptr;
-//	QString sM;
 	for (int i = 0; i < this->apBonus.length(); ++i) {
 
 		pBonus = this->apBonus.at(i);
-//		for (int j = 0; j < 4; ++j) {
-
-//			sM += "\n" + QString::number(pBonus->getCells().at(j)->getPos().x()) + ":" + QString::number(pBonus->getCells().at(j)->getPos().y());
-
-//		} // loop
 
 		if (!pBonus->contains(oPoint)) continue;
 
@@ -1033,30 +1007,13 @@ void Game::wormAteBonus(Worm *pWorm, const QPoint oPoint) {
 
 	} // loop
 
-//	this->onDebugMessage("->" + sM + "<-");
-
-	// for debugging bonus match
-//	QString sPos;
-//	SurfaceCell *pCell2;
-//	for (int i = 0; i < 4; ++i) {
-
-//		pCell2 = pBonus->getCells().at(i);
-//		sPos += "\ncell: " + QString::number(i) + " "
-//				+ QString::number(pCell2->getColumn())+ ":"
-//				+ QString::number(pCell2->getRow());
-
-//	} // loop
-//	this->onDebugMessage(sPos);
-
 	// didn't find any?
 	if (0u == ubState) {
 		this->onDebugMessage("could not find eaten bonus in Game::wormAteBonus");
 		return;
 	} // if none found
 
-	this->onDebugMessage("Worm ate bonus " + QString::number(ubState)
-						 + " " + QString::number(oPoint.x())
-						 + ":" + QString::number(oPoint.y()));
+	this->onDebugMessage("Worm ate bonus " + QString::number(ubState) + " " + QString::number(oPoint.x()) + ":" + QString::number(oPoint.y()));
 
 	// OK, found it and have state
 	// so tell good-bye
@@ -1075,15 +1032,14 @@ void Game::wormAteBonus(Worm *pWorm, const QPoint oPoint) {
 	// destroy it and remove it from cache
 	this->destroyBonus(pBonus);
 
-	this->onDebugMessage("cB " + QString::number(this->ubCountBonus)
-						 + " cAl " + QString::number(this->ubCountApplesLeft));
-
 	// now let's react to it with points and growth
 	switch (ubState) {
 
 		case L::BonusApple:
 
 			Fx::play(Fx::Gobble);
+
+			this->onDebugMessage("cB " + QString::number(this->ubCountBonus) + " cAl " + QString::number(this->ubCountApplesLeft));
 
 			// add points
 			pWorm->onAddScore((this->ubCountBonus - this->ubCountApplesLeft)

@@ -48,10 +48,10 @@ public:
 	// cell that will become tail next (2nd-last)
 	virtual SurfaceCell *assCell();
 	// these may not be used as we may be using 8 of 10 states for heads and tails
-	inline virtual quint8 bloatedNstate() { return (this->ubColourIndex * 10u) + 13u; }
-	inline virtual quint8 bloatedEstate() { return (this->ubColourIndex * 10u) + 14u; }
-	inline virtual quint8 bloatedWstate() { return (this->ubColourIndex * 10u) + 15u; }
-	inline virtual quint8 bloatedSstate() { return (this->ubColourIndex * 10u) + 16u; }
+	QT_DEPRECATED inline virtual quint8 bloatedNstate() { return (this->ubColourIndex * 10u) + 13u; }
+	QT_DEPRECATED inline virtual quint8 bloatedEstate() { return (this->ubColourIndex * 10u) + 14u; }
+	QT_DEPRECATED inline virtual quint8 bloatedWstate() { return (this->ubColourIndex * 10u) + 15u; }
+	QT_DEPRECATED inline virtual quint8 bloatedSstate() { return (this->ubColourIndex * 10u) + 16u; }
 	inline virtual quint8 colourIndex() const { return this->ubColourIndex; }
 	inline virtual L::Heading currentDirection() const { return this->eCurrentHeading; }
 	// cell that leads the worm (1st)
@@ -94,14 +94,16 @@ public slots:
 	void onAddScore(const qint16 iScore);
 	inline void onDebugMessage(const QString &sMessage) const {
 		Q_EMIT this->debugMessage("Worm:" + sMessage); }
+
 	inline void onMultiplyScore(const float fFactor) { this->ulScore *= fFactor; }
 	inline void onResetScore() { this->ulScore = 0u; Q_EMIT this->updateScore(0u);}
 	void onReverse();
 	void onSetLives(const quint8 ubLives);
 	inline void onSetName(const QString sName) { Q_EMIT this->updateName(sName); }
-	void onSetSpawnCell(SurfaceCell *pCell);
+	QT_DEPRECATED void onSetSpawnCell(SurfaceCell *pCell);
 	void onSetSpawnPoint(const QPoint oPoint, const quint8 ubState);
 	void onSubtractLife();
+	// key press entrance
 	void onTurn(const L::Heading eDirection);
 	void onTurnLeft();
 	void onTurnRight();

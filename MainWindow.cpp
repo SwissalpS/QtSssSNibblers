@@ -103,9 +103,6 @@ void MainWindow::initGame() {
 	connect(this, SIGNAL(settingsPlayerColoursChanged(QVector<quint8>)),
 			pSurface, SLOT(onColoursChanged(QVector<quint8>)));
 
-	connect(this, SIGNAL(settingsPlayerCountChanged(quint8,quint8)),
-			pSurface, SLOT(onPlayerCountChanged(quint8,quint8)));
-
 	connect(this, SIGNAL(settingsPlayerKeyChanged(quint8,QKeySequence,L::Heading)),
 			pSurface, SLOT(onPlayerKeyChanged(quint8,QKeySequence,L::Heading)));
 
@@ -157,14 +154,6 @@ void MainWindow::initGame() {
 	connect(pGame, SIGNAL(doLevelStartCountdown()),
 			pSurface, SLOT(onDoLevelStartCountdown()));
 
-	// old
-//	connect(pGame, SIGNAL(move()),
-//			pSurface, SLOT(onMove()));
-
-//	// old, maybe reusing
-//	connect(pGame, SIGNAL(nextLevel()),
-//			pSurface, SLOT(onNextLevel()));
-
 	connect(pGame, SIGNAL(loadLevel(MapGame*,quint8)),
 			pSurface, SLOT(onLoadLevel(MapGame*,quint8)));
 
@@ -193,37 +182,14 @@ void MainWindow::initGame() {
 	connect(pSurface, SIGNAL(nextLevel()),
 			pGame, SLOT(onNextLevel()));
 
-	// old
-//	connect(pSurface, SIGNAL(noSpaceFoundForBonus(quint8,bool)),
-//			pGame, SLOT(onNoSpaceFoundForBonus(quint8,bool)));
-
 	connect(pSurface, SIGNAL(pauseResumeToggled()),
 			pGame, SLOT(onPauseResumeToggled()));
-
-//	connect(pSurface, SIGNAL(resetGame()),
-//			pGame, SLOT(onReset()));
 
 	connect(pSurface, SIGNAL(startNewGame(quint8)),
 			pGame, SLOT(onStartNewGame(quint8)));
 
 	connect(pSurface, SIGNAL(tileChanged(QPoint,quint8)),
 			pGame, SLOT(onTileChanged(QPoint,quint8)));
-
-	// did not work
-//	connect(pSurface, SIGNAL(turnWorm(quint8,L::Heading)),
-//			pGame, SLOT(onTurnWorm(quint8L::Heading)));
-
-//	// old
-//	connect(pSurface, SIGNAL(wormAteBonus(Worm*,SurfaceCell*)),
-//			pGame, SLOT(onWormAteBonus(Worm*,SurfaceCell*)));
-
-//	// old
-//	connect(pSurface, SIGNAL(wormCreated(Worm*)),
-//			pGame, SLOT(onWormCreated(Worm*)));
-
-//	// old
-//	connect(pSurface, SIGNAL(wormCrashed(Worm*)),
-//			pGame, SLOT(onWormCrashed(Worm*)));
 
 	pSurface->init();
 	pGame->init();

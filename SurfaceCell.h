@@ -31,7 +31,7 @@ private:
 
 protected:
 	bool bBuilder;
-	quint8 ubState; // 0 = empty; 1-99 = player 1-99; 100-199 = bonuses and teleporters; 200-255 = walls
+	quint8 ubState; // L::Tiles
 	quint8 ubStateFrozen;
 	quint8 ubColumn;
 	quint8 ubRow;

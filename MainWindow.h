@@ -24,6 +24,7 @@ namespace SwissalpS { namespace QtNibblers {
 
 
 class MainWindow : public QMainWindow {
+
 	Q_OBJECT
 
 private:

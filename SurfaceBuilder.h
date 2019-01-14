@@ -26,6 +26,7 @@ namespace SwissalpS { namespace QtNibblers {
 
 
 class SurfaceBuilder : public QFrame {
+
 	Q_OBJECT
 
 private:

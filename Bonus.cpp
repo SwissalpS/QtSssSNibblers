@@ -23,6 +23,7 @@ Bonus::Bonus(QVector<SurfaceCell *> apCells, const bool bFake, QObject *pParent)
 
 Bonus::~Bonus() {
 
+	this->disconnect();
 	this->apCells.clear();
 	this->bExpired = true;
 	this->ubStateBase = 0xFCu;

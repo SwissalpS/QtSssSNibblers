@@ -38,7 +38,6 @@ protected:
 	quint8 ubCountNeedApple;
 	quint8 ubCurrentLevel;
 	quint8 ubSpeedIndex;
-	quint16 uiApplesToGo;
 	AppSettings *pAS;
 	MapGame *pMapGame;
 	QVector<Bonus *> apBonus;
@@ -48,9 +47,13 @@ protected:
 	WormAI *pWormAI;
 
 	virtual void addBonus(const bool bApple);
-	static void addCrashPotential(QHash<QString, Worm *> &hppCrashPotential, QVector<Worm *> &apCrashedWorms, QPoint oPoint, Worm *pWorm);
-	virtual void clearExpiredBonuses();
+	static void addCrashPotential(QHash<QString, Worm *> &hppCrashPotential,
+								  QVector<Worm *> &apCrashedWorms,
+								  QPoint oPoint, Worm *pWorm);
+
 	virtual void destroyBonus(Bonus *pBonus);
+	virtual void destructBonuses();
+	virtual void destructWorms();
 	virtual void initWorms();
 	virtual void loadCurrentLevel();
 	virtual void placeBonus(const quint8 ubBonus, const bool bFake);
@@ -78,9 +81,7 @@ signals:
 	void doLevelStartCountdown() const;
 	void debugMessage(const QString &sMessage) const;
 	void move() const;
-	void nextLevel() const;
 	void loadLevel(MapGame *pMap, const quint8 ubLevel);
-	//void placeBonus(const quint8 ubBonus, const bool bFake) const;
 	void spawnWorm(Worm *pWorm) const;
 	void statusMessage(const QString &sMessage) const;
 	void wormAteBonus(Worm *pWorm) const;
@@ -97,8 +98,6 @@ public slots:
 
 	void onLevelIsLoaded();
 	void onNextLevel();
-	// old
-	void onNoSpaceFoundForBonus(const quint8 ubBonus, const bool bFake);
 	void onPauseResumeToggled();
 	void onPlayerCountChanged(const quint8 ubCountHumans,
 							  const quint8 ubCountAIs);
@@ -107,12 +106,6 @@ public slots:
 	void onSpeedChanged(const int iIndex);
 	void onStartNewGame(const quint8 ubLevel);
 	void onTileChanged(const QPoint oPoint, const quint8 ubState);
-	// did not work
-	void onTurnWorm(const quint8 ubWorm, const L::Heading eDirection);
-	// old
-	void onWormCrashed(Worm *pWorm);
-	// old
-	void onWormCreated(Worm *pWorm);
 	void onWormDied(const bool bAI);
 
 }; // Game

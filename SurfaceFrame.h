@@ -6,6 +6,7 @@
 
 
 class SurfaceFrame : public QFrame {
+
 	Q_OBJECT
 
 private:

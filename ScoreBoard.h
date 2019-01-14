@@ -22,6 +22,7 @@ namespace SwissalpS { namespace QtNibblers {
 
 
 class ScoreBoard : public QFrame {
+
 	Q_OBJECT
 
 private:
