@@ -56,6 +56,27 @@ int DialogLoad::getSelected() const {
 } // getSelected
 
 
+void DialogLoad::on_buttonZap0_clicked() {
+
+	this->pUi->comboBox->setCurrentIndex(0);
+
+} // on_buttonZap0_clicked
+
+
+void DialogLoad::on_buttonZap128_clicked() {
+
+	this->pUi->comboBox->setCurrentIndex(128);
+
+} // on_buttonZap128_clicked
+
+
+void DialogLoad::on_buttonZap255_clicked() {
+
+	this->pUi->comboBox->setCurrentIndex(255);
+
+} // on_buttonZap255_clicked
+
+
 void DialogLoad::on_comboBox_currentIndexChanged(int iIndex) {
 
 	QLabel *pPreview = this->pUi->preview;

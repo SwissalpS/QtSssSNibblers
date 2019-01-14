@@ -28,6 +28,9 @@ private:
 	Ui::DialogLoad *pUi;
 
 private slots:
+	void on_buttonZap0_clicked();
+	void on_buttonZap128_clicked();
+	void on_buttonZap255_clicked();
 	void on_comboBox_currentIndexChanged(int iIndex);
 
 protected:

@@ -31,6 +31,39 @@
     <widget class="QComboBox" name="comboBox"/>
    </item>
    <item>
+    <widget class="QFrame" name="horizontalFrame">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QPushButton" name="buttonZap0">
+        <property name="text">
+         <string>Zap To Level 0</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="buttonZap128">
+        <property name="text">
+         <string>Zap To 128</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="buttonZap255">
+        <property name="text">
+         <string>255</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
     <widget class="QLabel" name="preview">
      <property name="text">
       <string/>
