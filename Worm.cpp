@@ -423,8 +423,6 @@ void Worm::onSubtractLife() {
 
 	this->ubLives--;
 
-	this->ulScore *= 7 / 10;
-
 	Q_EMIT this->updateLives(this->ubLives);
 	Q_EMIT this->updateScore(this->ulScore);
 
