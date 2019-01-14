@@ -34,10 +34,13 @@ SOURCES += \
 	Fx.cpp \
 	Game.cpp \
 	IconEngine.cpp \
+	History.cpp \
+	HistoryItem.cpp \
 	main.cpp \
 	MainWindow.cpp \
 	Map.cpp \
 	MapGame.cpp \
+	PersistantObject.cpp \
 	ScoreBoard.cpp \
 	SurfaceBuilder.cpp \
 	SurfaceCell.cpp \
@@ -55,11 +58,14 @@ HEADERS += \
 	FrameStartCountdown.h \
 	Fx.h \
 	Game.h \
+	History.h \
+	HistoryItem.h \
 	IconEngine.h \
 	Lingo.h \
 	MainWindow.h \
 	Map.h \
 	MapGame.h \
+	PersistantObject.h \
 	ScoreBoard.h \
 	SurfaceBuilder.h \
 	SurfaceCell.h \

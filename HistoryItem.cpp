@@ -1,0 +1,95 @@
+#include "HistoryItem.h"
+
+#include <QDateTime>
+
+
+
+namespace SwissalpS { namespace QtNibblers {
+
+
+
+HistoryItem::HistoryItem(QObject *pParent) :
+	QObject(pParent),
+	sName("Null"),
+	ubCountAI(0xFFu),
+	ubCountHuman(0xFFu),
+	ubLevelsDone(0xFFu),
+	ubLevelStart(0xFFu),
+	ubLivesLost(0xFFu),
+	ubSpeedIndex(0xFFu),
+	ulScore(0xFFFFFFFFu),
+	illTimeStamp(0xFFFFFFFFFFFFFFFF) {
+
+} // construct
+
+
+HistoryItem::HistoryItem(const QJsonObject oJSON, QObject *pParent) :
+	QObject(pParent),
+	sName(""),
+	ubCountAI(0u),
+	ubCountHuman(0u),
+	ubLevelsDone(0u),
+	ubLevelStart(0u),
+	ubLivesLost(0u),
+	ubSpeedIndex(0u),
+	ulScore(0u),
+	illTimeStamp(0) {
+
+	this->ubCountAI = quint8(oJSON.value(sTagCountAI).toInt());
+	this->ubCountHuman = quint8(oJSON.value(sTagCountHuman).toInt());
+	this->ubLevelsDone = quint8(oJSON.value(sTagLevelsDone).toInt());
+	this->ubLevelStart = quint8(oJSON.value(sTagLevelStart).toInt());
+	this->ubLivesLost = quint8(oJSON.value(sTagLivesLost).toInt());
+	this->ubSpeedIndex = quint8(oJSON.value(sTagSpeedIndex).toInt());
+	this->ulScore = quint32(oJSON.value(sTagScore).toInt());
+	this->illTimeStamp = qint64(oJSON.value(sTagTimeStamp).toDouble());
+
+} // construct
+
+
+HistoryItem::HistoryItem(const QString sName, const quint8 ubCountAI,
+						 const quint8 ubCountHuman, const quint8 ubLevelsDone,
+						 const quint8 ubLevelStart, const quint8 ubLivesLost,
+						 const quint8 ubSpeedIndex, const quint32 ulScore,
+						 const qint64 illTimeStamp, QObject *pParent) :
+	QObject(pParent),
+	sName(sName),
+	ubCountAI(ubCountAI),
+	ubCountHuman(ubCountHuman),
+	ubLevelsDone(ubLevelsDone),
+	ubLevelStart(ubLevelStart),
+	ubLivesLost(ubLivesLost),
+	ubSpeedIndex(ubSpeedIndex),
+	ulScore(ulScore),
+	illTimeStamp(illTimeStamp) {
+
+	if (0 == illTimeStamp) this->illTimeStamp = QDateTime::currentSecsSinceEpoch();
+
+} // construct
+
+
+HistoryItem::~HistoryItem() {
+
+} // dealloc
+
+
+QJsonObject HistoryItem::toJSON() const {
+
+	QJsonObject oOut;
+	oOut.insert(sTagCountAI, this->ubCountAI);
+	oOut.insert(sTagCountHuman, this->ubCountHuman);
+	oOut.insert(sTagLevelsDone, this->ubLevelsDone);
+	oOut.insert(sTagLevelStart, this->ubLevelStart);
+	oOut.insert(sTagLivesLost, this->ubLivesLost);
+	oOut.insert(sTagName, this->sName);
+	oOut.insert(sTagScore, qint32(this->ulScore));
+	oOut.insert(sTagSpeedIndex, this->ubSpeedIndex);
+	oOut.insert(sTagTimeStamp, qint64(this->illTimeStamp));
+
+	return oOut;
+
+} // toJSON
+
+
+
+}	} // namespace SwissalpS::QtNibblers
