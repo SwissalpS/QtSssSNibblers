@@ -777,26 +777,6 @@ void MainWindow::onPlayerUseMouseToggled(const quint8 ubWorm, const bool bChecke
 } // onPlayerUseMouseToggled
 
 
-void MainWindow::on_radioNetClient_toggled(bool bChecked) {
-
-} // on_radioNetClient_toggled
-
-
-void MainWindow::on_radioNetOff_toggled(bool bChecked) {
-
-	if (!bChecked) return;
-
-	// set setting to off
-	// kill any connections
-
-} // on_radioNetOff_toggled
-
-
-void MainWindow::on_radioNetServer_toggled(bool bChecked) {
-
-} // on_radioNetServer_toggled
-
-
 void MainWindow::on_selectColour1_currentIndexChanged(int iIndex) {
 
 	this->onPlayerColourChanged(0u, quint8(iIndex));

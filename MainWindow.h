@@ -84,10 +84,6 @@ private slots:
 	void on_kseUp3_keySequenceChanged(const QKeySequence &oKeySequence);
 	void on_kseUp4_keySequenceChanged(const QKeySequence &oKeySequence);
 
-	void on_radioNetClient_toggled(bool bChecked);
-	void on_radioNetOff_toggled(bool bChecked);
-	void on_radioNetServer_toggled(bool bChecked);
-
 	void on_selectColour1_currentIndexChanged(int iIndex);
 	void on_selectColour2_currentIndexChanged(int iIndex);
 	void on_selectColour3_currentIndexChanged(int iIndex);
