@@ -259,7 +259,8 @@ void SurfaceGame::focusOutEvent(QFocusEvent *pEvent) {
 
 	if (this->pUi->buttonPP->hasFocus()) return;
 
-	if (this->pStartCountDownFrame->isVisible()) {
+	if ((nullptr != this->pStartCountDownFrame)
+			&& this->pStartCountDownFrame->isVisible()) {
 
 		if (Qt::TabFocusReason == pEvent->reason()) this->window()->raise();
 		return;
