@@ -18,7 +18,8 @@ namespace SwissalpS { namespace QtNibblers {
 MainWindow::MainWindow(QWidget *pParent) :
 	QMainWindow(pParent),
 	pUi(new Ui::MainWindow),
-	pAS(AppSettings::pAppSettings()) {
+	pAS(AppSettings::pAppSettings()),
+	pHistory(nullptr) {
 
 	this->pUi->setupUi(this);
 
@@ -129,8 +130,15 @@ void MainWindow::initGame() {
 	connect(pGame, SIGNAL(debugMessage(QString)),
 			this, SLOT(onDebugMessage(QString)));
 
+	connect(pGame, SIGNAL(updateHistory()),
+			this, SLOT(onUpdateHistory()));
+
 	connect(pGame, SIGNAL(statusMessage(QString)),
 			this, SLOT(onStatusMessage(QString)));
+
+
+	connect(pGame, SIGNAL(newHistoryItem(HistoryItem*)),
+			this->pHistory, SLOT(addItem(HistoryItem*)));
 
 
 	connect(pGame, SIGNAL(advanceWormTo(Worm *,QPoint)),
@@ -195,6 +203,26 @@ void MainWindow::initGame() {
 	pGame->init();
 
 } // initGame
+
+
+void MainWindow::initHistory() {
+
+	QString sPath = this->pAS->getDataPath() + "History.json";
+	this->pHistory = new History(sPath, this);
+
+	connect(this->pHistory, SIGNAL(debugMessage(QString)),
+			this, SLOT(onDebugMessage(QString)));
+
+	if (!this->pHistory->isOK()) {
+
+		this->onDebugMessage(tr("Could not load History"));
+		return;
+
+	} // if failed to load
+
+	this->onUpdateHistory();
+
+} // initHistory
 
 
 void MainWindow::initSettings() {
@@ -912,6 +940,63 @@ void MainWindow::on_tabWidgetMain_currentChanged(int iIndex) {
 } // on_tabWidgetMain_currentChanged
 
 
+void MainWindow::onUpdateHistory() {
+
+	QVector<HistoryItem *> apHIs = this->pHistory->items();
+	int iTotal = apHIs.length();
+
+	QTableWidget *pTable = this->pUi->tableScore;
+	pTable->clear();
+
+	QStringList aLabels;
+	aLabels << tr("Points") << tr("Name") << tr("First Level")
+			<< tr("Levels Completed") << tr("Health Lost") << tr("#AI")
+			<< tr("#Humans") << tr("Speed") << tr("Date");
+	pTable->setColumnCount(aLabels.length());
+	pTable->setHorizontalHeaderLabels(aLabels);
+	pTable->setRowCount(iTotal);
+
+	aLabels.clear();
+	for (int i = 0; i < iTotal; ++i) {
+
+		aLabels.append(QString::number(i + 1));
+
+	} // loop
+	pTable->setVerticalHeaderLabels(aLabels);
+
+	pTable->setSortingEnabled(false);
+
+	HistoryItem *pHI;
+	QTableWidgetItem *pTWI;
+	for (int i = 0; i < apHIs.length(); ++i) {
+
+		pHI = apHIs.at(i);
+		pTWI = new QTableWidgetItem(QString::number(pHI->score()), 10);
+		pTable->setItem(i, 0, pTWI);
+		pTWI = new QTableWidgetItem(pHI->name(), 11);
+		pTable->setItem(i, 1, pTWI);
+		pTWI = new QTableWidgetItem(QString::number(pHI->levelStart()), 12);
+		pTable->setItem(i, 2, pTWI);
+		pTWI = new QTableWidgetItem(QString::number(pHI->levelsDone()), 13);
+		pTable->setItem(i, 3, pTWI);
+		pTWI = new QTableWidgetItem(QString::number(pHI->livesLost()), 14);
+		pTable->setItem(i, 4, pTWI);
+		pTWI = new QTableWidgetItem(QString::number(pHI->countAI()), 15);
+		pTable->setItem(i, 5, pTWI);
+		pTWI = new QTableWidgetItem(QString::number(pHI->countHuman()), 16);
+		pTable->setItem(i, 6, pTWI);
+		pTWI = new QTableWidgetItem(QString::number(pHI->speedIndex()), 17);
+		pTable->setItem(i, 7, pTWI);
+		pTWI = new QTableWidgetItem(QString::number(pHI->timeStamp()), 18);
+		pTable->setItem(i, 8, pTWI);
+
+	} // loop
+
+	pTable->setSortingEnabled(true);
+
+} // onUpdateHistory
+
+
 void MainWindow::run() {
 
 	// init tab views
@@ -920,9 +1005,10 @@ void MainWindow::run() {
 
 	this->initBuilder();
 
-	this->initGame();
-
 	//this->initScores();
+	this->initHistory();
+
+	this->initGame();
 
 	this->pUi->textBrowserAbout->setSource(QUrl::fromLocalFile(":/html/About/About.html"));
 	this->pUi->textBrowserHelp->setSource(QUrl::fromLocalFile(":/html/Help/Help.html"));

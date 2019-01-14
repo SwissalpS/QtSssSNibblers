@@ -1058,8 +1058,20 @@ void Game::onWormDied(const bool bAI) {
 					//+ " " + QString::number(pWorm->livesLost())
 					+ (((i+1) < apRanks.length()) ? "\n" : "");
 
+			if (pWorm->isAI()) continue;
+
+			Q_EMIT this->newHistoryItem(
+						new HistoryItem(
+							pWorm->name(),
+							this->ubCountAllPlayers - this->ubCountHumans,
+							this->ubCountHumans, this->ubCountLevels,
+							this->ubCurrentLevel - this->ubCountLevels,
+							pWorm->livesLost(), this->ubSpeedIndex,
+							pWorm->score()));
+
 		} // loop
 
+		Q_EMIT this->updateHistory();
 		Q_EMIT this->doGameOver(sOut);
 
 	} // if all have died

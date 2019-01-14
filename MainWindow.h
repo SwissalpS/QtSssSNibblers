@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "AppSettings.h"
+#include "History.h"
 #include "Lingo.h"
 
 
@@ -104,11 +105,13 @@ private slots:
 
 protected:
 	AppSettings *pAS;
+	History *pHistory;
 
 	void changeEvent(QEvent *pEvent);
 	void closeEvent(QCloseEvent *pEvent);
 	virtual void initBuilder();
 	virtual void initGame();
+	virtual void initHistory();
 	virtual void initSettings();
 	virtual void onPlayerColourChanged(const quint8 ubWorm, const quint8 ubIndex);
 	virtual void onPlayerKeyDownChanged(const quint8 ubWorm, const QKeySequence &oKeySequence);
@@ -143,6 +146,7 @@ signals:
 public slots:
 	void onDebugMessage(const QString &sMessage) const;
 	void onStatusMessage(const QString &sMessage) const;
+	virtual void onUpdateHistory();
 
 	void run();
 }; // MainWindow

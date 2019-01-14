@@ -5,6 +5,7 @@
 #include <QTimer>
 #include "AppSettings.h"
 #include "Bonus.h"
+#include "HistoryItem.h"
 #include "MapGame.h"
 #include "Worm.h"
 #include "WormAI.h"
@@ -82,9 +83,11 @@ signals:
 	void doLevelStartCountdown() const;
 	void debugMessage(const QString &sMessage) const;
 	void move() const;
+	void newHistoryItem(HistoryItem *pHI) const;
 	void loadLevel(MapGame *pMap, const quint8 ubLevel);
 	void spawnWorm(Worm *pWorm) const;
 	void statusMessage(const QString &sMessage) const;
+	void updateHistory() const;
 	void wormAteBonus(Worm *pWorm) const;
 	void wormCrashed(Worm *pWorm) const;
 	void wormCreated(Worm *pWorm) const;
