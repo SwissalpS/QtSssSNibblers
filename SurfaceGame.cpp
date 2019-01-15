@@ -17,6 +17,8 @@ namespace SwissalpS { namespace QtNibblers {
 SurfaceGame::SurfaceGame(QWidget *pParent) :
 	QFrame(pParent),
 	pUi(new Ui::SurfaceGame),
+	pTimerResize(nullptr),
+	ubResizeCount(0u),
 	bLevelDone(false),
 	bLevelLoading(true),
 	bProtectPP(false),
@@ -38,6 +40,13 @@ SurfaceGame::SurfaceGame(QWidget *pParent) :
 	this->apScoreBoards.clear();
 	this->apWorms.clear();
 
+	this->pTimerResize = new QTimer(this);
+	this->pTimerResize->setInterval(100);
+	this->pTimerResize->setSingleShot(true);
+
+	connect(this->pTimerResize, SIGNAL(timeout()),
+			this, SLOT(resizeDelayDone()));
+
 } // construct
 
 
@@ -49,6 +58,12 @@ SurfaceGame::~SurfaceGame() {
 	this->aopRows.clear();
 	this->apScoreBoards.clear();
 	this->apWorms.clear();
+
+	if (this->pTimerResize) {
+		this->pTimerResize->stop();
+		delete this->pTimerResize;
+		this->pTimerResize = nullptr;
+	}
 
 	delete this->pUi;
 
@@ -804,9 +819,17 @@ void SurfaceGame::resetButtons() {
 } // resetButtons
 
 
-void SurfaceGame::resizeEvent(QResizeEvent *pEvent) {
+void SurfaceGame::resizeDelayDone() {
 
-	QFrame::resizeEvent(pEvent);
+	//this->onDebugMessage("resizeDelayDone" + QString::number(qrand()));
+
+	this->ubResizeCount++;
+	if (2 < this->ubResizeCount) {
+
+		this->ubResizeCount = 0u;
+		return;
+
+	} // if need to break a moment to avoid a jittering and a hanging
 
 	int iSBwidth = 200;
 	int iDiff = this->window()->width() - this->width();
@@ -826,6 +849,16 @@ void SurfaceGame::resizeEvent(QResizeEvent *pEvent) {
 		} // switch spare space
 
 	} // loop
+
+} // resizeDelayDone
+
+
+void SurfaceGame::resizeEvent(QResizeEvent *pEvent) {
+
+	QFrame::resizeEvent(pEvent);
+
+	// throttle that we don't end up hanging
+	this->pTimerResize->start();
 
 } // resizeEvent
 

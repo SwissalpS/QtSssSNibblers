@@ -3,6 +3,8 @@
 
 #include <QFrame>
 #include <QKeyEvent>
+#include <QTimer>
+
 #include "AppSettings.h"
 #include "DialogLoad.h"
 #include "FrameStartCountdown.h"
@@ -35,6 +37,8 @@ class SurfaceGame : public QFrame {
 
 private:
 	Ui::SurfaceGame *pUi;
+	QTimer *pTimerResize;
+	quint8 ubResizeCount;
 
 private slots:
 	void on_buttonPP_toggled(bool bChecked);
@@ -68,7 +72,7 @@ protected:
 	virtual void keyPressEvent(QKeyEvent *pEvent) override;
 	virtual void pauseIfRunning();
 	virtual void resetButtons();
-	void resizeEvent(QResizeEvent *pEvent) override;
+	virtual void resizeEvent(QResizeEvent *pEvent) override;
 	virtual void setCellState(const QPoint oPoint, const quint8 ubState,
 					  const bool bUpdate = true);
 	virtual void setCellState(SurfaceCell *pCell, const quint8 ubState,
@@ -85,6 +89,7 @@ protected slots:
 	virtual void initKeys();
 	virtual void initCells();
 	inline virtual void onSCDFdone() { this->on_buttonPP_toggled(true); }
+	virtual void resizeDelayDone();
 
 public:
 	explicit SurfaceGame(QWidget *pParent = nullptr);
