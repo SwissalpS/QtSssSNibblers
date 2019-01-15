@@ -1189,8 +1189,10 @@ void MainWindow::run() {
 	//this->initScores();
 	this->initHistory();
 
+	// init game and surface (view)
 	this->initGame();
 
+	// init about and help
 	this->pUi->textBrowserAbout->setSource(QUrl::fromLocalFile(":/html/About/About.html"));
 	this->pUi->textBrowserHelp->setSource(QUrl::fromLocalFile(":/html/Help/Help.html"));
 

@@ -460,7 +460,7 @@ QVector<Worm *> Game::makeRanking() {
 
 			// can this happen?
 
-			this->onDebugMessage("unusual in makeRanking");
+			this->onDebugMessage("unusual in makeRanking " + QString::number(uiHighestScore));
 			// avoid infinite loop
 			apRanks += apRest;
 			apRest.clear();
@@ -521,21 +521,9 @@ QVector<Worm *> Game::makeRanking() {
 
 void Game::onBonusPlaced(const QVector<SurfaceCell *> apCells, const bool bFake) {
 
-//	this->onDebugMessage("\n" + QString::number(apCells.at(0)->getPos().x())
-//						 + ":" + QString::number(apCells.at(0)->getPos().y()) + " " + QString::number(apCells.at(0)->getState())
-//						 + " " + QString::number(apCells.at(1)->getPos().x())
-//						 + ":" + QString::number(apCells.at(1)->getPos().y()) + " " + QString::number(apCells.at(1)->getState())
-//						 + " " + QString::number(apCells.at(2)->getPos().x())
-//						 + ":" + QString::number(apCells.at(2)->getPos().y()) + " " + QString::number(apCells.at(2)->getState())
-//						 + " " + QString::number(apCells.at(3)->getPos().x())
-//						 + ":" + QString::number(apCells.at(3)->getPos().y()) + " " + QString::number(apCells.at(3)->getState()));
-
 	Bonus *pBonus = new Bonus(apCells, bFake, this);
 
-	this->onDebugMessage("onBonusPlaced " + QString::number(pBonus->getStateBase())
-						 + " " + QString::number(apCells.at(0)->getPos().x())
-						 + ":" + QString::number(apCells.at(0)->getPos().y())
-						 + " " + QString::number(bFake));
+	//this->onDebugMessage("onBonusPlaced " + QString::number(pBonus->getStateBase()) + " " + QString::number(apCells.at(0)->getPos().x()) + ":" + QString::number(apCells.at(0)->getPos().y()) + " " + QString::number(bFake));
 
 	this->apBonus.prepend(pBonus);
 
@@ -600,7 +588,7 @@ void Game::onBonusPlaced(const QVector<SurfaceCell *> apCells, const bool bFake)
 
 void Game::onBonusTimedOut(Bonus *pBonus) {
 
-	this->onDebugMessage("onBonusTimedOut" + QString::number(pBonus->getStateBase()) + " " + QString::number(pBonus->getCells().at(0)->getColumn()) + ":" + QString::number(pBonus->getCells().at(0)->getRow()) + " " + QString::number(pBonus->isFake()));
+	//this->onDebugMessage("onBonusTimedOut" + QString::number(pBonus->getStateBase()) + " " + QString::number(pBonus->getCells().at(0)->getColumn()) + ":" + QString::number(pBonus->getCells().at(0)->getRow()) + " " + QString::number(pBonus->isFake()));
 
 	bool bWasApple = L::BonusApple == pBonus->getStateBase();
 	if (pBonus->isFake()) bWasApple = false;
@@ -1030,8 +1018,6 @@ void Game::onTick() {
 
 		this->pWormAI->move(pWorm, this->apWorms, this->pMapGame);
 
-		//this->findNextMovesForWorm(pWorm);
-
 	} // loop worms
 
 } // onTick
@@ -1103,7 +1089,7 @@ void Game::onWormDied(const bool bAI) {
 
 void Game::placeBonus(const quint8 ubBonus, const bool bFake) {
 
-	this->onDebugMessage("placeBonus");
+	//this->onDebugMessage("placeBonus");
 
 	// find 4 adjacent cells that are not occupied
 	QVector<QPoint>aoPoints = this->pMapGame->freeSpotForBonus();
@@ -1128,7 +1114,7 @@ void Game::placeBonus(const quint8 ubBonus, const bool bFake) {
 
 void Game::wormAteBonus(Worm *pWorm, const QPoint oPoint) {
 
-	this->onDebugMessage("wormAteBonus");
+	//this->onDebugMessage("wormAteBonus");
 
 	// which one is it? how many points or other actions?
 
@@ -1154,7 +1140,7 @@ void Game::wormAteBonus(Worm *pWorm, const QPoint oPoint) {
 		return;
 	} // if none found
 
-	this->onDebugMessage("Worm ate bonus " + QString::number(ubState) + " " + QString::number(oPoint.x()) + ":" + QString::number(oPoint.y()));
+	//this->onDebugMessage("Worm ate bonus " + QString::number(ubState) + " " + QString::number(oPoint.x()) + ":" + QString::number(oPoint.y()));
 
 	// OK, found it and have state
 	// so tell good-bye
@@ -1181,7 +1167,7 @@ void Game::wormAteBonus(Worm *pWorm, const QPoint oPoint) {
 
 			Fx::play(Fx::Gobble);
 
-			this->onDebugMessage("cB " + QString::number(this->ubCountBonus) + " cAl " + QString::number(this->ubCountApplesLeft));
+			//this->onDebugMessage("cB " + QString::number(this->ubCountBonus) + " cAl " + QString::number(this->ubCountApplesLeft));
 
 			// add points
 			uiScore = qMax(1, (this->ubCountBonus - this->ubCountApplesLeft)
