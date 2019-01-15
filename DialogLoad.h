@@ -22,6 +22,7 @@ namespace SwissalpS { namespace QtNibblers {
 
 
 class DialogLoad : public QDialog {
+
 	Q_OBJECT
 
 private:
@@ -42,6 +43,7 @@ public:
 
 	virtual int getSelected() const;
 	virtual void setSelected(const int iIndex) const;
+	virtual void setWarning(const QString sMessage) const;
 
 }; // DialogLoad
 

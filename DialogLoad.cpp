@@ -1,6 +1,9 @@
 #include "DialogLoad.h"
 #include "ui_DialogLoad.h"
+
 #include "IconEngine.h"
+#include "AppSettings.h"
+#include "MapGame.h"
 
 
 
@@ -82,6 +85,35 @@ void DialogLoad::on_comboBox_currentIndexChanged(int iIndex) {
 	QLabel *pPreview = this->pUi->preview;
 	pPreview->setPixmap(IconEngine::level(iIndex).pixmap(pPreview->size()));
 
+	AppSettings *pAS = AppSettings::pAppSettings();
+	quint8 ubCountAIs = pAS->get(AppSettings::sSettingGameCountAIs).toUInt();
+	quint8 ubCountHumans = pAS->get(AppSettings::sSettingGameCountHumans).toUInt();
+	quint8 ubCountAll = ubCountAIs + ubCountHumans;
+
+	MapGame *pMap = MapGame::loadedMap(pAS->getDataPathLevelFile(iIndex), this);
+	int iCountSPs = pMap->spawnPoints().length();
+
+	QString sMessage;
+	if (0 == iCountSPs) {
+
+		sMessage = tr("There are no spawn-points on this map. Use Builder to add some.");
+
+	} else if (ubCountAll > iCountSPs) {
+
+		// safe now to subtract
+		quint8 ubDelta = ubCountAll - iCountSPs;
+
+		// TODO: translatable
+		sMessage = QString::number(ubDelta) + " spawn-point";
+		if (1 == ubDelta) sMessage += " is";
+		else sMessage += "s are";
+		sMessage += " missing. ";
+		sMessage += tr("Either reduce the number of players or add some points in Builder.");
+
+	} // if need to warn
+
+	this->setWarning(sMessage);
+
 } // on_comboBox_currentIndexChanged
 
 
@@ -90,6 +122,13 @@ void DialogLoad::setSelected(const int iIndex) const {
 	this->pUi->comboBox->setCurrentIndex(iIndex);
 
 } // setSelected
+
+
+void DialogLoad::setWarning(const QString sMessage) const {
+
+	this->pUi->warning->setText(sMessage);
+
+} // setWarning
 
 
 
