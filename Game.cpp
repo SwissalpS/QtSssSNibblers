@@ -235,6 +235,7 @@ void Game::initWorms() {
 
 	if (nullptr == this->pMapGame) {
 		this->onDebugMessage("initWorms no map!");
+		return;
 	} // if no map, should not happen
 
 	quint8 ubColour;
@@ -454,7 +455,7 @@ QVector<Worm *> Game::makeRanking() {
 
 			// move worm into other array
 			apRanks.append(pWormHighest);
-			apRest.removeOne(pWorm);
+			apRest.removeOne(pWormHighest);
 
 		} else {
 
@@ -876,7 +877,7 @@ void Game::onTick() {
 
 	} // if penalty
 
-	//Q_EMIT this->move();
+	Q_EMIT this->move();
 
 	static QVector<quint8> aStatesPickups;
 	static QVector<quint8> aStatesSnakes;
@@ -1070,10 +1071,11 @@ void Game::onWormDied(const bool bAI) {
 
 			Q_EMIT this->newHistoryItem(
 						new HistoryItem(
+							this->bUseFakes,
 							pWorm->name(),
 							this->ubCountAllPlayers - this->ubCountHumans,
-							this->ubCountHumans, this->ubCountLevels,
-							this->ubCurrentLevel - this->ubCountLevels,
+							this->ubCountHumans, this->ubCountLevels - 1,
+							(1 + this->ubCurrentLevel) - this->ubCountLevels,
 							pWorm->livesLost(), this->ubSpeedIndex,
 							pWorm->score()));
 
