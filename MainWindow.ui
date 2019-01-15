@@ -442,7 +442,7 @@
        <enum>QTabWidget::Triangular</enum>
       </property>
       <property name="currentIndex">
-       <number>3</number>
+       <number>0</number>
       </property>
       <property name="tabsClosable">
        <bool>false</bool>
@@ -458,7 +458,7 @@
         <item row="0" column="1">
          <widget class="QTabWidget" name="tabSettingsInner">
           <property name="currentIndex">
-           <number>0</number>
+           <number>2</number>
           </property>
           <widget class="QWidget" name="tabPlayerCount">
            <attribute name="title">
@@ -2941,21 +2941,21 @@
             <item row="0" column="0">
              <widget class="QTabWidget" name="tabWidget_2">
               <property name="currentIndex">
-               <number>0</number>
+               <number>3</number>
               </property>
               <widget class="QWidget" name="tabPlayer1">
                <attribute name="title">
                 <string>Worm 1</string>
                </attribute>
                <layout class="QFormLayout" name="formLayout_6">
-                <item row="0" column="0">
+                <item row="1" column="0">
                  <widget class="QLabel" name="label_12">
                   <property name="text">
                    <string>Colour</string>
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="1">
+                <item row="1" column="1">
                  <widget class="QComboBox" name="selectColour1">
                   <item>
                    <property name="text">
@@ -2999,14 +2999,14 @@
                   </item>
                  </widget>
                 </item>
-                <item row="1" column="0">
+                <item row="2" column="0">
                  <widget class="QLabel" name="label_39">
                   <property name="text">
                    <string>Controls</string>
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="0">
+                <item row="3" column="0">
                  <widget class="QLabel" name="label_34">
                   <property name="styleSheet">
                    <string notr="true">color: rgb(193, 125, 17);</string>
@@ -3016,7 +3016,7 @@
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="1">
+                <item row="3" column="1">
                  <widget class="QLabel" name="label_38">
                   <property name="styleSheet">
                    <string notr="true">color: rgb(193, 125, 17);</string>
@@ -3026,60 +3026,74 @@
                   </property>
                  </widget>
                 </item>
-                <item row="3" column="0">
+                <item row="4" column="0">
                  <widget class="QLabel" name="label_35">
                   <property name="text">
                    <string>Up</string>
                   </property>
                  </widget>
                 </item>
-                <item row="3" column="1">
+                <item row="4" column="1">
                  <widget class="QKeySequenceEdit" name="kseUp1"/>
                 </item>
-                <item row="4" column="0">
+                <item row="5" column="0">
                  <widget class="QLabel" name="label_36">
                   <property name="text">
                    <string>Down</string>
                   </property>
                  </widget>
                 </item>
-                <item row="4" column="1">
+                <item row="5" column="1">
                  <widget class="QKeySequenceEdit" name="kseDown1"/>
                 </item>
-                <item row="5" column="0">
+                <item row="6" column="0">
                  <widget class="QLabel" name="label_40">
                   <property name="text">
                    <string>Left</string>
                   </property>
                  </widget>
                 </item>
-                <item row="5" column="1">
+                <item row="6" column="1">
                  <widget class="QKeySequenceEdit" name="kseLeft1"/>
                 </item>
-                <item row="6" column="0">
+                <item row="7" column="0">
                  <widget class="QLabel" name="label_37">
                   <property name="text">
                    <string>Right</string>
                   </property>
                  </widget>
                 </item>
-                <item row="6" column="1">
+                <item row="7" column="1">
                  <widget class="QKeySequenceEdit" name="kseRight1"/>
                 </item>
-                <item row="7" column="1">
+                <item row="8" column="1">
                  <widget class="QCheckBox" name="cbRelative1">
                   <property name="text">
                    <string>Use relative, 2 button steering. (Only left and right)</string>
                   </property>
                  </widget>
                 </item>
-                <item row="8" column="1">
+                <item row="9" column="1">
                  <widget class="QCheckBox" name="cbUseMouse1">
                   <property name="enabled">
                    <bool>false</bool>
                   </property>
                   <property name="text">
                    <string>Use Mouse Buttons (Only one player)</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="0">
+                 <widget class="QLabel" name="label_45">
+                  <property name="text">
+                   <string>Name</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QLineEdit" name="leName1">
+                  <property name="text">
+                   <string>Player 1</string>
                   </property>
                  </widget>
                 </item>
@@ -3090,14 +3104,14 @@
                 <string>Worm 2</string>
                </attribute>
                <layout class="QFormLayout" name="formLayout_7">
-                <item row="0" column="0">
+                <item row="1" column="0">
                  <widget class="QLabel" name="label_11">
                   <property name="text">
                    <string>Colour</string>
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="1">
+                <item row="1" column="1">
                  <widget class="QComboBox" name="selectColour2">
                   <item>
                    <property name="text">
@@ -3141,14 +3155,14 @@
                   </item>
                  </widget>
                 </item>
-                <item row="1" column="0">
+                <item row="2" column="0">
                  <widget class="QLabel" name="label_32">
                   <property name="text">
                    <string>Controls</string>
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="0">
+                <item row="3" column="0">
                  <widget class="QLabel" name="label_27">
                   <property name="styleSheet">
                    <string notr="true">color: rgb(193, 125, 17);</string>
@@ -3158,7 +3172,7 @@
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="1">
+                <item row="3" column="1">
                  <widget class="QLabel" name="label_31">
                   <property name="styleSheet">
                    <string notr="true">color: rgb(193, 125, 17);</string>
@@ -3168,47 +3182,47 @@
                   </property>
                  </widget>
                 </item>
-                <item row="3" column="0">
+                <item row="4" column="0">
                  <widget class="QLabel" name="label_28">
                   <property name="text">
                    <string>Up</string>
                   </property>
                  </widget>
                 </item>
-                <item row="3" column="1">
+                <item row="4" column="1">
                  <widget class="QKeySequenceEdit" name="kseUp2"/>
                 </item>
-                <item row="4" column="0">
+                <item row="5" column="0">
                  <widget class="QLabel" name="label_29">
                   <property name="text">
                    <string>Down</string>
                   </property>
                  </widget>
                 </item>
-                <item row="4" column="1">
+                <item row="5" column="1">
                  <widget class="QKeySequenceEdit" name="kseDown2"/>
                 </item>
-                <item row="5" column="0">
+                <item row="6" column="0">
                  <widget class="QLabel" name="label_33">
                   <property name="text">
                    <string>Left</string>
                   </property>
                  </widget>
                 </item>
-                <item row="5" column="1">
+                <item row="6" column="1">
                  <widget class="QKeySequenceEdit" name="kseLeft2"/>
                 </item>
-                <item row="6" column="0">
+                <item row="7" column="0">
                  <widget class="QLabel" name="label_30">
                   <property name="text">
                    <string>Right</string>
                   </property>
                  </widget>
                 </item>
-                <item row="6" column="1">
+                <item row="7" column="1">
                  <widget class="QKeySequenceEdit" name="kseRight2"/>
                 </item>
-                <item row="9" column="1">
+                <item row="10" column="1">
                  <widget class="QCheckBox" name="cbUseMouse2">
                   <property name="enabled">
                    <bool>false</bool>
@@ -3218,10 +3232,24 @@
                   </property>
                  </widget>
                 </item>
-                <item row="8" column="1">
+                <item row="9" column="1">
                  <widget class="QCheckBox" name="cbRelative2">
                   <property name="text">
                    <string>Use relative, 2 button steering. (Only left and right)</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="0">
+                 <widget class="QLabel" name="label_46">
+                  <property name="text">
+                   <string>Name</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QLineEdit" name="leName2">
+                  <property name="text">
+                   <string>Fritz</string>
                   </property>
                  </widget>
                 </item>
@@ -3232,14 +3260,14 @@
                 <string>Worm 3</string>
                </attribute>
                <layout class="QFormLayout" name="formLayout_8">
-                <item row="0" column="0">
+                <item row="1" column="0">
                  <widget class="QLabel" name="label_10">
                   <property name="text">
                    <string>Colour</string>
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="1">
+                <item row="1" column="1">
                  <widget class="QComboBox" name="selectColour3">
                   <item>
                    <property name="text">
@@ -3283,14 +3311,14 @@
                   </item>
                  </widget>
                 </item>
-                <item row="2" column="0">
+                <item row="3" column="0">
                  <widget class="QLabel" name="label_25">
                   <property name="text">
                    <string>Controls</string>
                   </property>
                  </widget>
                 </item>
-                <item row="3" column="0">
+                <item row="4" column="0">
                  <widget class="QLabel" name="label_20">
                   <property name="styleSheet">
                    <string notr="true">color: rgb(193, 125, 17);</string>
@@ -3300,7 +3328,7 @@
                   </property>
                  </widget>
                 </item>
-                <item row="3" column="1">
+                <item row="4" column="1">
                  <widget class="QLabel" name="label_24">
                   <property name="styleSheet">
                    <string notr="true">color: rgb(193, 125, 17);</string>
@@ -3310,60 +3338,74 @@
                   </property>
                  </widget>
                 </item>
-                <item row="4" column="0">
+                <item row="5" column="0">
                  <widget class="QLabel" name="label_21">
                   <property name="text">
                    <string>Up</string>
                   </property>
                  </widget>
                 </item>
-                <item row="4" column="1">
+                <item row="5" column="1">
                  <widget class="QKeySequenceEdit" name="kseUp3"/>
                 </item>
-                <item row="6" column="0">
+                <item row="7" column="0">
                  <widget class="QLabel" name="label_22">
                   <property name="text">
                    <string>Down</string>
                   </property>
                  </widget>
                 </item>
-                <item row="6" column="1">
+                <item row="7" column="1">
                  <widget class="QKeySequenceEdit" name="kseDown3"/>
                 </item>
-                <item row="8" column="0">
+                <item row="9" column="0">
                  <widget class="QLabel" name="label_26">
                   <property name="text">
                    <string>Left</string>
                   </property>
                  </widget>
                 </item>
-                <item row="8" column="1">
+                <item row="9" column="1">
                  <widget class="QKeySequenceEdit" name="kseLeft3"/>
                 </item>
-                <item row="10" column="0">
+                <item row="11" column="0">
                  <widget class="QLabel" name="label_23">
                   <property name="text">
                    <string>Right</string>
                   </property>
                  </widget>
                 </item>
-                <item row="10" column="1">
+                <item row="11" column="1">
                  <widget class="QKeySequenceEdit" name="kseRight3"/>
                 </item>
-                <item row="12" column="1">
+                <item row="13" column="1">
                  <widget class="QCheckBox" name="cbRelative3">
                   <property name="text">
                    <string>Use relative, 2 button steering. (Only left and right)</string>
                   </property>
                  </widget>
                 </item>
-                <item row="14" column="1">
+                <item row="15" column="1">
                  <widget class="QCheckBox" name="cbUseMouse3">
                   <property name="enabled">
                    <bool>false</bool>
                   </property>
                   <property name="text">
                    <string>Use Mouse Buttons (Only one player)</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="0">
+                 <widget class="QLabel" name="label_47">
+                  <property name="text">
+                   <string>Name</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QLineEdit" name="leName3">
+                  <property name="text">
+                   <string>Albert</string>
                   </property>
                  </widget>
                 </item>
@@ -3374,14 +3416,14 @@
                 <string>Worm 4</string>
                </attribute>
                <layout class="QFormLayout" name="formLayout_9">
-                <item row="0" column="0">
+                <item row="1" column="0">
                  <widget class="QLabel" name="label_9">
                   <property name="text">
                    <string>Colour</string>
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="1">
+                <item row="1" column="1">
                  <widget class="QComboBox" name="selectColour4">
                   <item>
                    <property name="text">
@@ -3425,14 +3467,14 @@
                   </item>
                  </widget>
                 </item>
-                <item row="1" column="0">
+                <item row="2" column="0">
                  <widget class="QLabel" name="label_13">
                   <property name="text">
                    <string>Controls</string>
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="0">
+                <item row="3" column="0">
                  <widget class="QLabel" name="label_14">
                   <property name="styleSheet">
                    <string notr="true">color: rgb(193, 125, 17);</string>
@@ -3442,7 +3484,7 @@
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="1">
+                <item row="3" column="1">
                  <widget class="QLabel" name="label_15">
                   <property name="styleSheet">
                    <string notr="true">color: rgb(193, 125, 17);</string>
@@ -3452,60 +3494,74 @@
                   </property>
                  </widget>
                 </item>
-                <item row="3" column="0">
+                <item row="4" column="0">
                  <widget class="QLabel" name="label_16">
                   <property name="text">
                    <string>Up</string>
                   </property>
                  </widget>
                 </item>
-                <item row="3" column="1">
+                <item row="4" column="1">
                  <widget class="QKeySequenceEdit" name="kseUp4"/>
                 </item>
-                <item row="5" column="0">
+                <item row="6" column="0">
                  <widget class="QLabel" name="label_17">
                   <property name="text">
                    <string>Down</string>
                   </property>
                  </widget>
                 </item>
-                <item row="5" column="1">
+                <item row="6" column="1">
                  <widget class="QKeySequenceEdit" name="kseDown4"/>
                 </item>
-                <item row="7" column="0">
+                <item row="8" column="0">
                  <widget class="QLabel" name="label_18">
                   <property name="text">
                    <string>Left</string>
                   </property>
                  </widget>
                 </item>
-                <item row="7" column="1">
+                <item row="8" column="1">
                  <widget class="QKeySequenceEdit" name="kseLeft4"/>
                 </item>
-                <item row="9" column="0">
+                <item row="10" column="0">
                  <widget class="QLabel" name="label_19">
                   <property name="text">
                    <string>Right</string>
                   </property>
                  </widget>
                 </item>
-                <item row="9" column="1">
+                <item row="10" column="1">
                  <widget class="QKeySequenceEdit" name="kseRight4"/>
                 </item>
-                <item row="11" column="1">
+                <item row="12" column="1">
                  <widget class="QCheckBox" name="cbRelative4">
                   <property name="text">
                    <string>Use relative, 2 button steering. (Only left and right)</string>
                   </property>
                  </widget>
                 </item>
-                <item row="13" column="1">
+                <item row="14" column="1">
                  <widget class="QCheckBox" name="cbUseMouse4">
                   <property name="enabled">
                    <bool>false</bool>
                   </property>
                   <property name="text">
                    <string>Use Mouse Buttons (Only one player)</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="0">
+                 <widget class="QLabel" name="label_48">
+                  <property name="text">
+                   <string>Name</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QLineEdit" name="leName4">
+                  <property name="text">
+                   <string>Sarah</string>
                   </property>
                  </widget>
                 </item>
@@ -3983,7 +4039,7 @@
               <item>
                <widget class="QPushButton" name="buttonZap255">
                 <property name="text">
-                 <string>255</string>
+                 <string>225</string>
                 </property>
                </widget>
               </item>
@@ -4128,8 +4184,20 @@
        <layout class="QGridLayout" name="gridLayout_6">
         <item row="0" column="0">
          <widget class="QTableWidget" name="tableScore">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="sizeAdjustPolicy">
            <enum>QAbstractScrollArea::AdjustToContents</enum>
+          </property>
+          <property name="editTriggers">
+           <set>QAbstractItemView::NoEditTriggers</set>
+          </property>
+          <property name="showDropIndicator" stdset="0">
+           <bool>false</bool>
           </property>
           <property name="alternatingRowColors">
            <bool>true</bool>
@@ -4149,6 +4217,32 @@
           <column/>
           <column/>
           <column/>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QFrame" name="horizontalFrame">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_5">
+           <item>
+            <widget class="QPushButton" name="buttonClearHistory">
+             <property name="text">
+              <string>Clear All Without Asking For Confirmation</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="buttonClearHistorySelected">
+             <property name="text">
+              <string>Clear Selected Entries</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </widget>
         </item>
        </layout>
