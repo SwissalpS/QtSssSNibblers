@@ -32,11 +32,6 @@ private:
 	Ui::MainWindow *pUi;
 
 private slots:
-	void on_buttonHP0_clicked();
-	void on_buttonHP1_clicked();
-	void on_buttonHP2_clicked();
-	void on_buttonHP3_clicked();
-	void on_buttonHP4_clicked();
 
 	void on_buttonAP0_clicked();
 	void on_buttonAP1_clicked();
@@ -47,6 +42,13 @@ private slots:
 	void on_buttonAP6_clicked();
 	void on_buttonAP7_clicked();
 	void on_buttonAP8_clicked();
+
+
+	void on_buttonHP0_clicked();
+	void on_buttonHP1_clicked();
+	void on_buttonHP2_clicked();
+	void on_buttonHP3_clicked();
+	void on_buttonHP4_clicked();
 
 	void on_buttonZap0_clicked();
 	void on_buttonZap128_clicked();

@@ -29,9 +29,6 @@ SurfaceGame::SurfaceGame(QWidget *pParent) :
 
 	this->pUi->setupUi(this);
 
-	// for forced aspect ratio
-	this->iLastHeight = height();
-
 	// for key events
 	setFocusPolicy(Qt::StrongFocus);
 
@@ -443,7 +440,7 @@ void SurfaceGame::onBonusPlaced(const QVector<QPoint> aoPoints,
 								const quint8 ubBonus, const bool bFake) {
 
 	//this->onDebugMessage("onBonusPlaced");
-	this->onDebugMessage(QString::number(ubBonus) + " " + QString::number(aoPoints.at(0).x()) + ":" + QString::number(aoPoints.at(0).y()) + " " + QString::number(bFake));
+	//this->onDebugMessage(QString::number(ubBonus) + " " + QString::number(aoPoints.at(0).x()) + ":" + QString::number(aoPoints.at(0).y()) + " " + QString::number(bFake));
 
 	SurfaceCell *pCell = this->getCell(aoPoints.first());
 	SurfaceCell *pCell1 = this->getCell(aoPoints.at(1));
@@ -720,7 +717,7 @@ void SurfaceGame::onQuitting() {
 
 void SurfaceGame::onSpawnWorm(Worm *pWorm) {
 
-	this->onDebugMessage("onSpawnWorm");
+	//this->onDebugMessage("onSpawnWorm");
 
 	pWorm->startSpawning();
 
@@ -734,6 +731,8 @@ void SurfaceGame::onSpawnWorm(Worm *pWorm) {
 
 
 void SurfaceGame::onWormAteBonus(Worm *pWorm) {
+
+	//this->onDebugMessage("onWormAteBonus");
 
 	// mark bloatedness on worm
 	pWorm->headCell()->addBloatedHeading(pWorm->currentDirection());
