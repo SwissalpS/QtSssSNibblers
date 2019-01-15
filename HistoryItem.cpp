@@ -35,6 +35,7 @@ HistoryItem::HistoryItem(const QJsonObject oJSON, QObject *pParent) :
 	ulScore(0u),
 	illTimeStamp(0) {
 
+	this->sName = oJSON.value(sTagName).toString();
 	this->ubCountAI = quint8(oJSON.value(sTagCountAI).toInt());
 	this->ubCountHuman = quint8(oJSON.value(sTagCountHuman).toInt());
 	this->ubLevelsDone = quint8(oJSON.value(sTagLevelsDone).toInt());

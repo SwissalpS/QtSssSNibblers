@@ -268,6 +268,8 @@ void Game::initWorms() {
 	QPoint oPoint;
 	quint8 ubState;
 	Worm *pWorm;
+	QString sName;
+	QStringList aUsedNames;
 	for (ubCount = 0u; ubCount < this->ubCountAllPlayers; ++ubCount) {
 
 		oPoint = this->pMapGame->spawnPoints().at(ubCount);
@@ -294,11 +296,21 @@ void Game::initWorms() {
 
 		if (pWorm->isAI()) {
 
-			pWorm->onSetName(tr("AI ") + QString::number(ubCount + 1u - ubCountHumans));
+			pWorm->onSetName(tr("AI ") + QString::number((ubCount + 1u) - ubCountHumans));
 
 		} else {
 
-			pWorm->onSetName(tr("Player ") + QString::number(ubCount + 1u));
+			sName = this->pAS->getPlayerName(ubCount);
+
+			// deal with empty names
+			if (sName.isEmpty()) sName = tr("Player") + " "
+										 + QString::number(ubCount + 1u);
+
+			// deal with duplicate names
+			while (aUsedNames.contains(sName)) sName += " I";
+			aUsedNames << sName;
+
+			pWorm->onSetName(sName);
 
 		} // if AI or human
 
@@ -675,6 +687,16 @@ void Game::onPlayerCountChanged(const quint8 ubCountHumans,
 	// nothing to do, covered when restarting game
 
 } // onPlayerCountChanged
+
+
+void Game::onPlayerNameChanged(const quint8 ubWorm, const QString sName) {
+
+	// watchdog
+	if (ubWorm >= this->apWorms.length()) return;
+
+	this->apWorms.at(ubWorm)->onSetName(sName);
+
+} // onPlayerNameChanged
 
 
 void Game::onPauseResumeToggled() {

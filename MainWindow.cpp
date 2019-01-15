@@ -123,6 +123,9 @@ void MainWindow::initGame() {
 	connect(this, SIGNAL(settingsPlayerCountChanged(quint8,quint8)),
 			pGame, SLOT(onPlayerCountChanged(quint8,quint8)));
 
+	connect(this, SIGNAL(settingsPlayerNameChanged(quint8,QString)),
+			pGame, SLOT(onPlayerNameChanged(quint8,QString)));
+
 	connect(this, SIGNAL(settingsSpeedChanged(int)),
 			pGame, SLOT(onSpeedChanged(int)));
 
@@ -290,6 +293,8 @@ void MainWindow::initSettings() {
 	this->settingsUpdatePlayerMouseAndRelative();
 
 	this->settingsUpdatePlayerKeys();
+
+	this->settingsUpdatePlayerNames();
 
 } // initSettings
 
@@ -682,6 +687,34 @@ void MainWindow::on_kseUp4_keySequenceChanged(const QKeySequence &oKeySequence) 
 } // on_kseUp4_keySequenceChanged
 
 
+void MainWindow::on_leName1_editingFinished() {
+
+	this->onPlayerNameChanged(0u, this->pUi->leName1->text());
+
+} // on_leName1_editingFinished
+
+
+void MainWindow::on_leName2_editingFinished() {
+
+	this->onPlayerNameChanged(1u, this->pUi->leName2->text());
+
+} // on_leName2_editingFinished
+
+
+void MainWindow::on_leName3_editingFinished() {
+
+	this->onPlayerNameChanged(2u, this->pUi->leName3->text());
+
+} // on_leName3_editingFinished
+
+
+void MainWindow::on_leName4_editingFinished() {
+
+	this->onPlayerNameChanged(3u, this->pUi->leName4->text());
+
+} // on_leName4_editingFinished
+
+
 void MainWindow::onPlayerColourChanged(const quint8 ubWorm, const quint8 ubIndex) {
 
 	quint8 ubIndexOld = this->pAS->getPlayerColour(ubWorm);
@@ -762,6 +795,18 @@ void MainWindow::onPlayerKeyUpChanged(const quint8 ubWorm,
 	Q_EMIT this->settingsPlayerKeyChanged(ubWorm, oKeySequence, L::Up);
 
 } // onPlayerUpChanged
+
+
+void MainWindow::onPlayerNameChanged(const quint8 ubWorm, const QString sName) {
+
+	QString sOld = this->pAS->getPlayerName(ubWorm);
+	if (0 == sOld.compare(sName)) return;
+
+	this->pAS->setPlayerName(ubWorm, sName);
+
+	Q_EMIT this->settingsPlayerNameChanged(ubWorm, sName);
+
+} // onPlayerNameChanged
 
 
 void MainWindow::onPlayerRelativeToggled(const quint8 ubWorm, const bool bChecked) {
@@ -1118,6 +1163,19 @@ void MainWindow::settingsUpdatePlayerKeys() {
 											QKeySequence::PortableText));
 
 } // settingsUpdatePlayerKeys
+
+
+void MainWindow::settingsUpdatePlayerNames() {
+
+	QStringList aNames = this->pAS->get(AppSettings::sSettingGameNames).toStringList();
+	if (4 > aNames.length()) return;
+
+	this->pUi->leName1->setText(aNames.at(0));
+	this->pUi->leName2->setText(aNames.at(1));
+	this->pUi->leName3->setText(aNames.at(2));
+	this->pUi->leName4->setText(aNames.at(3));
+
+} // settingsUpdatePlayerNames
 
 
 void MainWindow::settingsUpdatePlayerMouseAndRelative() {

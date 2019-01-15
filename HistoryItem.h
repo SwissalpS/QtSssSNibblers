@@ -29,10 +29,10 @@ protected:
 public:
 	const QString sTagCountAI = QStringLiteral("countAI");
 	const QString sTagCountHuman = QStringLiteral("countHuman");
-	const QString sTagName = QStringLiteral("name");
 	const QString sTagLevelsDone = QStringLiteral("levelsDone");
 	const QString sTagLevelStart = QStringLiteral("levelStart");
 	const QString sTagLivesLost = QStringLiteral("livesLost");
+	const QString sTagName = QStringLiteral("name");
 	const QString sTagScore = QStringLiteral("score");
 	const QString sTagSpeedIndex = QStringLiteral("speedIndex");
 	const QString sTagTimeStamp = QStringLiteral("timeStamp");
@@ -49,10 +49,10 @@ public:
 	inline virtual quint8 countAI() const { return this->ubCountAI; }
 	inline virtual quint8 countHuman() const { return this->ubCountHuman; }
 	inline virtual bool isNull() const { return 0xFFu == this->ubSpeedIndex; }
-	inline virtual QString name() const { return this->sName; }
 	inline virtual quint8 levelsDone() const { return this->ubLevelsDone; }
 	inline virtual quint8 levelStart() const { return this->ubLevelStart; }
 	inline virtual quint8 livesLost() const { return this->ubLivesLost; }
+	inline virtual QString name() const { return this->sName; }
 	inline virtual quint8 score() const { return this->ulScore; }
 	inline virtual quint8 speedIndex() const { return this->ubSpeedIndex; }
 	inline virtual qint64 timeStamp() const { return this->illTimeStamp; }

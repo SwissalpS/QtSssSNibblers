@@ -23,6 +23,7 @@ const QString AppSettings::sSettingGameKeyDown = "aGameKeyDown";
 const QString AppSettings::sSettingGameKeyLeft = "aGameKeyLeft";
 const QString AppSettings::sSettingGameKeyRight = "aGameKeyRight";
 const QString AppSettings::sSettingGameKeyUp = "aGameKeyUp";
+const QString AppSettings::sSettingGameNames = "aGameNames";
 const QString AppSettings::sSettingGameFakeBonuses = "bGameFakeBonuses";
 const QString AppSettings::sSettingGameLoadSetsStartLevel = "bGameLoadSetsStartLevel";
 const QString AppSettings::sSettingGameOverOnLastDead = "bGameOverOnLastDead";
@@ -42,6 +43,7 @@ const quint8 AppSettings::ubSettingBuilderLastBrushIndexDefault = 0x0u;
 const quint8 AppSettings::ubSettingBuilderLastLevelDefault = 0x0u;
 const quint8 AppSettings::ubSettingGameCountAIsDefault = 0x4u;
 const quint8 AppSettings::ubSettingGameCountHumansDefault = 0x0u;
+const QString AppSettings::sSettingGameNamesDefault = "Harry;Larry;Sarah;Trisha";
 const bool AppSettings::bSettingGameFakeBonusesDefault = false;
 const bool AppSettings::bSettingGameOverOnLastDeadDefault = true;
 const bool AppSettings::bSettingGameSoundDefault = true;
@@ -94,6 +96,18 @@ AppSettings::AppSettings(QObject *parent) :
 	pS->setValue(sSettingGameCountAIs, this->get(sSettingGameCountAIs));
 	pS->setValue(sSettingGameCountHumans, this->get(sSettingGameCountHumans));
 	pS->setValue(sSettingGameFakeBonuses, this->get(sSettingGameFakeBonuses));
+
+	QStringList aNames = pS->value(sSettingGameNames).toStringList();
+	if (4 > aNames.length()) {
+
+		aNames.clear();
+
+		aNames = sSettingGameNamesDefault.split(";");
+
+		pS->setValue(sSettingGameNames, aNames);
+
+	} // if not valid length list returned, make a new one
+
 	pS->setValue(sSettingGameOverOnLastDead, this->get(sSettingGameOverOnLastDead));
 
 	// make sure key-binding arrays exist
@@ -480,6 +494,17 @@ QString AppSettings::getPlayerKeyUp(const quint8 ubWorm) const {
 } // getPlayerKeyUp
 
 
+QString AppSettings::getPlayerName(const quint8 ubWorm) const {
+
+	QStringList aNames = this->get(sSettingGameNames).toStringList();
+
+	if (aNames.length() <= ubWorm) return "Player X";
+
+	return aNames.at(ubWorm);
+
+} // getPlayerName
+
+
 bool AppSettings::getPlayerRelative(const quint8 ubWorm) const {
 
 	QList<QVariant> aList = this->get(sSettingGameRelative).toList();
@@ -608,6 +633,19 @@ void AppSettings::setPlayerKeyUp(const quint8 ubWorm, const QString sKey) const 
 	this->pSettings->setValue(sSettingGameKeyUp, aListNew);
 
 } // setPlayerKeyUp
+
+
+void AppSettings::setPlayerName(const quint8 ubWorm, const QString sName) const {
+
+	QStringList aNames = this->get(sSettingGameNames).toStringList();
+
+	if (aNames.length() <= ubWorm) return;
+
+	aNames.replace(ubWorm, sName);
+
+	this->pSettings->setValue(sSettingGameNames, aNames);
+
+} // setPlayerName
 
 
 void AppSettings::setPlayerRelative(const quint8 ubWorm, const bool bChecked) const {

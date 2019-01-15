@@ -87,6 +87,11 @@ private slots:
 	void on_kseUp3_keySequenceChanged(const QKeySequence &oKeySequence);
 	void on_kseUp4_keySequenceChanged(const QKeySequence &oKeySequence);
 
+	void on_leName1_editingFinished();
+	void on_leName2_editingFinished();
+	void on_leName3_editingFinished();
+	void on_leName4_editingFinished();
+
 	void on_radioNetClient_toggled(bool bChecked);
 	void on_radioNetOff_toggled(bool bChecked);
 	void on_radioNetServer_toggled(bool bChecked);
@@ -120,11 +125,13 @@ protected:
 	virtual void onPlayerKeyLeftChanged(const quint8 ubWorm, const QKeySequence &oKeySequence);
 	virtual void onPlayerKeyRightChanged(const quint8 ubWorm, const QKeySequence &oKeySequence);
 	virtual void onPlayerKeyUpChanged(const quint8 ubWorm, const QKeySequence &oKeySequence);
+	virtual void onPlayerNameChanged(const quint8 ubWorm, const QString sName);
 	virtual void onPlayerRelativeToggled(const quint8 ubWorm, const bool bChecked);
 	virtual void onPlayerUseMouseToggled(const quint8 ubWorm, const bool bChecked);
 	virtual void settingsUpdatePlayerColours();
 	virtual void settingsUpdatePlayerCount();
 	virtual void settingsUpdatePlayerKeys();
+	virtual void settingsUpdatePlayerNames();
 	virtual void settingsUpdatePlayerMouseAndRelative();
 
 public:
@@ -141,6 +148,7 @@ signals:
 	void settingsPlayerKeyChanged(const quint8 ubWorm,
 						  const QKeySequence &oKeySequence,
 						  const L::Heading eHeading) const;
+	void settingsPlayerNameChanged(const quint8 ubWorm, const QString sName) const;
 	void settingsSpeedChanged(const int iIndex) const;
 	void settingsRelativeChanged(const quint8 ubWorm, const bool bRelative) const;
 
