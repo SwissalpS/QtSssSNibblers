@@ -475,7 +475,7 @@ void MainWindow::on_buttonZap128_clicked() {
 
 void MainWindow::on_buttonZap255_clicked() {
 
-	this->pUi->selectStartLevel->setCurrentIndex(255);
+	this->pUi->selectStartLevel->setCurrentIndex(225);
 
 } // on_buttonZap255_clicked
 

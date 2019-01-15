@@ -22,6 +22,7 @@ namespace SwissalpS { namespace QtNibblers {
 
 
 class DialogSave : public QDialog {
+
 	Q_OBJECT
 
 private:

@@ -75,7 +75,7 @@ void DialogLoad::on_buttonZap128_clicked() {
 
 void DialogLoad::on_buttonZap255_clicked() {
 
-	this->pUi->comboBox->setCurrentIndex(255);
+	this->pUi->comboBox->setCurrentIndex(225);
 
 } // on_buttonZap255_clicked
 
