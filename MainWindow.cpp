@@ -7,6 +7,7 @@
 #include "SurfaceGame.h"
 
 #include <iostream>
+#include <QDateTime>
 #include <QStatusBar>
 
 
@@ -397,6 +398,48 @@ void MainWindow::on_buttonAP8_clicked() {
 	this->settingsUpdatePlayerCount();
 
 } // on_buttonAP8_clicked
+
+
+void MainWindow::on_buttonClearHistory_clicked() {
+
+	this->pHistory->clear();
+
+	this->onUpdateHistory();
+
+} // on_buttonClearHistory_clicked
+
+
+void MainWindow::on_buttonClearHistorySelected_clicked() {
+
+	//this->onDebugMessage("on_buttonClearHistorySelected_clicked");
+
+	QTableWidget *pTable = this->pUi->tableScore;
+	QList<QTableWidgetItem *> apList = pTable->selectedItems();
+	if (0 == apList.length()) return;
+
+	QTableWidgetItem *pItem;
+	QTableWidgetItem *pItemIndex;
+	QVector<int> aiIndexes;
+	int iRow = -1;
+	for (int i = 0; i < apList.length(); ++i) {
+
+		pItem = apList.at(i);
+
+		// we only need to look at one per row
+		if (pItem->row() == iRow) continue;
+		iRow = pItem->row();
+
+		// get the original index
+		pItemIndex = pTable->item(pItem->row(), 10);
+		aiIndexes.append(pItemIndex->data(Qt::DisplayRole).toInt());
+
+	} // loop all selected items
+
+	this->pHistory->clear(aiIndexes);
+
+	this->onUpdateHistory();
+
+} // on_buttonClearHistorySelected_clicked
 
 
 void MainWindow::on_buttonHP0_clicked() {
@@ -993,51 +1036,144 @@ void MainWindow::onUpdateHistory() {
 	QTableWidget *pTable = this->pUi->tableScore;
 	pTable->clear();
 
-	QStringList aLabels;
-	aLabels << tr("Points") << tr("Name") << tr("First Level")
-			<< tr("Levels Completed") << tr("Health Lost") << tr("#AI")
-			<< tr("#Humans") << tr("Speed") << tr("Date");
-	pTable->setColumnCount(aLabels.length());
-	pTable->setHorizontalHeaderLabels(aLabels);
+	static QString sNo;
+	static QString sYes;
+	static QStringList aLabelsH;
+	if (aLabelsH.isEmpty()) {
+
+		aLabelsH << tr("Points") << tr("Name") << tr("First Level")
+				<< tr("Levels Completed") << tr("Speed") << tr("Fakes")
+				<< tr("Health Lost") << tr("#Humans") << tr("#AI") << tr("Date");
+
+		sNo = tr("No");
+		sYes = tr("Yes");
+
+	} // if first call
+
+	// set titles
+	pTable->setColumnCount(aLabelsH.length() + 1);
+	pTable->setHorizontalHeaderLabels(aLabelsH);
 	pTable->setRowCount(iTotal);
 
-	aLabels.clear();
+	// no need for more
+	if (0 >= iTotal) return;
+
+	// number the vertical headers
+	QStringList aLabelsV;
 	for (int i = 0; i < iTotal; ++i) {
 
-		aLabels.append(QString::number(i + 1));
+		aLabelsV.append(QString::number(i + 1));
 
 	} // loop
-	pTable->setVerticalHeaderLabels(aLabels);
+	pTable->setVerticalHeaderLabels(aLabelsV);
 
+	// disable sorting while adding items
 	pTable->setSortingEnabled(false);
 
+	QString sSpeed;
 	HistoryItem *pHI;
 	QTableWidgetItem *pTWI;
-	for (int i = 0; i < apHIs.length(); ++i) {
+	for (int i = 0; i < iTotal; ++i) {
 
 		pHI = apHIs.at(i);
-		pTWI = new QTableWidgetItem(QString::number(pHI->score()), 10);
+
+		pTWI = new QTableWidgetItem(QString::number(pHI->score() * 1.01f), 10);
+		pTWI->setData(Qt::DisplayRole, pHI->score());
 		pTable->setItem(i, 0, pTWI);
+
 		pTWI = new QTableWidgetItem(pHI->name(), 11);
 		pTable->setItem(i, 1, pTWI);
-		pTWI = new QTableWidgetItem(QString::number(pHI->levelStart()), 12);
+
+		pTWI = new QTableWidgetItem(QString::number(pHI->levelStart() * 1.1f), 12);
+		pTWI->setData(Qt::DisplayRole, pHI->levelStart());
 		pTable->setItem(i, 2, pTWI);
-		pTWI = new QTableWidgetItem(QString::number(pHI->levelsDone()), 13);
+
+		pTWI = new QTableWidgetItem(QString::number(pHI->levelsDone() * 1.1f), 13);
+		pTWI->setData(Qt::DisplayRole, pHI->levelsDone());
 		pTable->setItem(i, 3, pTWI);
-		pTWI = new QTableWidgetItem(QString::number(pHI->livesLost()), 14);
+
+		pTWI = new QTableWidgetItem(QString::number(pHI->speedIndex() * 1.01f), 14);
+		switch (pHI->speedIndex()) {
+			case 0: sSpeed = tr("Beginner"); break;
+			case 1: sSpeed = tr("Slow"); break;
+			case 2: sSpeed = tr("Medium"); break;
+			case 3: sSpeed = tr("Fast"); break;
+			case 4:
+			default:
+				sSpeed = tr("Full Speed");
+			break;
+		} // switch pHI->speedIndex()
+		pTWI->setData(Qt::DisplayRole, QString::number(pHI->speedIndex()) + " " + sSpeed);
 		pTable->setItem(i, 4, pTWI);
-		pTWI = new QTableWidgetItem(QString::number(pHI->countAI()), 15);
+
+		pTWI = new QTableWidgetItem((pHI->fakes() ? sYes : sNo), 15);
+		//pTWI->setData(Qt::DisplayRole, pHI->fakes());
 		pTable->setItem(i, 5, pTWI);
-		pTWI = new QTableWidgetItem(QString::number(pHI->countHuman()), 16);
+
+		pTWI = new QTableWidgetItem(QString::number(pHI->livesLost() * 1.1f), 16);
+		pTWI->setData(Qt::DisplayRole, pHI->livesLost());
 		pTable->setItem(i, 6, pTWI);
-		pTWI = new QTableWidgetItem(QString::number(pHI->speedIndex()), 17);
+
+		pTWI = new QTableWidgetItem(QString::number(pHI->countHuman() * 1.1f), 17);
+		pTWI->setData(Qt::DisplayRole, pHI->countHuman());
 		pTable->setItem(i, 7, pTWI);
-		pTWI = new QTableWidgetItem(QString::number(pHI->timeStamp()), 18);
+
+		pTWI = new QTableWidgetItem(QString::number(pHI->countAI() * 1.1f), 18);
+		pTWI->setData(Qt::DisplayRole, pHI->countAI());
 		pTable->setItem(i, 8, pTWI);
+
+		pTWI = new QTableWidgetItem(
+				   QDateTime::fromSecsSinceEpoch(
+					   pHI->timeStamp()).toString("yyyy.MM.dd_HH:mm"), 19);
+		pTable->setItem(i, 9, pTWI);
+
+		pTWI = new QTableWidgetItem(QString::number(i * 1.1f), 20);
+		pTWI->setData(Qt::DisplayRole, i);
+		pTable->setItem(i, 10, pTWI);
+
+	} // loop making items
+
+	// collect up to 4 most recent entries
+	quint8 ubCountMostRecent = 0u;
+	qint64 illMostRecent = apHIs.last()->timeStamp();
+	quint32 ulHighest = 0;
+	int iHighestIndex = iTotal - 1;
+	for (int i = iTotal - 1; i > iTotal - 5; --i) {
+
+		pHI = apHIs.at(i);
+		if (pHI->timeStamp() == illMostRecent) {
+
+			ubCountMostRecent++;
+
+			if (pHI->score() > ulHighest) {
+
+				ulHighest = pHI->score();
+				iHighestIndex = i;
+
+			} // if highscore found
+
+		} else break;
+
+	} // loop most recent
+
+	// we can select on easily
+	pTable->selectRow(iHighestIndex);
+	for (int i = iTotal - 1; i > iTotal - 1 - ubCountMostRecent; --i) {
+
+		if (0 == i - iHighestIndex) continue;
+
+		pTable->item(i, 0)->setSelected(true);
+		pTable->item(i, 1)->setSelected(true);
+		pTable->item(i, 3)->setSelected(true);
+		pTable->item(i, 6)->setSelected(true);
+		pTable->item(i, 9)->setSelected(true);
 
 	} // loop
 
 	pTable->setSortingEnabled(true);
+	pTable->sortItems(0, Qt::DescendingOrder);
+	pTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+	pTable->hideColumn(10);
 
 } // onUpdateHistory
 

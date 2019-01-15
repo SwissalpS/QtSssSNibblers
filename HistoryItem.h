@@ -16,6 +16,7 @@ class HistoryItem : public QObject {
 private:
 
 protected:
+	bool bFakes;
 	QString sName;
 	quint8 ubCountAI;
 	quint8 ubCountHuman;
@@ -29,6 +30,7 @@ protected:
 public:
 	const QString sTagCountAI = QStringLiteral("countAI");
 	const QString sTagCountHuman = QStringLiteral("countHuman");
+	const QString sTagFakes = QStringLiteral("fakes");
 	const QString sTagLevelsDone = QStringLiteral("levelsDone");
 	const QString sTagLevelStart = QStringLiteral("levelStart");
 	const QString sTagLivesLost = QStringLiteral("livesLost");
@@ -39,21 +41,23 @@ public:
 
 	explicit HistoryItem(QObject *pParent = nullptr);
 	explicit HistoryItem(const QJsonObject oJSON, QObject *pParent = nullptr);
-	explicit HistoryItem(const QString sName, const quint8 ubCountAI,
-						 const quint8 ubCountHuman, const quint8 ubLevelsDone,
-						 const quint8 ubLevelStart, const quint8 ubLivesLost,
-						 const quint8 ubSpeedIndex, const quint32 ulScore,
-						 const qint64 illTimeStamp = 0, QObject *pParent = nullptr);
+	explicit HistoryItem(const bool bFakes, const QString sName,
+						 const quint8 ubCountAI, const quint8 ubCountHuman,
+						 const quint8 ubLevelsDone, const quint8 ubLevelStart,
+						 const quint8 ubLivesLost, const quint8 ubSpeedIndex,
+						 const quint32 ulScore, const qint64 illTimeStamp = 0,
+						 QObject *pParent = nullptr);
 	virtual ~HistoryItem();
 
 	inline virtual quint8 countAI() const { return this->ubCountAI; }
 	inline virtual quint8 countHuman() const { return this->ubCountHuman; }
+	inline virtual bool fakes() const { return this->bFakes; }
 	inline virtual bool isNull() const { return 0xFFu == this->ubSpeedIndex; }
 	inline virtual quint8 levelsDone() const { return this->ubLevelsDone; }
 	inline virtual quint8 levelStart() const { return this->ubLevelStart; }
 	inline virtual quint8 livesLost() const { return this->ubLivesLost; }
 	inline virtual QString name() const { return this->sName; }
-	inline virtual quint8 score() const { return this->ulScore; }
+	inline virtual quint32 score() const { return this->ulScore; }
 	inline virtual quint8 speedIndex() const { return this->ubSpeedIndex; }
 	inline virtual qint64 timeStamp() const { return this->illTimeStamp; }
 

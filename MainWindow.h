@@ -43,6 +43,8 @@ private slots:
 	void on_buttonAP7_clicked();
 	void on_buttonAP8_clicked();
 
+	void on_buttonClearHistory_clicked();
+	void on_buttonClearHistorySelected_clicked();
 
 	void on_buttonHP0_clicked();
 	void on_buttonHP1_clicked();

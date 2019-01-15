@@ -30,6 +30,7 @@ public:
 	virtual ~History();
 
 	virtual void clear();
+	virtual void clear(QVector<int> aiIndexes);
 	virtual QVector<HistoryItem *> items();
 
 public slots:

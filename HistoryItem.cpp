@@ -10,6 +10,7 @@ namespace SwissalpS { namespace QtNibblers {
 
 HistoryItem::HistoryItem(QObject *pParent) :
 	QObject(pParent),
+	bFakes(false),
 	sName("Null"),
 	ubCountAI(0xFFu),
 	ubCountHuman(0xFFu),
@@ -25,6 +26,7 @@ HistoryItem::HistoryItem(QObject *pParent) :
 
 HistoryItem::HistoryItem(const QJsonObject oJSON, QObject *pParent) :
 	QObject(pParent),
+	bFakes(false),
 	sName(""),
 	ubCountAI(0u),
 	ubCountHuman(0u),
@@ -35,6 +37,7 @@ HistoryItem::HistoryItem(const QJsonObject oJSON, QObject *pParent) :
 	ulScore(0u),
 	illTimeStamp(0) {
 
+	this->bFakes = oJSON.value(sTagFakes).toBool();
 	this->sName = oJSON.value(sTagName).toString();
 	this->ubCountAI = quint8(oJSON.value(sTagCountAI).toInt());
 	this->ubCountHuman = quint8(oJSON.value(sTagCountHuman).toInt());
@@ -48,12 +51,14 @@ HistoryItem::HistoryItem(const QJsonObject oJSON, QObject *pParent) :
 } // construct
 
 
-HistoryItem::HistoryItem(const QString sName, const quint8 ubCountAI,
-						 const quint8 ubCountHuman, const quint8 ubLevelsDone,
-						 const quint8 ubLevelStart, const quint8 ubLivesLost,
-						 const quint8 ubSpeedIndex, const quint32 ulScore,
-						 const qint64 illTimeStamp, QObject *pParent) :
+HistoryItem::HistoryItem(const bool bFakes, const QString sName,
+						 const quint8 ubCountAI, const quint8 ubCountHuman,
+						 const quint8 ubLevelsDone, const quint8 ubLevelStart,
+						 const quint8 ubLivesLost, const quint8 ubSpeedIndex,
+						 const quint32 ulScore, const qint64 illTimeStamp,
+						 QObject *pParent) :
 	QObject(pParent),
+	bFakes(bFakes),
 	sName(sName),
 	ubCountAI(ubCountAI),
 	ubCountHuman(ubCountHuman),
@@ -79,6 +84,7 @@ QJsonObject HistoryItem::toJSON() const {
 	QJsonObject oOut;
 	oOut.insert(sTagCountAI, this->ubCountAI);
 	oOut.insert(sTagCountHuman, this->ubCountHuman);
+	oOut.insert(sTagFakes, this->bFakes);
 	oOut.insert(sTagLevelsDone, this->ubLevelsDone);
 	oOut.insert(sTagLevelStart, this->ubLevelStart);
 	oOut.insert(sTagLivesLost, this->ubLivesLost);
