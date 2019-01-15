@@ -105,6 +105,7 @@ public slots:
 	void onPauseResumeToggled();
 	void onPlayerCountChanged(const quint8 ubCountHumans,
 							  const quint8 ubCountAIs);
+	void onPlayerNameChanged(const quint8 ubWorm, const QString sName);
 	void onReset();
 	void onResetSoft();
 	void onSpeedChanged(const int iIndex);
