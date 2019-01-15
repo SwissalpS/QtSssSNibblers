@@ -88,6 +88,7 @@ void SurfaceGame::changeEvent(QEvent *pEvent) {
 } // changeEvent
 
 
+// set all to 0
 void SurfaceGame::clearSurface() {
 
 	quint8 ubRows = quint8(this->aopRows.count());
@@ -117,6 +118,7 @@ void SurfaceGame::clearSurface() {
 } // clearSurface
 
 
+// set any of ubState to their frozen state (original state on load)
 void SurfaceGame::clearSurfaceOf(const quint8 ubState) {
 
 	QVector<quint8> aStates;
@@ -146,7 +148,7 @@ void SurfaceGame::clearSurfaceOf(const QVector<quint8> aStates) {
 
 			if (aStates.contains(pCell->getState())) {
 
-				this->setCellState(pCell, L::FloorClean, false);
+				pCell->defrostState();
 
 			} // if one to clear
 
