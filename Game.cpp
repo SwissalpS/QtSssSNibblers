@@ -433,6 +433,8 @@ void Game::loadCurrentLevel() {
 	QString sMessage;
 	QString sPath;
 
+	//this->onDebugMessage("mode: " + QString::number(ubBMmode));
+
 	while (bBadMap) {
 
 		bBadMap = false;
@@ -440,7 +442,6 @@ void Game::loadCurrentLevel() {
 
 		delete this->pMapGame; this->pMapGame = nullptr;
 		this->pMapGame = MapGame::loadedMap(sPath, this);
-		// has zero spawn points
 		if (MapGame::NoError != this->pMapGame->errorCode()) {
 
 			this->onDebugMessage("Load Error");
