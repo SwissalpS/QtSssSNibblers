@@ -774,6 +774,9 @@ void SurfaceGame::onWormCreated(Worm *pWorm) {
 	connect(pWorm, SIGNAL(updateScore(quint32)),
 			pSB, SLOT(setScore(quint32)));
 
+	this->ubResizeCount = 0u;
+	this->resizeDelayDone();
+
 } // onWormCreated
 
 
