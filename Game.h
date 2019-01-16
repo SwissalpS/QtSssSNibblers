@@ -113,6 +113,7 @@ public slots:
 	void onStartNewGame(const quint8 ubLevel);
 	void onTileChanged(const QPoint oPoint, const quint8 ubState);
 	void onWormDied(const bool bAI);
+	inline void onWormFarted() const { }
 
 }; // Game
 

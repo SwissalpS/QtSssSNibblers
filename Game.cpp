@@ -291,6 +291,9 @@ void Game::initWorms() {
 		connect(pWorm, SIGNAL(died(bool)),
 				this, SLOT(onWormDied(bool)));
 
+		connect(pWorm, SIGNAL(fart()),
+				this, SLOT(onWormFarted()));
+
 		this->apWorms.append(pWorm);
 
 		Q_EMIT this->wormCreated(pWorm);
