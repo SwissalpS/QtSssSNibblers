@@ -8,13 +8,15 @@ namespace SwissalpS { namespace QtNibblers {
 
 
 Worm::Worm(const QPoint oPoint, const quint8 ubState, const quint8 ubColour,
-		   const bool bAI, QObject *pParent) :
+		   const bool bAI, const quint8 ubLivesMax, QObject *pParent) :
 	QObject(pParent),
 	bAmAI(bAI),
+	uiCountLevels(0u),
 	uiTargetLength(5u),
 	ubColourIndex(ubColour),
 	ubLives(0u),
 	ubLivesLost(0u),
+	ubLivesMax(ubLivesMax),
 	ubSpawnSafetyTicks(0u),
 	ulScore(0u),
 	oPointSpawn(oPoint),
@@ -22,8 +24,6 @@ Worm::Worm(const QPoint oPoint, const quint8 ubState, const quint8 ubColour,
 	eNextBloat(L::Nowhere) {
 
 	this->onSetSpawnPoint(oPoint, ubState);
-
-	//this->startSpawning();
 
 } // construct
 
@@ -272,6 +272,13 @@ QPoint Worm::nextPoint() {
 
 void Worm::onAddLife() {
 
+	if (this->ubLivesMax) {
+
+		// already got max or more (jic)
+		if (this->ubLivesMax <= this->ubLives) return;
+
+	} // if limited lives
+
 	this->ubLives++;
 
 	Q_EMIT this->updateLives(this->ubLives);
@@ -305,6 +312,8 @@ void Worm::onGrow(const float fFactor) {
 
 
 void Worm::onReverse() {
+
+	if (this->isDead()) return;
 
 	QVector<SurfaceCell *> apOld(this->apCells);
 	this->apCells.clear();

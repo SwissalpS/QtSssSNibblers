@@ -21,10 +21,12 @@ protected:
 	bool bAmAI;
 	bool bAmCrashed;
 	bool bUseRelativeControls;
+	quint16 uiCountLevels;
 	quint16 uiTargetLength;
 	quint8 ubColourIndex;
 	quint8 ubLives;
 	quint8 ubLivesLost;
+	quint8 ubLivesMax;
 	quint8 ubSpawnSafetyTicks;
 	quint32 ulScore;
 	QPoint oPointSpawn;
@@ -41,7 +43,7 @@ protected:
 public:
 
 	explicit Worm(const QPoint oPoint, const quint8 ubState,
-				  const quint8 ubColour, const bool bAI,
+				  const quint8 ubColour, const bool bAI, const quint8 ubLivesMax,
 				  QObject *pParent = nullptr);
 	virtual ~Worm();
 
@@ -68,6 +70,7 @@ public:
 	// cell that comes after the head (2nd)
 	virtual SurfaceCell *neckCell();
 	virtual QPoint leftPoint();
+	inline virtual quint16 levelCount() const { return this->uiCountLevels; }
 	inline virtual quint8 livesLost() const { return this->ubLivesLost; }
 	inline virtual QString name() const { return this->sName; }
 	virtual QPoint nextPoint();
@@ -95,6 +98,7 @@ signals:
 	void updateScore(const quint32 ulScore) const;
 
 public slots:
+	inline void onAddLevel() { this->uiCountLevels++; }
 	void onAddLife();
 	void onAddScore(const qint16 iScore);
 	inline void onDebugMessage(const QString &sMessage) const {

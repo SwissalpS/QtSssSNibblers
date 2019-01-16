@@ -29,6 +29,7 @@ Game::Game(QObject *pParent) :
 	ubCountNeedApple(SssS_Nibblers_Bonus_Delay_Ticks),
 	ubCurrentLevel(0u),
 	ubSpeedIndex(0u),
+	ubStartLevel(0u),
 	pAS(AppSettings::pAppSettings()),
 	pMapGame(nullptr),
 	pWormAI(nullptr) {
@@ -243,6 +244,7 @@ void Game::initWorms() {
 	quint8 ubCountAIs = quint8(this->pAS->get(AppSettings::sSettingGameCountAIs).toUInt());
 	this->ubCountHumans = quint8(this->pAS->get(AppSettings::sSettingGameCountHumans).toUInt());
 	quint8 ubLives = quint8(this->pAS->get(AppSettings::sSettingGameStartLives).toUInt());
+	quint8 ubLivesMax = (this->pAS->get(AppSettings::sSettingGameLimitLives).toBool()) ? 0u : 2u * ubLives;
 	this->ubCountAllPlayers = ubCountAIs + this->ubCountHumans;
 
 	// check that there are enough spawn points
@@ -278,7 +280,7 @@ void Game::initWorms() {
 
 		ubColour = this->pAS->getPlayerColour(ubCount);
 
-		pWorm = new Worm(oPoint, ubState, ubColour, (ubCount >= ubCountHumans), this);
+		pWorm = new Worm(oPoint, ubState, ubColour, (ubCount >= ubCountHumans), ubLivesMax, this);
 
 		if (!pWorm->isAI())
 			pWorm->setUseRelativeControls(this->pAS->getPlayerRelative(ubCount));
@@ -651,6 +653,8 @@ void Game::onLevelIsLoaded() {
 
 	} // loop worms
 
+	this->ubCountLevels++;
+
 } // onLevelIsLoaded
 
 
@@ -660,8 +664,6 @@ void Game::onNextLevel() {
 
 	if (0xFFu == this->ubCurrentLevel) this->ubCurrentLevel = 0u;
 	else this->ubCurrentLevel++;
-
-	this->ubCountLevels++;
 
 	this->loadCurrentLevel();
 
@@ -1059,27 +1061,31 @@ void Game::onWormDied(const bool bAI) {
 		Worm *pWorm;
 		QString sOut;
 		QVector<Worm *> apRanks = this->makeRanking();
+
 		for (int i = 0; i < apRanks.length(); ++i) {
 
 			pWorm = apRanks.at(i);
+
+			// prepare output for Game Over cover
 			sOut += QString::number(i + 1) + ". " + pWorm->name() + ": "
 					+ QString::number(pWorm->score())
 					//+ " " + QString::number(pWorm->livesLost())
+					//+ " " + QString::number(pWorm->levelCount())
 					+ (((i+1) < apRanks.length()) ? "\n" : "");
 
 			if (pWorm->isAI()) continue;
 
+			// inform History about the results
 			Q_EMIT this->newHistoryItem(
 						new HistoryItem(
 							this->bUseFakes,
 							pWorm->name(),
 							this->ubCountAllPlayers - this->ubCountHumans,
-							this->ubCountHumans, this->ubCountLevels - 1,
-							(1 + this->ubCurrentLevel) - this->ubCountLevels,
-							pWorm->livesLost(), this->ubSpeedIndex,
-							pWorm->score()));
+							this->ubCountHumans, pWorm->levelCount(),
+							this->ubStartLevel, pWorm->livesLost(),
+							this->ubSpeedIndex, pWorm->score()));
 
-		} // loop
+		} // loop worms sorted by rank
 
 		Q_EMIT this->updateHistory();
 		Q_EMIT this->doGameOver(sOut);
@@ -1191,6 +1197,12 @@ void Game::wormAteBonus(Worm *pWorm, const QPoint oPoint) {
 					this->pTimer->stop();
 					this->pTimerBonus->stop();
 					this->bLevelStarted = false;
+
+					for (int i = 0; i < this->apWorms.length(); ++i) {
+
+						if (!this->apWorms.at(i)->isDead()) this->apWorms.at(i)->onAddLevel();
+
+					} // loop worms
 
 					this->onDebugMessage("wormAteBonus:level done");
 					Q_EMIT this->doLevelDone();

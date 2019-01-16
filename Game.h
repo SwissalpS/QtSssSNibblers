@@ -39,6 +39,7 @@ protected:
 	quint8 ubCountNeedApple;
 	quint8 ubCurrentLevel;
 	quint8 ubSpeedIndex;
+	quint8 ubStartLevel;
 	AppSettings *pAS;
 	MapGame *pMapGame;
 	QVector<Bonus *> apBonus;
