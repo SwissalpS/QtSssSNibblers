@@ -39,6 +39,8 @@ protected:
 	explicit MapGame(QObject *pParent = nullptr);
 	explicit MapGame(const QByteArray &aFileContents, QObject *pParent = nullptr);
 
+	virtual bool isGoodForBonus(const QPoint oPoint);
+
 public:
 	// use this to get a map. If invalid will return a null-map
 	static MapGame *loadedMap(const QString sFilePath, QObject *pParent = nullptr);

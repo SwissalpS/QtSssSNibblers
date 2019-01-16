@@ -89,48 +89,31 @@ QVector<QPoint> MapGame::freeSpotForBonus() {
 
 	// find 4 adjacent cells that are not occupied
 
-	static QVector<quint8> aubStatesFree;
-	if (aubStatesFree.isEmpty())
-		aubStatesFree = IconEngine::statesFloors()
-						+ IconEngine::statesTeleporterExits()
-						+ IconEngine::statesSpawns();
-
-	quint8 ubColumns = 0u;
-	quint8 ubRows = 0u;
-	quint8 ubState;
 	QPoint oPoint;
-	QPoint oPoint2;
 	QVector<QPoint> aoPoints;
-	aoPoints.clear();
-	QVector<QPoint> aoFreeCells;
-	aoFreeCells.clear();
+	static QVector<QPoint> aoFreePoints;
 
-	for (; ubRows < SssS_Nibblers_Surface_Height; ++ubRows) {
+	if (aoFreePoints.isEmpty()) {
 
-		for (ubColumns = 0u; ubColumns < SssS_Nibblers_Surface_Width; ++ubColumns) {
+		quint8 ubColumns = 0u;
+		quint8 ubRows = 0u;
 
-			oPoint = QPoint(ubColumns, ubRows);
-			ubState = this->tile(oPoint);
-			if (!aubStatesFree.contains(ubState)) continue;
+		for (; ubRows < SssS_Nibblers_Surface_Height - 1u; ++ubRows) {
 
-			ubState = this->tile(L::warpPoint(oPoint, L::Right));
-			if (!aubStatesFree.contains(ubState)) continue; // TODO: optimize as we have already checked this one
+			for (ubColumns = 0u; ubColumns < SssS_Nibblers_Surface_Width - 1u; ++ubColumns) {
 
-			oPoint2 = L::warpPoint(oPoint, L::Down);
-			ubState = this->tile(oPoint2);
-			if (!aubStatesFree.contains(ubState)) continue;
+				// OK, this one could work
+				oPoint = QPoint(ubColumns, ubRows);
+				if (this->isGoodForBonus(oPoint))
+					aoFreePoints.append(oPoint);
 
-			ubState = this->tile(L::warpPoint(oPoint2, L::Right));
-			if (!aubStatesFree.contains(ubState)) continue;
+			} // loop columns
 
-			// OK, this one could work
-			aoFreeCells.append(oPoint);
+		} // loop rows
 
-		} // loop columns
+	} // first call
 
-	} // loop rows
-
-	int iMaxPlusOne = aoFreeCells.length();
+	int iMaxPlusOne = aoFreePoints.length();
 	if (0 == iMaxPlusOne) {
 
 		this->onDebugMessage("No Space Found for bonus");
@@ -139,10 +122,39 @@ QVector<QPoint> MapGame::freeSpotForBonus() {
 
 	} // if no free space to put any bonus
 
+	int iIndex;
 	int iMin = 0;
-	int iIndex = iMin + (qrand() % (iMaxPlusOne - iMin));
+	QPoint oPoint2;
+	QVector<QPoint> aoTriedPoints;
+	bool bOK = false;
+	while (!bOK) {
 
-	oPoint = aoFreeCells.at(iIndex);
+		iIndex = iMin + (qrand() % (iMaxPlusOne - iMin));
+		oPoint = aoFreePoints.at(iIndex);
+
+		if (aoTriedPoints.contains(oPoint)) continue;
+
+		if (this->isGoodForBonus(oPoint)) {
+
+			bOK = true;
+			continue;
+
+		} // if good found
+
+		aoTriedPoints.append(oPoint);
+
+		if (aoTriedPoints.length() == aoFreePoints.length()) {
+
+			// tried all but could not satisfy
+
+			this->onDebugMessage("No Space Found for bonus");
+
+			return aoPoints;
+
+		} // if nothing found
+
+	} // loop !bOK
+
 	aoPoints.append(oPoint);
 	aoPoints.append(L::warpPoint(oPoint, L::Right));
 	oPoint2 = L::warpPoint(oPoint, L::Down);
@@ -161,6 +173,35 @@ QVector<QPoint> MapGame::freeSpotForBonus() {
 	return aoPoints;
 
 } // freeSpotForBonus
+
+
+// check if a bonus can be placed there
+bool MapGame::isGoodForBonus(const QPoint oPoint) {
+
+	static QVector<quint8> aubStatesFree;
+	if (aubStatesFree.isEmpty())
+		aubStatesFree = IconEngine::statesFloors()
+						+ IconEngine::statesTeleporterExits()
+						+ IconEngine::statesSpawns();
+	quint8 ubState;
+	QPoint oPoint2;
+
+	ubState = this->tile(oPoint);
+	if (!aubStatesFree.contains(ubState)) return false;
+
+	ubState = this->tile(L::warpPoint(oPoint, L::Right));
+	if (!aubStatesFree.contains(ubState)) return false;
+
+	oPoint2 = L::warpPoint(oPoint, L::Down);
+	ubState = this->tile(oPoint2);
+	if (!aubStatesFree.contains(ubState)) return false;
+
+	ubState = this->tile(L::warpPoint(oPoint2, L::Right));
+	if (!aubStatesFree.contains(ubState)) return false;
+
+	return true;
+
+} // isGoodForBonus
 
 
 // static main way to get a map
