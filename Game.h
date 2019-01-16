@@ -56,6 +56,7 @@ protected:
 	virtual void destroyBonus(Bonus *pBonus);
 	virtual void destructBonuses();
 	virtual void destructWorms();
+	virtual void gameDone(const bool bGameWon);
 	virtual void initWorms();
 	virtual void loadCurrentLevel();
 	virtual QVector<Worm *> makeRanking();

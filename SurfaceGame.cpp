@@ -562,8 +562,8 @@ void SurfaceGame::onDoGameOver(const QString &sRanking) {
 	this->pUi->buttonPP->setEnabled(false);
 
 	// show game over dialog
-	QString sMessage = tr("Game Over");
-	this->showStartCountDownFrame(sMessage + "\n" + sRanking);
+	QString sMessage = tr("Game Done. Start a new one by clicking the 'Load New Game' button in the upper left.");
+	this->showStartCountDownFrame(sRanking);
 
 	Q_EMIT this->statusMessage(sMessage);
 

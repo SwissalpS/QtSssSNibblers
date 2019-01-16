@@ -204,6 +204,54 @@ void Game::destructWorms() {
 } // destructWorms
 
 
+void Game::gameDone(const bool bGameWon) {
+
+	Fx::play(Fx::GameOver);
+
+	this->pTimer->stop();
+	this->pTimerBonus->stop();
+	this->bPaused = true;
+
+	this->ubCountDead = 0xFFu;
+	this->ubCountDeadHumans = 0xFFu;
+
+	QString sOut = bGameWon ? tr("Game Won") : tr("Game Over");
+	sOut += "\n";
+
+	QVector<Worm *> apRanks = this->makeRanking();
+
+	Worm *pWorm;
+	for (int i = 0; i < apRanks.length(); ++i) {
+
+		pWorm = apRanks.at(i);
+
+		// prepare output for Game Over cover
+		sOut += QString::number(i + 1) + ". " + pWorm->name() + ": "
+				+ QString::number(pWorm->score())
+				//+ " " + QString::number(pWorm->livesLost())
+				//+ " " + QString::number(pWorm->levelCount())
+				+ (((i+1) < apRanks.length()) ? "\n" : "");
+
+		if (pWorm->isAI()) continue;
+
+		// inform History about the results
+		Q_EMIT this->newHistoryItem(
+					new HistoryItem(
+						this->bUseFakes,
+						pWorm->name(),
+						this->ubCountAllPlayers - this->ubCountHumans,
+						this->ubCountHumans, pWorm->levelCount(),
+						this->ubStartLevel, pWorm->livesLost(),
+						this->ubSpeedIndex, pWorm->score()));
+
+	} // loop worms sorted by rank
+
+	Q_EMIT this->updateHistory();
+	Q_EMIT this->doGameOver(sOut);
+
+} // gameDone
+
+
 void Game::init() {
 
 	this->onDebugMessage("init");
@@ -392,6 +440,7 @@ void Game::loadCurrentLevel() {
 
 		delete this->pMapGame; this->pMapGame = nullptr;
 		this->pMapGame = MapGame::loadedMap(sPath, this);
+		// has zero spawn points
 		if (MapGame::NoError != this->pMapGame->errorCode()) {
 
 			this->onDebugMessage("Load Error");
@@ -399,8 +448,17 @@ void Game::loadCurrentLevel() {
 
 			if (0u == ubBMmode) {
 
+				if (this->ubStartLevel == this->ubCurrentLevel) {
+
+					Q_EMIT this->doLevelLoadError();
+
+					return;
+
+				} // if first level
+
 				// Game Won
-				Q_EMIT this->doLevelLoadError();
+
+				this->gameDone(true);
 
 				return;
 
@@ -411,6 +469,7 @@ void Game::loadCurrentLevel() {
 				if (this->ubStartLevel == this->ubCurrentLevel) {
 
 					// stuck -> Game Won
+
 					Q_EMIT this->doLevelLoadError();
 					return;
 
@@ -429,6 +488,10 @@ void Game::loadCurrentLevel() {
 
 					// were around the world and didn't find a single good one
 					// how sad
+
+					this->gameDone(true);
+
+					return;
 					Q_EMIT this->doLevelLoadError();
 					return;
 
@@ -449,15 +512,20 @@ void Game::loadCurrentLevel() {
 
 			if (0u == ubBMmode) {
 
+				if (this->ubStartLevel == this->ubCurrentLevel) {
+
+					Q_EMIT this->doLevelIsMissingSpawnPoints(this->ubCountAllPlayers
+															 - this->pMapGame->spawnPoints().length());
+
+					return;
+
+				}
 				// Game Won
 				this->onDebugMessage("Game Won");
 
+				this->gameDone(true);
+
 				Q_EMIT this->statusMessage(tr("Level does not have sufficient spawn-points. Bailling."));
-				Q_EMIT this->doLevelIsMissingSpawnPoints(
-							quint8(this->apWorms.length()
-								   - this->pMapGame->spawnPoints().length()));
-return;
-				delete this->pMapGame; this->pMapGame = nullptr;
 
 				return;
 
@@ -469,7 +537,10 @@ return;
 				if (this->ubStartLevel == this->ubCurrentLevel) {
 
 					// stuck -> Game Won
+					this->onDebugMessage("Game Won");
+
 					Q_EMIT this->doLevelLoadError();
+
 					return;
 
 				} // if stuck
@@ -488,6 +559,12 @@ return;
 
 					// were around the world and didn't find a single good one
 					// how sad
+					this->onDebugMessage("Around the world");
+
+					this->gameDone(true);
+
+					return;
+
 					Q_EMIT this->doLevelLoadError();
 					return;
 
@@ -502,8 +579,6 @@ return;
 	connect(this->pMapGame, SIGNAL(debugMessage(QString)),
 			this, SLOT(onDebugMessage(QString)));
 
-//			this->ubCountDead = 0xFFu;
-//			this->ubCountDeadHumans = 0xFFu;
 
 	Q_EMIT this->loadLevel(this->pMapGame, this->ubCurrentLevel);
 
@@ -1142,47 +1217,8 @@ void Game::onWormDied(const bool bAI) {
 	++this->ubCountDead;
 	if (!bAI) ++this->ubCountDeadHumans;
 
-	if (this->isGameOver()) {
-
-		Fx::play(Fx::GameOver);
-
-		this->pTimer->stop();
-		this->pTimerBonus->stop();
-		this->bPaused = true;
-
-		Worm *pWorm;
-		QString sOut;
-		QVector<Worm *> apRanks = this->makeRanking();
-
-		for (int i = 0; i < apRanks.length(); ++i) {
-
-			pWorm = apRanks.at(i);
-
-			// prepare output for Game Over cover
-			sOut += QString::number(i + 1) + ". " + pWorm->name() + ": "
-					+ QString::number(pWorm->score())
-					//+ " " + QString::number(pWorm->livesLost())
-					//+ " " + QString::number(pWorm->levelCount())
-					+ (((i+1) < apRanks.length()) ? "\n" : "");
-
-			if (pWorm->isAI()) continue;
-
-			// inform History about the results
-			Q_EMIT this->newHistoryItem(
-						new HistoryItem(
-							this->bUseFakes,
-							pWorm->name(),
-							this->ubCountAllPlayers - this->ubCountHumans,
-							this->ubCountHumans, pWorm->levelCount(),
-							this->ubStartLevel, pWorm->livesLost(),
-							this->ubSpeedIndex, pWorm->score()));
-
-		} // loop worms sorted by rank
-
-		Q_EMIT this->updateHistory();
-		Q_EMIT this->doGameOver(sOut);
-
-	} // if all have died
+	// if all have died
+	if (this->isGameOver()) this->gameDone(false);
 
 } // onWormDied
 

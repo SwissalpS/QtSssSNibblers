@@ -291,6 +291,20 @@ void MainWindow::initSettings() {
 	pBoxLives->setCurrentIndex(
 				this->pAS->get(AppSettings::sSettingGameStartLives).toInt());
 
+	// radios bad level reaction mode
+	switch (this->pAS->get(AppSettings::sSettingGameBadLevelMode).toUInt()) {
+
+		case 2u:this->pUi->radioBLskip->setChecked(true);
+		break;
+
+		case 1u: this->pUi->radioBLloop->setChecked(true);
+		break;
+
+		case 0u:
+		default:
+			this->pUi->radioBLwin->setChecked(true);
+
+	} // switch this->pAS->get(AppSettings::sSettingGameBadLevelMode).toUInt()
 
 	this->settingsUpdatePlayerColours();
 
@@ -911,7 +925,7 @@ void MainWindow::on_radioBLloop_toggled(bool bChecked) {
 
 	this->onDebugMessage("on_radioBLloop_toggled");
 
-	this->pAS->setValue(AppSettings::sSettingGameBadLevelMode, 0u);
+	this->pAS->setValue(AppSettings::sSettingGameBadLevelMode, 1u);
 
 } // on_radioBLloop_toggled
 
@@ -922,7 +936,7 @@ void MainWindow::on_radioBLskip_toggled(bool bChecked) {
 
 	this->onDebugMessage("on_radioBLskip_toggled");
 
-	this->pAS->setValue(AppSettings::sSettingGameBadLevelMode, 1u);
+	this->pAS->setValue(AppSettings::sSettingGameBadLevelMode, 2u);
 
 } // on_radioBLskip_toggled
 
@@ -933,7 +947,7 @@ void MainWindow::on_radioBLwin_toggled(bool bChecked) {
 
 	this->onDebugMessage("on_radioBLwin_toggled");
 
-	this->pAS->setValue(AppSettings::sSettingGameBadLevelMode, 2u);
+	this->pAS->setValue(AppSettings::sSettingGameBadLevelMode, 0u);
 
 } // on_radioBLwin_toggled
 
