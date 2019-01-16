@@ -123,8 +123,6 @@ void Game::addBonus(const bool bApple) {
 
 		} // if add a fake
 
-		this->ubCountNeedApple = SssS_Nibblers_Bonus_Delay_Ticks;
-
 		this->placeBonus(L::BonusApple, false);
 
 	} // if not apple

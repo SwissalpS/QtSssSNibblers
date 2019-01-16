@@ -18,7 +18,7 @@
 #define SssS_Nibblers_Bonus_Cherry_Grow float(0.5f)
 #define SssS_Nibblers_Bonus_Cherry_Points quint16(32u)
 
-#define SssS_Nibblers_Bonus_Delay_Ticks quint8(2u)
+#define SssS_Nibblers_Bonus_Delay_Ticks quint8(7u)
 
 #define SssS_Nibblers_Bonus_Diamond_Lifetime quint16(150u)
 #define SssS_Nibblers_Bonus_Diamond_Grow float(1.0f)
