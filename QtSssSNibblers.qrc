@@ -7,20 +7,52 @@
 		<file>Images/arrow.svg</file>
 		<file>Images/bonus1.png</file>
 		<file>Images/bonus1.svg</file>
+		<file>Images/bonus1_NE.png</file>
+		<file>Images/bonus1_NW.png</file>
+		<file>Images/bonus1_SE.png</file>
+		<file>Images/bonus1_SW.png</file>
 		<file>Images/bonus2.png</file>
 		<file>Images/bonus2.svg</file>
+		<file>Images/bonus2_NE.png</file>
+		<file>Images/bonus2_NW.png</file>
+		<file>Images/bonus2_SE.png</file>
+		<file>Images/bonus2_SW.png</file>
 		<file>Images/bonus3.png</file>
 		<file>Images/bonus3.svg</file>
+		<file>Images/bonus3_NE.png</file>
+		<file>Images/bonus3_NW.png</file>
+		<file>Images/bonus3_SE.png</file>
+		<file>Images/bonus3_SW.png</file>
 		<file>Images/bonus4.png</file>
 		<file>Images/bonus4.svg</file>
+		<file>Images/bonus4_NE.png</file>
+		<file>Images/bonus4_NW.png</file>
+		<file>Images/bonus4_SE.png</file>
+		<file>Images/bonus4_SW.png</file>
 		<file>Images/bonus5.png</file>
 		<file>Images/bonus5.svg</file>
+		<file>Images/bonus5_NE.png</file>
+		<file>Images/bonus5_NW.png</file>
+		<file>Images/bonus5_SE.png</file>
+		<file>Images/bonus5_SW.png</file>
 		<file>Images/diamond.png</file>
 		<file>Images/diamond.svg</file>
+		<file>Images/diamond_NE.png</file>
+		<file>Images/diamond_NW.png</file>
+		<file>Images/diamond_SE.png</file>
+		<file>Images/diamond_SW.png</file>
 		<file>Images/life.png</file>
 		<file>Images/life.svg</file>
+		<file>Images/life_NE.png</file>
+		<file>Images/life_NW.png</file>
+		<file>Images/life_SE.png</file>
+		<file>Images/life_SW.png</file>
 		<file>Images/questionmark.png</file>
 		<file>Images/questionmark.svg</file>
+		<file>Images/questionmark_NE.png</file>
+		<file>Images/questionmark_NW.png</file>
+		<file>Images/questionmark_SE.png</file>
+		<file>Images/questionmark_SW.png</file>
 		<file>Images/scoreboard_life.svg</file>
 		<file>Images/wall_corner_ne.svg</file>
 		<file>Images/wall_corner_nw.svg</file>

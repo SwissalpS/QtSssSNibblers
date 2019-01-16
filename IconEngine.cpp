@@ -243,34 +243,34 @@ QIcon IconEngine::getCell(const quint8 ubState) {
 
 		// bonuses
 		// apples -> add length and advance level
-		case L::BonusAppleNW: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus1.png"), L::NorthWest); break;
-		case L::BonusAppleNE: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus1.png"), L::NorthEast); break;
-		case L::BonusAppleSE: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus1.png"), L::SouthEast); break;
-		case L::BonusAppleSW: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus1.png"), L::SouthWest); break;
+		case L::BonusAppleNW: oIcon = QIcon(":/Images/bonus1_NW.png"); break;
+		case L::BonusAppleNE: oIcon = QIcon(":/Images/bonus1_NE.png"); break;
+		case L::BonusAppleSE: oIcon = QIcon(":/Images/bonus1_SE.png"); break;
+		case L::BonusAppleSW: oIcon = QIcon(":/Images/bonus1_SW.png"); break;
 
 		// cherries -> shorten
-		case L::BonusCherryNW: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus2.png"), L::NorthWest); break;
-		case L::BonusCherryNE: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus2.png"), L::NorthEast); break;
-		case L::BonusCherrySE: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus2.png"), L::SouthEast); break;
-		case L::BonusCherrySW: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus2.png"), L::SouthWest); break;
+		case L::BonusCherryNW: oIcon = QIcon(":/Images/bonus2_NW.png"); break;
+		case L::BonusCherryNE: oIcon = QIcon(":/Images/bonus2_NE.png"); break;
+		case L::BonusCherrySE: oIcon = QIcon(":/Images/bonus2_SE.png"); break;
+		case L::BonusCherrySW: oIcon = QIcon(":/Images/bonus2_SW.png"); break;
 
 		// bananas -> add length
-		case L::BonusBananaNW: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus3.png"), L::NorthWest); break;
-		case L::BonusBananaNE: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus3.png"), L::NorthEast); break;
-		case L::BonusBananaSE: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus3.png"), L::SouthEast); break;
-		case L::BonusBananaSW: oIcon = IconEngine::makeQuart(QIcon(":/Images/bonus3.png"), L::SouthWest); break;
+		case L::BonusBananaNW: oIcon = QIcon(":/Images/bonus3_NW.png"); break;
+		case L::BonusBananaNE: oIcon = QIcon(":/Images/bonus3_NE.png"); break;
+		case L::BonusBananaSE: oIcon = QIcon(":/Images/bonus3_SE.png"); break;
+		case L::BonusBananaSW: oIcon = QIcon(":/Images/bonus3_SW.png"); break;
 
 		// hearts -> add life
-		case L::BonusHeartNW: oIcon = IconEngine::makeQuart(QIcon(":/Images/life.png"), L::NorthWest); break;
-		case L::BonusHeartNE: oIcon = IconEngine::makeQuart(QIcon(":/Images/life.png"), L::NorthEast); break;
-		case L::BonusHeartSE: oIcon = IconEngine::makeQuart(QIcon(":/Images/life.png"), L::SouthEast); break;
-		case L::BonusHeartSW: oIcon = IconEngine::makeQuart(QIcon(":/Images/life.png"), L::SouthWest); break;
+		case L::BonusHeartNW: oIcon = QIcon(":/Images/life_NW.png"); break;
+		case L::BonusHeartNE: oIcon = QIcon(":/Images/life_NE.png"); break;
+		case L::BonusHeartSE: oIcon = QIcon(":/Images/life_SE.png"); break;
+		case L::BonusHeartSW: oIcon = QIcon(":/Images/life_SW.png"); break;
 
 		// diamonds -> reverse direction
-		case L::BonusDiamondNW: oIcon = IconEngine::makeQuart(QIcon(":/Images/diamond.png"), L::NorthWest); break;
-		case L::BonusDiamondNE: oIcon = IconEngine::makeQuart(QIcon(":/Images/diamond.png"), L::NorthEast); break;
-		case L::BonusDiamondSE: oIcon = IconEngine::makeQuart(QIcon(":/Images/diamond.png"), L::SouthEast); break;
-		case L::BonusDiamondSW: oIcon = IconEngine::makeQuart(QIcon(":/Images/diamond.png"), L::SouthWest); break;
+		case L::BonusDiamondNW: oIcon = QIcon(":/Images/diamond_NW.png"); break;
+		case L::BonusDiamondNE: oIcon = QIcon(":/Images/diamond_NE.png"); break;
+		case L::BonusDiamondSE: oIcon = QIcon(":/Images/diamond_SE.png"); break;
+		case L::BonusDiamondSW: oIcon = QIcon(":/Images/diamond_SW.png"); break;
 
 		// most common -> empty space
 			// 0-9 floor tiles
