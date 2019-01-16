@@ -16,6 +16,7 @@ AppSettings *AppSettings::pSingelton = nullptr;
 
 const QString AppSettings::sSettingBuilderLastBrushIndex = "iBuilderLastBrushIndex";
 const QString AppSettings::sSettingBuilderLastLevel = "ubBuilderLastLevel";
+const QString AppSettings::sSettingGameBadLevelMode = "ubGameBadLevelMode";
 const QString AppSettings::sSettingGameColours = "aGameColours";
 const QString AppSettings::sSettingGameCountAIs = "iGameCountAIs";
 const QString AppSettings::sSettingGameCountHumans = "iGameCountHumans";
@@ -23,9 +24,11 @@ const QString AppSettings::sSettingGameKeyDown = "aGameKeyDown";
 const QString AppSettings::sSettingGameKeyLeft = "aGameKeyLeft";
 const QString AppSettings::sSettingGameKeyRight = "aGameKeyRight";
 const QString AppSettings::sSettingGameKeyUp = "aGameKeyUp";
+const QString AppSettings::sSettingGameLimitLives = "bGameLimitLives";
 const QString AppSettings::sSettingGameNames = "aGameNames";
 const QString AppSettings::sSettingGameFakeBonuses = "bGameFakeBonuses";
 const QString AppSettings::sSettingGameLoadSetsStartLevel = "bGameLoadSetsStartLevel";
+const QString AppSettings::sSettingHistoryEnableClearAll = "bHistoryEnableClearAll";
 const QString AppSettings::sSettingGameOverOnLastDead = "bGameOverOnLastDead";
 const QString AppSettings::sSettingGameRelative = "aGameRelative";
 const QString AppSettings::sSettingGameSound = "bGameSound";
@@ -41,16 +44,19 @@ const QString AppSettings::sSettingWindowMainSize = "windowMainSize";
 
 const quint8 AppSettings::ubSettingBuilderLastBrushIndexDefault = 0x0u;
 const quint8 AppSettings::ubSettingBuilderLastLevelDefault = 0x0u;
+const quint8 AppSettings::ubSettingGameBadLevelModeDefault = 0x0u;
 const quint8 AppSettings::ubSettingGameCountAIsDefault = 0x4u;
 const quint8 AppSettings::ubSettingGameCountHumansDefault = 0x0u;
+const bool AppSettings::bSettingGameLimitLivesDefault = true;
 const QString AppSettings::sSettingGameNamesDefault = "Harry;Larry;Sarah;Trisha";
 const bool AppSettings::bSettingGameFakeBonusesDefault = false;
-const bool AppSettings::bSettingGameOverOnLastDeadDefault = true;
+const bool AppSettings::bSettingGameOverOnLastDeadDefault = false;
 const bool AppSettings::bSettingGameSoundDefault = true;
 const qint8 AppSettings::iSettingGameSpeedDefault = 0u;
 const quint8 AppSettings::ubSettingGameStartLevelDefault = 0x1u;
-const quint8 AppSettings::ubSettingGameStartLivesDefault = 0x7u;
-const bool AppSettings::bSettingGameLoadSetsStartLevelDefault = true;
+const quint8 AppSettings::ubSettingGameStartLivesDefault = 0x6u;
+const bool AppSettings::bSettingGameLoadSetsStartLevelDefault = false;
+const bool AppSettings::bSettingHistoryEnableClearAllDefault = false;
 const bool AppSettings::bSettingPowerUserDefault = false;
 const qint8 AppSettings::iSettingTabMainIndexDefault = 1u;
 const qint8 AppSettings::iSettingTabSettingIndexDefault = 0u;
@@ -79,6 +85,7 @@ AppSettings::AppSettings(QObject *parent) :
 
 	pS->setValue(sSettingBuilderLastBrushIndex, this->get(sSettingBuilderLastBrushIndex));
 	pS->setValue(sSettingBuilderLastLevel, this->get(sSettingBuilderLastLevel));
+	pS->setValue(sSettingGameBadLevelMode, this->get(sSettingGameBadLevelMode));
 
 	// make sure we have a valid list of colours
 	QList<QVariant> aList = pS->value(sSettingGameColours).toList();
@@ -96,6 +103,7 @@ AppSettings::AppSettings(QObject *parent) :
 	pS->setValue(sSettingGameCountAIs, this->get(sSettingGameCountAIs));
 	pS->setValue(sSettingGameCountHumans, this->get(sSettingGameCountHumans));
 	pS->setValue(sSettingGameFakeBonuses, this->get(sSettingGameFakeBonuses));
+	pS->setValue(sSettingGameLimitLives, this->get(sSettingGameLimitLives));
 
 	QStringList aNames = pS->value(sSettingGameNames).toStringList();
 	if (4 > aNames.length()) {
@@ -191,6 +199,7 @@ AppSettings::AppSettings(QObject *parent) :
 	} // if not valid length
 
 	pS->setValue(sSettingGameLoadSetsStartLevel, this->get(sSettingGameLoadSetsStartLevel));
+	pS->setValue(sSettingHistoryEnableClearAll, this->get(sSettingHistoryEnableClearAll));
 	pS->setValue(sSettingTabMainIndex, this->get(sSettingTabMainIndex));
 	pS->setValue(sSettingTabSettingIndex, this->get(sSettingTabSettingIndex));
 	pS->setValue(sSettingWindowMainPosition, this->get(sSettingWindowMainPosition));
@@ -323,6 +332,10 @@ QVariant AppSettings::get(const QString sKey) const {
 
 		return this->pSettings->value(sKey, ubSettingBuilderLastLevelDefault);
 
+	} else if (sSettingGameBadLevelMode == sKey) {
+
+		return this->pSettings->value(sKey, ubSettingGameBadLevelModeDefault);
+
 	} else if (sSettingGameColours == sKey) {
 
 		return this->pSettings->value(sKey);
@@ -338,6 +351,10 @@ QVariant AppSettings::get(const QString sKey) const {
 	} else if (sSettingGameFakeBonuses == sKey) {
 
 		return this->pSettings->value(sKey, bSettingGameFakeBonusesDefault);
+
+	} else if (sSettingGameLimitLives == sKey) {
+
+		return this->pSettings->value(sKey, bSettingGameLimitLivesDefault);
 
 	} else if (sSettingGameOverOnLastDead == sKey) {
 
@@ -370,6 +387,10 @@ QVariant AppSettings::get(const QString sKey) const {
 	} else if (sSettingGameLoadSetsStartLevel == sKey) {
 
 		return this->pSettings->value(sKey, bSettingGameLoadSetsStartLevelDefault);
+
+	} else if (sSettingHistoryEnableClearAll == sKey) {
+
+		return this->pSettings->value(sKey, bSettingHistoryEnableClearAllDefault);
 
 	} else if (sSettingTabMainIndex == sKey) {
 

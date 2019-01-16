@@ -58,6 +58,7 @@ private slots:
 
 	void on_cbFakeBonuses_stateChanged(int iState);
 	void on_cbGameOverOnLastDead_stateChanged(int iState);
+	void on_cbLimitLives_toggled(bool bChecked);
 	void on_cbLoadSetsStartLevel_stateChanged(int iState);
 
 	void on_cbRelative1_toggled(bool bChecked);
@@ -94,6 +95,9 @@ private slots:
 	void on_leName3_editingFinished();
 	void on_leName4_editingFinished();
 
+	void on_radioBLloop_toggled(bool bChecked);
+	void on_radioBLskip_toggled(bool bChecked);
+	void on_radioBLwin_toggled(bool bChecked);
 	void on_radioNetClient_toggled(bool bChecked);
 	void on_radioNetOff_toggled(bool bChecked);
 	void on_radioNetServer_toggled(bool bChecked);

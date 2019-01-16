@@ -38,6 +38,7 @@ private:
 public:
 	static const QString sSettingBuilderLastBrushIndex;
 	static const QString sSettingBuilderLastLevel;
+	static const QString sSettingGameBadLevelMode;
 	static const QString sSettingGameColours;
 	static const QString sSettingGameCountAIs;
 	static const QString sSettingGameCountHumans;
@@ -45,6 +46,7 @@ public:
 	static const QString sSettingGameKeyLeft;
 	static const QString sSettingGameKeyRight;
 	static const QString sSettingGameKeyUp;
+	static const QString sSettingGameLimitLives;
 	static const QString sSettingGameNames;
 	static const QString sSettingGameFakeBonuses;
 	static const QString sSettingGameOverOnLastDead;
@@ -55,6 +57,7 @@ public:
 	static const QString sSettingGameStartLives;
 	static const QString sSettingGameUseMouse;
 	static const QString sSettingGameLoadSetsStartLevel;
+	static const QString sSettingHistoryEnableClearAll;
 	static const QString sSettingPowerUser;
 	static const QString sSettingTabMainIndex;
 	static const QString sSettingTabSettingIndex;
@@ -64,8 +67,10 @@ public:
 
 	static const quint8 ubSettingBuilderLastBrushIndexDefault;
 	static const quint8 ubSettingBuilderLastLevelDefault;
+	static const quint8 ubSettingGameBadLevelModeDefault;
 	static const quint8 ubSettingGameCountAIsDefault;
 	static const quint8 ubSettingGameCountHumansDefault;
+	static const bool bSettingGameLimitLivesDefault;
 	static const QString sSettingGameNamesDefault;
 	static const bool bSettingGameFakeBonusesDefault;
 	static const bool bSettingGameOverOnLastDeadDefault;
@@ -74,6 +79,7 @@ public:
 	static const quint8 ubSettingGameStartLivesDefault;
 	static const qint8 iSettingGameSpeedDefault;
 	static const bool bSettingGameLoadSetsStartLevelDefault;
+	static const bool bSettingHistoryEnableClearAllDefault;
 	static const bool bSettingPowerUserDefault;
 	static const qint8 iSettingTabMainIndexDefault;
 	static const qint8 iSettingTabSettingIndexDefault;

@@ -224,6 +224,9 @@ void MainWindow::initHistory() {
 
 	} // if failed to load
 
+	this->pUi->buttonClearHistory->setEnabled(
+				this->pAS->get(AppSettings::sSettingHistoryEnableClearAll).toBool());
+
 	this->onUpdateHistory();
 
 } // initHistory
@@ -542,6 +545,15 @@ void MainWindow::on_cbLoadSetsStartLevel_stateChanged(int iState) {
 	this->pAS->setValue(AppSettings::sSettingGameLoadSetsStartLevel, 0 < iState);
 
 } // on_cbLoadSetsStartLevel_stateChanged
+
+
+void MainWindow::on_cbLimitLives_toggled(bool bChecked) {
+
+	this->onDebugMessage("on_cbLimitLives_toggled");
+
+	this->pAS->setValue(AppSettings::sSettingGameLimitLives, bChecked);
+
+} // on_cbLimitLives_toggled
 
 
 void MainWindow::on_cbRelative1_toggled(bool bChecked) {
@@ -891,6 +903,39 @@ void MainWindow::onPlayerUseMouseToggled(const quint8 ubWorm, const bool bChecke
 	//Q_EMIT this->settingsPlayerMouseChanged(ubWorm, bChecked);
 
 } // onPlayerUseMouseToggled
+
+
+void MainWindow::on_radioBLloop_toggled(bool bChecked) {
+
+	if (!bChecked) return;
+
+	this->onDebugMessage("on_radioBLloop_toggled");
+
+	this->pAS->setValue(AppSettings::sSettingGameBadLevelMode, 0u);
+
+} // on_radioBLloop_toggled
+
+
+void MainWindow::on_radioBLskip_toggled(bool bChecked) {
+
+	if (!bChecked) return;
+
+	this->onDebugMessage("on_radioBLskip_toggled");
+
+	this->pAS->setValue(AppSettings::sSettingGameBadLevelMode, 1u);
+
+} // on_radioBLskip_toggled
+
+
+void MainWindow::on_radioBLwin_toggled(bool bChecked) {
+
+	if (!bChecked) return;
+
+	this->onDebugMessage("on_radioBLwin_toggled");
+
+	this->pAS->setValue(AppSettings::sSettingGameBadLevelMode, 2u);
+
+} // on_radioBLwin_toggled
 
 
 void MainWindow::on_radioNetClient_toggled(bool bChecked) {
