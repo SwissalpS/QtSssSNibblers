@@ -940,12 +940,18 @@ void MainWindow::on_radioBLwin_toggled(bool bChecked) {
 
 void MainWindow::on_radioNetClient_toggled(bool bChecked) {
 
+	if (!bChecked) return;
+
+	this->onDebugMessage("on_radioNetClient_toggled");
+
 } // on_radioNetClient_toggled
 
 
 void MainWindow::on_radioNetOff_toggled(bool bChecked) {
 
 	if (!bChecked) return;
+
+	this->onDebugMessage("on_radioNetOff_toggled");
 
 	// set setting to off
 	// kill any connections
@@ -954,6 +960,10 @@ void MainWindow::on_radioNetOff_toggled(bool bChecked) {
 
 
 void MainWindow::on_radioNetServer_toggled(bool bChecked) {
+
+	if (!bChecked) return;
+
+	this->onDebugMessage("on_radioNetServer_toggled");
 
 } // on_radioNetServer_toggled
 
