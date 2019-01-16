@@ -246,7 +246,12 @@ void SurfaceGame::dialogLoadFinished(const int iResult) {
 	this->resetButtons();
 	this->bLevelDone = false;
 
-	Q_EMIT this->startNewGame(quint8(this->pDialogLoad->getSelected()));
+	int iIndex = this->pDialogLoad->getSelected();
+
+	if (this->pAS->get(AppSettings::sSettingGameLoadSetsStartLevel).toBool())
+		this->pAS->setValue(AppSettings::sSettingGameStartLevel, iIndex);
+
+	Q_EMIT this->startNewGame(quint8(iIndex));
 
 } // dialogLoadFinished
 

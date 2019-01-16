@@ -98,6 +98,7 @@ private slots:
 	void on_radioBLloop_toggled(bool bChecked);
 	void on_radioBLskip_toggled(bool bChecked);
 	void on_radioBLwin_toggled(bool bChecked);
+
 	void on_radioNetClient_toggled(bool bChecked);
 	void on_radioNetOff_toggled(bool bChecked);
 	void on_radioNetServer_toggled(bool bChecked);

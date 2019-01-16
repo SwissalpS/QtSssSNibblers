@@ -32,6 +32,8 @@ Game::Game(QObject *pParent) :
 	ubStartLevel(0u),
 	pAS(AppSettings::pAppSettings()),
 	pMapGame(nullptr),
+	pTimer(nullptr),
+	pTimerBonus(nullptr),
 	pWormAI(nullptr) {
 
 	this->apBonus.clear();
@@ -220,10 +222,9 @@ void Game::init() {
 
 	this->onSpeedChanged(this->pAS->get(AppSettings::sSettingGameSpeed).toInt());
 
-	this->ubCurrentLevel = quint8(this->pAS->get(
-							   AppSettings::sSettingGameStartLevel).toUInt());
-
-	this->loadCurrentLevel();
+	//this->loadCurrentLevel();
+	this->onStartNewGame(quint8(this->pAS->get(
+									AppSettings::sSettingGameStartLevel).toUInt()));
 
 } // init
 
@@ -241,11 +242,8 @@ void Game::initWorms() {
 
 	quint8 ubColour;
 	quint8 ubCount;
-	quint8 ubCountAIs = quint8(this->pAS->get(AppSettings::sSettingGameCountAIs).toUInt());
-	this->ubCountHumans = quint8(this->pAS->get(AppSettings::sSettingGameCountHumans).toUInt());
 	quint8 ubLives = quint8(this->pAS->get(AppSettings::sSettingGameStartLives).toUInt());
 	quint8 ubLivesMax = (this->pAS->get(AppSettings::sSettingGameLimitLives).toBool()) ? 0u : 2u * ubLives;
-	this->ubCountAllPlayers = ubCountAIs + this->ubCountHumans;
 
 	// check that there are enough spawn points
 	if (this->ubCountAllPlayers > this->pMapGame->spawnPoints().length()) {
@@ -327,6 +325,9 @@ void Game::initWorms() {
 
 bool Game::isGameOver() {
 
+	// can't be over if it has not started
+	if (!this->bGameStarted) return false;
+
 	//this->onDebugMessage("isGameOver");
 
 	bool bUseLastDeadMethod = this->pAS->get(
@@ -378,53 +379,131 @@ void Game::loadCurrentLevel() {
 
 	this->onDebugMessage("loadCurrentLevel");
 
+	bool bBadMap = true;
+	quint8 ubFirstLevel = this->ubCurrentLevel;
+	quint8 ubBMmode = quint8(this->pAS->get(AppSettings::sSettingGameBadLevelMode).toUInt());
 	QString sMessage;
-	QString sPath = this->pAS->getDataPathLevelFile(this->ubCurrentLevel);
+	QString sPath;
 
-	delete this->pMapGame;
-	this->pMapGame = nullptr;
-	this->pMapGame = MapGame::loadedMap(sPath, this);
-	if (MapGame::NoError != this->pMapGame->errorCode()) {
+	while (bBadMap) {
 
-		this->onDebugMessage("Load Error");
+		bBadMap = false;
+		sPath = this->pAS->getDataPathLevelFile(this->ubCurrentLevel);
 
-		Q_EMIT this->statusMessage(tr("Could not load level") + " "
-								   + QString::number(this->ubCurrentLevel));
+		delete this->pMapGame; this->pMapGame = nullptr;
+		this->pMapGame = MapGame::loadedMap(sPath, this);
+		if (MapGame::NoError != this->pMapGame->errorCode()) {
 
-		Q_EMIT this->doLevelLoadError();
+			this->onDebugMessage("Load Error");
+			bBadMap = true;
 
-		this->ubCountDead = 0xFFu;
-		this->ubCountDeadHumans = 0xFFu;
+			if (0u == ubBMmode) {
 
-		delete this->pMapGame;
-		this->pMapGame = nullptr;
+				// Game Won
+				Q_EMIT this->doLevelLoadError();
 
-		return;
+				return;
 
-	} // if map somehow not good
+			} else if (1u == ubBMmode) {
+
+				// loop back
+
+				if (this->ubStartLevel == this->ubCurrentLevel) {
+
+					// stuck -> Game Won
+					Q_EMIT this->doLevelLoadError();
+					return;
+
+				} // if stuck
+
+				this->ubCurrentLevel = this->ubStartLevel;
+
+			} else {
+
+				// skip to next good one
+
+				if (0xFFu == this->ubCurrentLevel) this->ubCurrentLevel = 0u;
+				else this->ubCurrentLevel++;
+
+				if (ubFirstLevel == this->ubCurrentLevel) {
+
+					// were around the world and didn't find a single good one
+					// how sad
+					Q_EMIT this->doLevelLoadError();
+					return;
+
+				} // if round the world
+
+			} // switch mode
+
+			continue;
+
+		} // if map had load issues
+
+		// check that there are enough spawn points
+		if (this->ubCountAllPlayers > this->pMapGame->spawnPoints().length()) {
+
+			this->onDebugMessage("Too Few Spawn points");
+
+			bBadMap = true;
+
+			if (0u == ubBMmode) {
+
+				// Game Won
+				this->onDebugMessage("Game Won");
+
+				Q_EMIT this->statusMessage(tr("Level does not have sufficient spawn-points. Bailling."));
+				Q_EMIT this->doLevelIsMissingSpawnPoints(
+							quint8(this->apWorms.length()
+								   - this->pMapGame->spawnPoints().length()));
+return;
+				delete this->pMapGame; this->pMapGame = nullptr;
+
+				return;
+
+			} else if (1u == ubBMmode) {
+
+				// loop back
+				this->onDebugMessage("Loop");
+
+				if (this->ubStartLevel == this->ubCurrentLevel) {
+
+					// stuck -> Game Won
+					Q_EMIT this->doLevelLoadError();
+					return;
+
+				} // if stuck
+
+				this->ubCurrentLevel = this->ubStartLevel;
+
+			} else {
+
+				// skip to next good one
+				this->onDebugMessage("skip");
+
+				if (0xFFu == this->ubCurrentLevel) this->ubCurrentLevel = 0u;
+				else this->ubCurrentLevel++;
+
+				if (ubFirstLevel == this->ubCurrentLevel) {
+
+					// were around the world and didn't find a single good one
+					// how sad
+					Q_EMIT this->doLevelLoadError();
+					return;
+
+				} // if round the world
+
+			} // switch mode
+
+		} // if not enough start points
+
+	} // loop until good map found
 
 	connect(this->pMapGame, SIGNAL(debugMessage(QString)),
 			this, SLOT(onDebugMessage(QString)));
 
-	// check that there are enough spawn points
-	if (this->apWorms.length() > this->pMapGame->spawnPoints().length()) {
-
-		this->onDebugMessage("Too Few Spawn points");
-
-		Q_EMIT this->statusMessage(tr("Level does not have sufficient spawn-points. Bailling."));
-		Q_EMIT this->doLevelIsMissingSpawnPoints(
-					quint8(this->apWorms.length()
-						   - this->pMapGame->spawnPoints().length()));
-
-		delete this->pMapGame;
-		this->pMapGame = nullptr;
-
-		this->ubCountDead = 0xFFu;
-		this->ubCountDeadHumans = 0xFFu;
-
-		return;
-
-	} // if not enough start points
+//			this->ubCountDead = 0xFFu;
+//			this->ubCountDeadHumans = 0xFFu;
 
 	Q_EMIT this->loadLevel(this->pMapGame, this->ubCurrentLevel);
 
@@ -464,11 +543,9 @@ QVector<Worm *> Game::makeRanking() {
 
 		} else {
 
-			// can this happen?
-
-			this->onDebugMessage("unusual in makeRanking " + QString::number(uiHighestScore));
-			// avoid infinite loop
+			// the rest have a Zero score
 			apRanks += apRest;
+			// clear so we break and are neat
 			apRest.clear();
 
 		} // if got highest or not
@@ -496,13 +573,21 @@ QVector<Worm *> Game::makeRanking() {
 
 			if (pWorm->score() == pWormHighest->score()) {
 
+				// found 2 with identical score
+
 				if (pWorm->livesLost() > pWormHighest->livesLost()) {
 
+					// first has lost more lives than next
+
+					// mark that we need one more round
 					bFound = true;
+
 					apRanks.append(pWormHighest);
 					apRest.removeAt(1);
 
 				} else {
+
+					// first is still better off
 
 					apRanks.append(pWorm);
 					apRest.removeFirst();
@@ -510,6 +595,8 @@ QVector<Worm *> Game::makeRanking() {
 				} // if first is worse off than second
 
 			} else {
+
+				// scores differ -> use current order
 
 				apRanks.append(pWorm);
 				apRest.removeFirst();
@@ -615,7 +702,7 @@ void Game::onLevelIsLoaded() {
 
 	if (0 == this->apWorms.length()) {
 
-		this->onDebugMessage("no worms");
+		//this->onDebugMessage("no worms");
 
 		this->initWorms();
 
@@ -623,23 +710,24 @@ void Game::onLevelIsLoaded() {
 
 	} // if new game
 
+	// todo: do we still need this safe-guard?
 	if (nullptr == this->pMapGame) {
 		this->onDebugMessage("no map");
 		return;
 	}
 
-	this->onDebugMessage("really check again? didn't we check when loading?");
+//	this->onDebugMessage("really check again? didn't we check when loading?");
 
-	// check that there are enough spawn points
-	if (this->apWorms.length() > this->pMapGame->spawnPoints().length()) {
+//	// check that there are enough spawn points
+//	if (this->apWorms.length() > this->pMapGame->spawnPoints().length()) {
 
-		Q_EMIT this->statusMessage(tr("Level does not have sufficient spawn-points. Bailling."));
+//		Q_EMIT this->statusMessage(tr("Level does not have sufficient spawn-points. Bailling."));
 
-		return;
+//		return;
 
-	} // if not enough start points
+//	} // if not enough start points
 
-	this->onDebugMessage("OK, got enough spawn points");
+//	this->onDebugMessage("OK, got enough spawn points");
 
 	// random spawn point distribution
 	this->pMapGame->randomizeSpawnOrder();
@@ -789,7 +877,7 @@ void Game::onReset() {
 	this->ubCountLevels = 1u;
 	this->bGameStarted = false;
 
-	this->initWorms();
+	//this->initWorms();
 
 	this->onResetSoft();
 
@@ -834,16 +922,17 @@ void Game::onStartNewGame(const quint8 ubLevel) {
 
 	this->onDebugMessage("onStartNewGame");
 
-	if (this->pAS->get(AppSettings::sSettingGameLoadSetsStartLevel).toBool())
-		this->pAS->setValue(AppSettings::sSettingGameStartLevel, ubLevel);
-
 	this->ubCurrentLevel = ubLevel;
-	this->ubCountDead = 0u;
-	this->ubCountDeadHumans = 0u;
+	this->ubStartLevel = ubLevel;
+
 	this->bGameStarted = false;
 	this->bLevelStarted = false;
 
-	this->initWorms();
+	this->destructWorms();
+
+	quint8 ubCountAIs = quint8(this->pAS->get(AppSettings::sSettingGameCountAIs).toUInt());
+	this->ubCountHumans = quint8(this->pAS->get(AppSettings::sSettingGameCountHumans).toUInt());
+	this->ubCountAllPlayers = this->ubCountHumans + ubCountAIs;
 
 	this->loadCurrentLevel();
 
@@ -1048,7 +1137,7 @@ void Game::onTickBonus() {
 
 void Game::onWormDied(const bool bAI) {
 
-	this->onDebugMessage("onWormDied");
+	this->onDebugMessage("onWormDied " + QString::number(bAI));
 
 	++this->ubCountDead;
 	if (!bAI) ++this->ubCountDeadHumans;
@@ -1230,6 +1319,7 @@ void Game::wormAteBonus(Worm *pWorm, const QPoint oPoint) {
 			uiScore = qMax(qint16(1), qint16(double(0.5) * double(this->ubCountLevels)
 									 * double(pWorm->targetLength())));
 			pWorm->onAddScore(uiScore);
+
 			// grow
 			pWorm->addLength(int(double(-0.5) * double(pWorm->targetLength())));
 
@@ -1243,6 +1333,7 @@ void Game::wormAteBonus(Worm *pWorm, const QPoint oPoint) {
 			// add points
 			uiScore = qMax(qint16(1), qint16(pWorm->targetLength() * this->ubCountLevels));
 			pWorm->onAddScore(uiScore);
+
 			// grow
 			pWorm->addLength(pWorm->targetLength());
 
