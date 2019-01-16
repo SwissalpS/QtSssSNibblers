@@ -442,7 +442,7 @@
        <enum>QTabWidget::Triangular</enum>
       </property>
       <property name="currentIndex">
-       <number>3</number>
+       <number>0</number>
       </property>
       <property name="tabsClosable">
        <bool>false</bool>
@@ -455,10 +455,13 @@
         <string>Settings</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_3">
-        <item row="0" column="1">
+        <item row="0" column="0">
          <widget class="QTabWidget" name="tabSettingsInner">
+          <property name="toolTip">
+           <string/>
+          </property>
           <property name="currentIndex">
-           <number>2</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="tabPlayerCount">
            <attribute name="title">
@@ -487,6 +490,12 @@
             </item>
             <item row="1" column="1">
              <widget class="QGroupBox" name="groupBox">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="title">
                <string notr="true"/>
               </property>
@@ -497,10 +506,16 @@
                <item>
                 <widget class="QPushButton" name="buttonHP0">
                  <property name="sizePolicy">
-                  <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+                  <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>64</height>
+                  </size>
                  </property>
                  <property name="palette">
                   <palette>
@@ -667,10 +682,16 @@
                <item>
                 <widget class="QPushButton" name="buttonHP1">
                  <property name="sizePolicy">
-                  <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+                  <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>64</height>
+                  </size>
                  </property>
                  <property name="palette">
                   <palette>
@@ -840,10 +861,16 @@
                <item>
                 <widget class="QPushButton" name="buttonHP2">
                  <property name="sizePolicy">
-                  <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+                  <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>64</height>
+                  </size>
                  </property>
                  <property name="palette">
                   <palette>
@@ -1010,10 +1037,16 @@
                <item>
                 <widget class="QPushButton" name="buttonHP3">
                  <property name="sizePolicy">
-                  <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+                  <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>64</height>
+                  </size>
                  </property>
                  <property name="palette">
                   <palette>
@@ -1180,10 +1213,16 @@
                <item>
                 <widget class="QPushButton" name="buttonHP4">
                  <property name="sizePolicy">
-                  <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+                  <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>64</height>
+                  </size>
                  </property>
                  <property name="palette">
                   <palette>
@@ -1388,6 +1427,18 @@
               <property name="enabled">
                <bool>true</bool>
               </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="title">
                <string notr="true"/>
               </property>
@@ -1398,10 +1449,16 @@
                <item>
                 <widget class="QPushButton" name="buttonAP0">
                  <property name="sizePolicy">
-                  <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+                  <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>64</height>
+                  </size>
                  </property>
                  <property name="palette">
                   <palette>
@@ -1568,10 +1625,16 @@
                <item>
                 <widget class="QPushButton" name="buttonAP1">
                  <property name="sizePolicy">
-                  <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+                  <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>64</height>
+                  </size>
                  </property>
                  <property name="palette">
                   <palette>
@@ -1741,10 +1804,16 @@
                <item>
                 <widget class="QPushButton" name="buttonAP2">
                  <property name="sizePolicy">
-                  <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+                  <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>64</height>
+                  </size>
                  </property>
                  <property name="palette">
                   <palette>
@@ -1911,10 +1980,16 @@
                <item>
                 <widget class="QPushButton" name="buttonAP3">
                  <property name="sizePolicy">
-                  <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+                  <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>64</height>
+                  </size>
                  </property>
                  <property name="palette">
                   <palette>
@@ -2081,10 +2156,16 @@
                <item>
                 <widget class="QPushButton" name="buttonAP4">
                  <property name="sizePolicy">
-                  <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+                  <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>64</height>
+                  </size>
                  </property>
                  <property name="palette">
                   <palette>
@@ -2251,10 +2332,16 @@
                <item>
                 <widget class="QPushButton" name="buttonAP5">
                  <property name="sizePolicy">
-                  <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+                  <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>64</height>
+                  </size>
                  </property>
                  <property name="palette">
                   <palette>
@@ -2421,10 +2508,16 @@
                <item>
                 <widget class="QPushButton" name="buttonAP6">
                  <property name="sizePolicy">
-                  <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+                  <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>64</height>
+                  </size>
                  </property>
                  <property name="palette">
                   <palette>
@@ -2591,10 +2684,16 @@
                <item>
                 <widget class="QPushButton" name="buttonAP7">
                  <property name="sizePolicy">
-                  <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+                  <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>64</height>
+                  </size>
                  </property>
                  <property name="palette">
                   <palette>
@@ -2761,10 +2860,16 @@
                <item>
                 <widget class="QPushButton" name="buttonAP8">
                  <property name="sizePolicy">
-                  <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+                  <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>64</height>
+                  </size>
                  </property>
                  <property name="palette">
                   <palette>
@@ -2931,6 +3036,13 @@
               </layout>
              </widget>
             </item>
+            <item row="7" column="1">
+             <widget class="QLabel" name="label_53">
+              <property name="text">
+               <string>This setting takes effect when starting a new game.</string>
+              </property>
+             </widget>
+            </item>
            </layout>
           </widget>
           <widget class="QWidget" name="tabControls">
@@ -2940,8 +3052,11 @@
            <layout class="QGridLayout" name="gridLayout_4">
             <item row="0" column="0">
              <widget class="QTabWidget" name="tabWidget_2">
+              <property name="toolTip">
+               <string>These settings go in effect immediately.</string>
+              </property>
               <property name="currentIndex">
-               <number>3</number>
+               <number>0</number>
               </property>
               <widget class="QWidget" name="tabPlayer1">
                <attribute name="title">
@@ -3823,6 +3938,9 @@
             </item>
             <item row="1" column="0">
              <widget class="QLabel" name="label_2">
+              <property name="toolTip">
+               <string>Can be changed during active game.</string>
+              </property>
               <property name="text">
                <string>Speed</string>
               </property>
@@ -3872,6 +3990,9 @@
             </item>
             <item row="6" column="1">
              <widget class="QCheckBox" name="cbFakeBonuses">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Takes effect when new game is started.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
               <property name="text">
                <string>Use Fake Bonuses</string>
               </property>
@@ -3893,7 +4014,7 @@
             <item row="9" column="1">
              <widget class="QCheckBox" name="cbGameOverOnLastDead">
               <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Game is over when last human controlled worm dies (If all are AI, game is over when all have died)&lt;/p&gt;&lt;p&gt;In short, for classic nibbles-style, uncheck.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Game is over when last human controlled worm dies (If all are AI, game is over when all have died)&lt;/p&gt;&lt;p&gt;In short, for classic nibbles-style, uncheck.&lt;/p&gt;&lt;p&gt;Can be changed during active game.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="text">
                <string>Game Over When All Dead</string>
@@ -4067,8 +4188,7 @@
             <item row="18" column="1">
              <widget class="QLabel" name="label_50">
               <property name="toolTip">
-               <string>Reasons are: 1. Current Player Count is greater than the number of Spawn Points provided in the Level Map.
-2. File may not exist or be corrupt.</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Reasons are: 1. Current Player Count is greater than the number of Spawn Points provided in the Level Map.&lt;/p&gt;&lt;p&gt;2. File may not exist or be corrupt.&lt;/p&gt;&lt;p&gt;Has effect if changed during game-play.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="text">
                <string>An unplayable level causes:</string>
@@ -4145,7 +4265,7 @@
             <item row="16" column="1">
              <widget class="QCheckBox" name="cbLimitLives">
               <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Classic Nibbles starts with 6 health and limits to a maximum of 12. By checking this box, you can mimic that behaviour.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Classic Nibbles starts with 6 health and limits to a maximum of 12. By checking this box, you can mimic that behaviour.&lt;/p&gt;&lt;p&gt;Takes effect when new game is started.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="text">
                <string>Limit to double the strarting amount</string>
