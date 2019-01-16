@@ -206,7 +206,7 @@ void SurfaceGame::countdownTick() {
 
 	Q_EMIT this->statusMessage(tr("Go, Go, Goooooh!"));
 
-	this->onDebugMessage("countdown over!! onPRT--->)))");
+	//this->onDebugMessage("countdown over!! onPRT--->)))");
 	Q_EMIT this->pauseResumeToggled();
 
 } // countdownTick
@@ -368,7 +368,7 @@ void SurfaceGame::initCells() {
 
 void SurfaceGame::initKeys() {
 
-	this->onDebugMessage("initKeys");
+	//this->onDebugMessage("initKeys");
 
 	this->ahKeys.clear();
 
@@ -504,7 +504,7 @@ void SurfaceGame::on_buttonPP_toggled(bool bStartPlaying) {
 
 	} // starting/resuming or pausing
 
-	this->onDebugMessage("onPRT----->)))");
+	//this->onDebugMessage("onPRT----->)))");
 	Q_EMIT this->pauseResumeToggled();
 
 } // on_buttonPP_toggled
@@ -917,7 +917,7 @@ void SurfaceGame::setCellState(const quint8 ubColumn, const quint8 ubRow,
 void SurfaceGame::showStartCountDownFrame(const QString sMessage,
 										  const QString sButton) {
 
-	this->onDebugMessage("showStartCountDownFrame");
+	//this->onDebugMessage("showStartCountDownFrame");
 
 	FrameStartCountdown *pFrame = this->pStartCountDownFrame;
 	if (nullptr == pFrame) {
