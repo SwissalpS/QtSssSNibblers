@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1008</width>
-    <height>562</height>
+    <width>1059</width>
+    <height>639</height>
    </rect>
   </property>
   <property name="palette">
@@ -442,7 +442,7 @@
        <enum>QTabWidget::Triangular</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>3</number>
       </property>
       <property name="tabsClosable">
        <bool>false</bool>
@@ -3931,11 +3931,14 @@
             </item>
             <item row="13" column="1">
              <widget class="QCheckBox" name="cbLoadSetsStartLevel">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;when checked: loading a level in Play-tab, causes that level to be loaded the next time this application is started.&lt;/p&gt;&lt;p&gt;unchecked: app always starts with the level selected here no matter how many games you have started with other levels.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
               <property name="text">
                <string>Start with last loaded</string>
               </property>
               <property name="checked">
-               <bool>true</bool>
+               <bool>false</bool>
               </property>
              </widget>
             </item>
@@ -3958,14 +3961,14 @@
                <string>Default is 6</string>
               </property>
               <property name="text">
-               <string>Start with Lives</string>
+               <string>Starting Health</string>
               </property>
              </widget>
             </item>
             <item row="15" column="1">
              <widget class="QComboBox" name="selectStartLives"/>
             </item>
-            <item row="16" column="0">
+            <item row="17" column="0">
              <spacer name="verticalSpacer_10">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
@@ -4010,7 +4013,7 @@
                <bool>true</bool>
               </property>
               <property name="text">
-               <string>TextLabel</string>
+               <string/>
               </property>
              </widget>
             </item>
@@ -4024,6 +4027,9 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="toolTip">
+                 <string>Jump the selector bellow to first entry.</string>
+                </property>
                 <property name="text">
                  <string>Zap To Level 0</string>
                 </property>
@@ -4031,6 +4037,9 @@
               </item>
               <item>
                <widget class="QPushButton" name="buttonZap128">
+                <property name="toolTip">
+                 <string>Jump the selector bellow to middle entry.</string>
+                </property>
                 <property name="text">
                  <string>Zap To 128</string>
                 </property>
@@ -4038,12 +4047,110 @@
               </item>
               <item>
                <widget class="QPushButton" name="buttonZap255">
+                <property name="toolTip">
+                 <string>Jump the selector bellow near last entries.</string>
+                </property>
                 <property name="text">
                  <string>225</string>
                 </property>
                </widget>
               </item>
              </layout>
+            </item>
+            <item row="18" column="0">
+             <widget class="QLabel" name="label_49">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="18" column="1">
+             <widget class="QLabel" name="label_50">
+              <property name="toolTip">
+               <string>Reasons are: 1. Current Player Count is greater than the number of Spawn Points provided in the Level Map.
+2. File may not exist or be corrupt.</string>
+              </property>
+              <property name="text">
+               <string>An unplayable level causes:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="19" column="0">
+             <widget class="QLabel" name="label_51">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="19" column="1">
+             <layout class="QHBoxLayout" name="horizontalLayout_6">
+              <item>
+               <widget class="QRadioButton" name="radioBLwin">
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Tally up the score and celebrate.&lt;/p&gt;&lt;p&gt;Choose this option to mimic classic Nibbles.&lt;/p&gt;&lt;p&gt;Start at Level 1 with 6 health, check the limiter&lt;/p&gt;&lt;p&gt;and uncheck 'Game Over When All Dead'.&lt;/p&gt;&lt;p&gt;Also make sure Level 27 has no spawn-points.&lt;/p&gt;&lt;p&gt;This way you can get the closest to what Nibbles&lt;/p&gt;&lt;p&gt;feels like.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+                <property name="text">
+                 <string>Game Won</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="radioBLloop">
+                <property name="toolTip">
+                 <string>Continue with the level this game started at</string>
+                </property>
+                <property name="text">
+                 <string>Use First Level as Next Level</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="radioBLskip">
+                <property name="enabled">
+                 <bool>true</bool>
+                </property>
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Move on to the next level that works with the current configuration of players. Loop arround after 255 go to 0.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+                <property name="text">
+                 <string>Skip Level</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item row="20" column="0">
+             <spacer name="verticalSpacer_11">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="16" column="0">
+             <widget class="QLabel" name="label_52">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="16" column="1">
+             <widget class="QCheckBox" name="cbLimitLives">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Classic Nibbles starts with 6 health and limits to a maximum of 12. By checking this box, you can mimic that behaviour.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="text">
+               <string>Limit to double the strarting amount</string>
+              </property>
+             </widget>
             </item>
            </layout>
           </widget>
@@ -4230,6 +4337,9 @@
           <layout class="QHBoxLayout" name="horizontalLayout_5">
            <item>
             <widget class="QPushButton" name="buttonClearHistory">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="text">
               <string>Clear All Without Asking For Confirmation</string>
              </property>
@@ -4292,7 +4402,7 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1008</width>
+     <width>1059</width>
      <height>25</height>
     </rect>
    </property>
