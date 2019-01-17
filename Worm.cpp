@@ -315,6 +315,8 @@ void Worm::onReverse() {
 
 	if (this->isDead()) return;
 
+	this->aeNextHeadings.clear();
+
 	QVector<SurfaceCell *> apOld(this->apCells);
 	this->apCells.clear();
 
