@@ -2,6 +2,8 @@
 #define SURFACECELL_H
 
 #include <QFrame>
+#include <QTimer>
+
 #include "Lingo.h"
 
 
@@ -28,6 +30,7 @@ class SurfaceCell : public QFrame {
 
 private:
 	Ui::SurfaceCell *pUi;
+	QTimer *pTimer;
 
 protected:
 	bool bBuilder;
@@ -41,6 +44,9 @@ protected:
 	QColor colour() const;
 	virtual void mouseReleaseEvent(QMouseEvent *pEvent);
 	virtual void paintEvent(QPaintEvent *pEvent);
+
+protected slots:
+	virtual void onDesnakeTimer();
 
 
 public:

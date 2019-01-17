@@ -31,6 +31,7 @@ SurfaceCell::SurfaceCell(bool bBuilder, quint8 ubState, quint8 ubColumn,
 						 quint8 ubRow, QWidget *pParent) :
 	QFrame(pParent),
 	pUi(new Ui::SurfaceCell),
+	pTimer(nullptr),
 	bBuilder(bBuilder),
 	ubState(ubState),
 	ubColumn(ubColumn),
@@ -40,12 +41,25 @@ SurfaceCell::SurfaceCell(bool bBuilder, quint8 ubState, quint8 ubColumn,
 
 	this->aeHeadingsBloated.clear();
 
+	this->pTimer = new QTimer(this);
+	this->pTimer->setInterval(108);
+	this->pTimer->setTimerType(Qt::PreciseTimer);
+
+	connect(this->pTimer, SIGNAL(timeout()),
+			this, SLOT(onDesnakeTimer()));
+
 } // construct
 
 
 SurfaceCell::~SurfaceCell() {
 
 	delete this->pUi;
+
+	if (nullptr != this->pTimer) {
+		this->pTimer->stop();
+		delete this->pTimer;
+		this->pTimer = nullptr;
+	}
 
 } // dealloc
 
@@ -93,15 +107,6 @@ QColor SurfaceCell::colour() const {
 
 		// most common -> empty space
 		case L::FloorClean:
-		case L::FloorWet1:
-		case L::FloorWet2:
-		case L::FloorWet3:
-		case L::FloorWet4:
-		case L::FloorWet5:
-		case L::FloorWet6:
-		case L::FloorWet7:
-		case L::FloorWet8:
-		case L::FloorWet9:
 		// spawn points
 		case L::SpawnHeadingNorth:
 		case L::SpawnHeadingWest:
@@ -119,6 +124,16 @@ QColor SurfaceCell::colour() const {
 		case L::TeleporterOutI: // exit I
 		case L::TeleporterOutJ: // exit J
 			return QColor(Qt::black);//transparent); // black
+
+		case L::FloorWet1: return QColor(Qt::darkGray).darker(1100);
+		case L::FloorWet2: return QColor(Qt::darkGray).darker(1060);
+		case L::FloorWet3: return QColor(Qt::darkGray).darker(580);
+		case L::FloorWet4: return QColor(Qt::darkGray).darker(340);
+		case L::FloorWet5: return QColor(Qt::darkGray).darker(220);
+		case L::FloorWet6: return QColor(Qt::darkGray).darker(160);
+		case L::FloorWet7: return QColor(Qt::darkGray).darker(130);
+		case L::FloorWet8: return QColor(Qt::darkGray).darker(115);
+		case L::FloorWet9: return QColor(Qt::darkGray);
 
 		// also common -> walls
 		case L::WallVertical:
@@ -254,10 +269,18 @@ void SurfaceCell::defrostState() {
 
 void SurfaceCell::desnakeState() {
 
-	// TODO: start counter and cycle through
+	// start counter and cycle through
 	// slime states and eventually reach original state
 
-	this->defrostState();
+	this->aeHeadingsBloated.clear();
+
+	this->ubState = L::FloorWet9;
+
+	this->onChanged();
+
+	this->update();
+
+	this->pTimer->start();
 
 } // desnakeState
 
@@ -272,6 +295,31 @@ void SurfaceCell::mouseReleaseEvent(QMouseEvent *pEvent) {
 	Q_EMIT this->clicked(this->ubColumn, this->ubRow, bShift, this);
 
 } // mouseReleaseEvent
+
+
+void SurfaceCell::onDesnakeTimer() {
+
+	if ((L::FloorClean == this->ubState)
+			|| (L::FloorWet9 < this->ubState)) {
+
+		this->pTimer->stop();
+		return;
+
+	} // if already moved on to other state
+
+	this->ubState--;
+	if (L::FloorClean == this->ubState) {
+
+		this->defrostState();
+		return;
+
+	} // if returning to normal
+
+	this->onChanged();
+
+	this->update();
+
+} // onDesnakeTimer
 
 
 void SurfaceCell::paintEvent(QPaintEvent *pEvent) {
