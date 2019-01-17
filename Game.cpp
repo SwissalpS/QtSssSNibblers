@@ -275,12 +275,14 @@ void Game::init() {
 
 	this->pTimer = new QTimer(this);
 	this->pTimer->setSingleShot(false);
+	this->pTimer->setTimerType(Qt::PreciseTimer);
 
 	connect(this->pTimer, SIGNAL(timeout()),
 			this, SLOT(onTick()));
 
 	this->pTimerBonus = new QTimer(this);
 	this->pTimerBonus->setSingleShot(false);
+	this->pTimerBonus->setTimerType(Qt::PreciseTimer);
 
 	connect(this->pTimerBonus, SIGNAL(timeout()),
 			this, SLOT(onTickBonus()));
@@ -1002,8 +1004,19 @@ void Game::onSpeedChanged(const int iIndex) {
 	} // switch iIndex
 
 	iInterval = ubFactor * SssS_Nibblers_Speed_Base;
-	iIntervalBonus = qMax(ubFactor * SssS_Nibblers_Speed_Bonus_Base,
-						  SssS_Nibblers_Speed_Bonus_Base);
+	// avoid 0 interval as things need to be done too
+	// 12 was the longest I measured a onTick() to take
+	// however, at times, for a couple seconds, it can take
+	// well over 40 ms to get back to the next call to onTick()
+	// garbage collection? leak? what could be causing this temporary throtle?
+	// it has nothing to do with looking for spots to put bonus or fading tiles
+	// the first is included in the 12 ms and the second hadn't been added yet
+	// when I did the measurements
+	iInterval = qMax(iInterval, 12);
+
+	// have at least a foctor of 1 for bonus
+	ubFactor = qMax(ubFactor, quint8(1u));
+	iIntervalBonus = ubFactor * SssS_Nibblers_Speed_Bonus_Base;
 
 	this->pTimer->setInterval(iInterval);
 	this->pTimerBonus->setInterval(iIntervalBonus);
@@ -1041,6 +1054,12 @@ void Game::onTileChanged(const QPoint oPoint, const quint8 ubState) {
 
 
 void Game::onTick() {
+
+	static QTime oTime;
+	int iElapsedLast = oTime.elapsed();
+	oTime.start();
+	int iElapsed;
+	static int iLongest = 0;
 
 	//this->onDebugMessage("onTick");
 
@@ -1207,6 +1226,10 @@ void Game::onTick() {
 		this->pWormAI->move(pWorm, this->apWorms, this->pMapGame);
 
 	} // loop worms
+
+	iElapsed = oTime.elapsed();
+	//this->onDebugMessage(QString::number(iElapsedLast) + " :since last | used ms: " + QString::number(iElapsed) + " longest: " + QString::number(iLongest));
+	if (iElapsed > iLongest) iLongest = iElapsed;
 
 } // onTick
 
