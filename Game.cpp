@@ -123,7 +123,26 @@ void Game::addBonus(const bool bApple) {
 
 		} // if add a fake
 
-		this->placeBonus(L::BonusApple, false);
+		// dirty fix to prevent more than one real apple at a time
+		Bonus *pBonus;
+		bool bHaveApple = false;
+		for (int i = 0; i < this->apBonus.length(); ++i) {
+
+			pBonus = this->apBonus.at(i);
+
+			if (pBonus->isFake()) continue;
+
+			if (pBonus->getStateBase() == L::BonusApple) {
+
+				this->onDebugMessage("wanted to place an apple when there was one already!!!!!!");
+				bHaveApple = true;
+				break;
+
+			} // if found real apple
+
+		} // loop bonuses
+
+		if (!bHaveApple) this->placeBonus(L::BonusApple, false);
 
 	} // if not apple
 
