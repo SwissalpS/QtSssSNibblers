@@ -121,17 +121,21 @@ void MainWindow::initGame() {
 	connect(this, SIGNAL(settingsPlayerKeyChanged(quint8,QKeySequence,L::Heading)),
 			pSurface, SLOT(onPlayerKeyChanged(quint8,QKeySequence,L::Heading)));
 
-	connect(this, SIGNAL(settingsRelativeChanged(quint8,bool)),
-			pSurface, SLOT(onPlayerRelativeChanged(quint8,bool)));
-
 	connect(this, SIGNAL(settingsPlayerUseMouseChanged()),
 			pSurface, SLOT(onPlayerUseMouseChanged()));
 
-	connect(pSurface, SIGNAL(debugMessage(QString)),
-			this, SLOT(onDebugMessage(QString)));
+	connect(this, SIGNAL(settingsRelativeChanged(quint8,bool)),
+			pSurface, SLOT(onPlayerRelativeChanged(quint8,bool)));
+
+	connect(this, SIGNAL(settingsTrailChanged(int)),
+			pSurface, SLOT(onTrailChanged(int)));
 
 	connect(pSurface, SIGNAL(statusMessage(QString)),
 			this, SLOT(onStatusMessage(QString)));
+
+
+	connect(pSurface, SIGNAL(debugMessage(QString)),
+			this, SLOT(onDebugMessage(QString)));
 
 
 	Game *pGame = new Game(this);
@@ -320,6 +324,9 @@ void MainWindow::initSettings() {
 			this->pUi->radioBLwin->setChecked(true);
 
 	} // switch this->pAS->get(AppSettings::sSettingGameBadLevelMode).toUInt()
+
+	this->pUi->sliderDust->setValue(
+				this->pAS->get(AppSettings::sSettingGameTrailLength).toUInt());
 
 	this->settingsUpdatePlayerColours();
 
@@ -1012,6 +1019,21 @@ void MainWindow::on_radioNetServer_toggled(bool bChecked) {
 	this->onDebugMessage("on_radioNetServer_toggled");
 
 } // on_radioNetServer_toggled
+
+
+void MainWindow::on_sliderDust_valueChanged(int iValue) {
+
+	this->onDebugMessage("on_sliderDust_valueChanged " + QString::number(iValue));
+
+	if (iValue == this->pAS->get(AppSettings::sSettingGameTrailLength).toUInt())
+		return;
+
+	// actually changed
+	this->pAS->setValue(AppSettings::sSettingGameTrailLength, iValue);
+
+	Q_EMIT this->settingsTrailChanged(iValue);
+
+} // on_sliderDust_valueChanged
 
 
 void MainWindow::on_selectColour1_currentIndexChanged(int iIndex) {

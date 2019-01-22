@@ -109,6 +109,7 @@ signals:
 	void startNewGame(const quint8 ubLevel) const;
 	void statusMessage(const QString &sMessage) const;
 	void tileChanged(const QPoint oPoint, const quint8 ubState) const;
+	void trailChanged(const int iValue) const;
 	void turnWorm(const quint8 ubWorm, const L::Heading eDirection) const;
 
 public slots:
@@ -139,6 +140,9 @@ public slots:
 	inline virtual void onPlayerUseMouseChanged() { this->initKeys(); }
 	virtual void onQuitting();
 	virtual void onSpawnWorm(Worm *pWorm);
+	inline virtual void onTrailChanged(const int iValue) {
+		Q_EMIT this->trailChanged(iValue); }
+
 	virtual void onWormAteBonus(Worm *pWorm);
 	virtual void onWormCrashed(Worm *pWorm);
 	virtual void onWormCreated(Worm *pWorm);

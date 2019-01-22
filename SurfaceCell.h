@@ -86,6 +86,8 @@ public slots:
 	inline void onDebugMessage(const QString &sMessage) const {
 		Q_EMIT this->debugMessage("SurfaceCell:" + sMessage); }
 
+	inline void onTrailChanged(const int iValue) { this->pTimer->setInterval(iValue); }
+
 }; // SurfaceCell
 
 

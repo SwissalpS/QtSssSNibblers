@@ -330,6 +330,7 @@ void SurfaceGame::initCells() {
 	quint8 ubColumns = 0u;
 	quint8 ubRows = 0u;
 	quint8 ubState = L::FloorClean;
+	quint16 uiTrail = this->pAS->get(AppSettings::sSettingGameTrailLength).toUInt();
 	QList<SurfaceCell*> aRow;
 	SurfaceCell *pCell;
 	QHBoxLayout *pHBox;
@@ -349,6 +350,9 @@ void SurfaceGame::initCells() {
 			aRow.append(pCell);
 			pHBox->addWidget(pCell);
 
+			connect(this, SIGNAL(trailChanged(int)),
+					pCell, SLOT(onTrailChanged(int)));
+
 			connect(pCell, SIGNAL(debugMessage(QString)),
 					this, SLOT(onDebugMessage(QString)));
 
@@ -356,6 +360,8 @@ void SurfaceGame::initCells() {
 					this, SLOT(onCellChanged(QPoint,quint8)));
 
 			pCell->setCursor(Qt::BlankCursor);
+
+			pCell->onTrailChanged(uiTrail);
 
 		} // loop columns
 

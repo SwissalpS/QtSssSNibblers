@@ -35,6 +35,7 @@ const QString AppSettings::sSettingGameSound = "bGameSound";
 const QString AppSettings::sSettingGameSpeed = "iGameSpeed0-3";
 const QString AppSettings::sSettingGameStartLevel = "ubGameStartLevel0-255";
 const QString AppSettings::sSettingGameStartLives = "ubGameStartLives0-255";
+const QString AppSettings::sSettingGameTrailLength = "uiGameTrailLength0-65535";
 const QString AppSettings::sSettingGameUseMouse = "aGameUseMouse";
 const QString AppSettings::sSettingPowerUser = "bPU";
 const QString AppSettings::sSettingTabMainIndex = "iMainTabIndex";
@@ -55,6 +56,7 @@ const bool AppSettings::bSettingGameSoundDefault = true;
 const qint8 AppSettings::iSettingGameSpeedDefault = 0u;
 const quint8 AppSettings::ubSettingGameStartLevelDefault = 0x1u;
 const quint8 AppSettings::ubSettingGameStartLivesDefault = 0x6u;
+const quint16 AppSettings::uiSettingGameTrailLengthDefault = 0x108u;
 const bool AppSettings::bSettingGameLoadSetsStartLevelDefault = false;
 const bool AppSettings::bSettingHistoryEnableClearAllDefault = false;
 const bool AppSettings::bSettingPowerUserDefault = false;
@@ -171,6 +173,9 @@ AppSettings::AppSettings(QObject *parent) :
 
 	} // if not valid length
 
+	pS->setValue(sSettingGameLoadSetsStartLevel, this->get(sSettingGameLoadSetsStartLevel));
+	pS->setValue(sSettingGameTrailLength, this->get(sSettingGameTrailLength));
+
 	// make sure the list of relative steering is long enough
 	aList = pS->value(sSettingGameRelative).toList();
 	if (4 > aList.length()) {
@@ -198,7 +203,6 @@ AppSettings::AppSettings(QObject *parent) :
 
 	} // if not valid length
 
-	pS->setValue(sSettingGameLoadSetsStartLevel, this->get(sSettingGameLoadSetsStartLevel));
 	pS->setValue(sSettingHistoryEnableClearAll, this->get(sSettingHistoryEnableClearAll));
 	pS->setValue(sSettingTabMainIndex, this->get(sSettingTabMainIndex));
 	pS->setValue(sSettingTabSettingIndex, this->get(sSettingTabSettingIndex));
@@ -379,6 +383,10 @@ QVariant AppSettings::get(const QString sKey) const {
 	} else if (sSettingGameStartLives == sKey) {
 
 		return this->pSettings->value(sKey, ubSettingGameStartLivesDefault);
+
+	} else if (sSettingGameTrailLength == sKey) {
+
+		return this->pSettings->value(sKey, uiSettingGameTrailLengthDefault);
 
 	} else if (sSettingGameUseMouse == sKey) {
 

@@ -115,6 +115,7 @@ private slots:
 	void on_selectSpeed_currentIndexChanged(int iIndex);
 	void on_selectStartLevel_currentIndexChanged(int iIndex);
 	void on_selectStartLives_currentIndexChanged(int iIndex);
+	void on_sliderDust_valueChanged(int iValue);
 	void on_tabWidgetMain_currentChanged(int iIndex);
 
 protected:
@@ -160,9 +161,9 @@ signals:
 						  const L::Heading eHeading) const;
 	void settingsPlayerNameChanged(const quint8 ubWorm, const QString sName) const;
 	void settingsPlayerUseMouseChanged() const;
-	void settingsSpeedChanged(const int iIndex) const;
 	void settingsRelativeChanged(const quint8 ubWorm, const bool bRelative) const;
-
+	void settingsSpeedChanged(const int iIndex) const;
+	void settingsTrailChanged(const int iValue) const;
 
 public slots:
 	void onDebugMessage(const QString &sMessage) const;

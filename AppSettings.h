@@ -55,6 +55,7 @@ public:
 	static const QString sSettingGameSpeed;
 	static const QString sSettingGameStartLevel;
 	static const QString sSettingGameStartLives;
+	static const QString sSettingGameTrailLength;
 	static const QString sSettingGameUseMouse;
 	static const QString sSettingGameLoadSetsStartLevel;
 	static const QString sSettingHistoryEnableClearAll;
@@ -77,6 +78,7 @@ public:
 	static const bool bSettingGameSoundDefault;
 	static const quint8 ubSettingGameStartLevelDefault;
 	static const quint8 ubSettingGameStartLivesDefault;
+	static const quint16 uiSettingGameTrailLengthDefault;
 	static const qint8 iSettingGameSpeedDefault;
 	static const bool bSettingGameLoadSetsStartLevelDefault;
 	static const bool bSettingHistoryEnableClearAllDefault;

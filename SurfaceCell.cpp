@@ -133,7 +133,8 @@ QColor SurfaceCell::colour() const {
 		case L::FloorWet6: //return QColor(Qt::darkGray).darker(230);
 		case L::FloorWet7:
 		case L::FloorWet8: //return QColor(Qt::darkGray).darker(115);
-		case L::FloorWet9: return QColor(Qt::darkGray);
+		case L::FloorWet9:
+			return QColor(247, 239, 212);//return QColor(Qt::darkGray);
 
 		// also common -> walls
 		case L::WallVertical:
@@ -450,7 +451,7 @@ void SurfaceCell::paintEvent(QPaintEvent *pEvent) {
 
 		//oColour = Qt::gray;
 
-		oColour.setAlpha(this->ubState * 255/9);
+		oColour.setAlpha((this->ubState * 192/9));
 
 	} // if post snake
 
