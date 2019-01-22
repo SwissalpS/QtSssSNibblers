@@ -602,7 +602,7 @@ void MainWindow::on_cbLoadSetsStartLevel_stateChanged(int iState) {
 
 void MainWindow::on_cbLimitLives_toggled(bool bChecked) {
 
-	this->onDebugMessage("on_cbLimitLives_toggled");
+	//this->onDebugMessage("on_cbLimitLives_toggled");
 
 	this->pAS->setValue(AppSettings::sSettingGameLimitLives, bChecked);
 
