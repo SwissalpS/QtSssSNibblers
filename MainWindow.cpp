@@ -332,9 +332,7 @@ void MainWindow::initSettings() {
 } // initSettings
 
 
-void MainWindow::mouseReleaseEvent(QMouseEvent *pEvent) {
-
-	QMainWindow::mouseReleaseEvent(pEvent);
+void MainWindow::mousePressEvent(QMouseEvent *pEvent) {
 
 	if (Qt::LeftButton == pEvent->button()) {
 
@@ -346,7 +344,9 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *pEvent) {
 
 	} // if left or right button
 
-} // mouseReleaseEvent
+	QMainWindow::mousePressEvent(pEvent);
+
+} // mousePressEvent
 
 
 void MainWindow::on_buttonAP0_clicked() {

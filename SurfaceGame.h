@@ -71,7 +71,7 @@ protected:
 	virtual SurfaceCell* getCell(const QPoint oPoint);
 	virtual SurfaceCell* getCell(const quint8 ubColumn, const quint8 ubRow);
 	virtual void keyPressEvent(QKeyEvent *pEvent) override;
-	virtual void mouseReleaseEvent(QMouseEvent *pEvent) override;
+	virtual void mousePressEvent(QMouseEvent *pEvent) override;
 	virtual void pauseIfRunning();
 	virtual void resetButtons();
 	virtual void resizeEvent(QResizeEvent *pEvent) override;

@@ -440,7 +440,7 @@ void SurfaceGame::keyPressEvent(QKeyEvent *pEvent) {
 } // keyPressEvent
 
 
-void SurfaceGame::mouseReleaseEvent(QMouseEvent *pEvent) {
+void SurfaceGame::mousePressEvent(QMouseEvent *pEvent) {
 
 	if (Qt::LeftButton == pEvent->button()) {
 
@@ -452,9 +452,9 @@ void SurfaceGame::mouseReleaseEvent(QMouseEvent *pEvent) {
 
 	} // if left or right button
 
-	else QFrame::mouseReleaseEvent(pEvent);
+	else QFrame::mousePressEvent(pEvent);
 
-} // mouseReleaseEvent
+} // mousePressEvent
 
 
 void SurfaceGame::onAdvanceWormTo(Worm *pWorm, const QPoint oPoint) {

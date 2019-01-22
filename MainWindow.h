@@ -127,7 +127,7 @@ protected:
 	virtual void initGame();
 	virtual void initHistory();
 	virtual void initSettings();
-	virtual void mouseReleaseEvent(QMouseEvent *pEvent) override;
+	virtual void mousePressEvent(QMouseEvent *pEvent) override;
 	virtual void onPlayerColourChanged(const quint8 ubWorm, const quint8 ubIndex);
 	virtual void onPlayerKeyDownChanged(const quint8 ubWorm, const QKeySequence &oKeySequence);
 	virtual void onPlayerKeyLeftChanged(const quint8 ubWorm, const QKeySequence &oKeySequence);
