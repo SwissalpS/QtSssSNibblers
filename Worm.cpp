@@ -499,7 +499,6 @@ void Worm::setColourIndex(const quint8 ubIndex) {
 void Worm::startSpawning() {
 
 	this->apCells.clear();
-	//this->apCells.prepend(this->pCellSpawn);
 
 	this->uiTargetLength = 5u;
 	this->ubSpawnSafetyTicks = 7u;

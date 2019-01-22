@@ -37,6 +37,13 @@ MainWindow::~MainWindow() {
 
 	delete this->pUi;
 
+	this->pHistory->save();
+	delete this->pHistory;
+
+	this->pAS->sync();
+	this->pAS = nullptr;
+	AppSettings::drop();
+
 } // dealloc
 
 
