@@ -125,14 +125,14 @@ QColor SurfaceCell::colour() const {
 		case L::TeleporterOutJ: // exit J
 			return QColor(Qt::black);//transparent); // black
 
-		case L::FloorWet1: return QColor(Qt::darkGray).darker(1100);
-		case L::FloorWet2: return QColor(Qt::darkGray).darker(1060);
-		case L::FloorWet3: return QColor(Qt::darkGray).darker(580);
-		case L::FloorWet4: return QColor(Qt::darkGray).darker(340);
-		case L::FloorWet5: return QColor(Qt::darkGray).darker(220);
-		case L::FloorWet6: return QColor(Qt::darkGray).darker(160);
-		case L::FloorWet7: return QColor(Qt::darkGray).darker(130);
-		case L::FloorWet8: return QColor(Qt::darkGray).darker(115);
+		case L::FloorWet1:
+		case L::FloorWet2: //return QColor(Qt::darkGray).darker(920);
+		case L::FloorWet3:
+		case L::FloorWet4: //return QColor(Qt::darkGray).darker(460);
+		case L::FloorWet5:
+		case L::FloorWet6: //return QColor(Qt::darkGray).darker(230);
+		case L::FloorWet7:
+		case L::FloorWet8: //return QColor(Qt::darkGray).darker(115);
 		case L::FloorWet9: return QColor(Qt::darkGray);
 
 		// also common -> walls
@@ -332,6 +332,7 @@ void SurfaceCell::onDesnakeTimer() {
 void SurfaceCell::paintEvent(QPaintEvent *pEvent) {
 
 	static QVector<quint8> aubSnakes = IconEngine::statesSnakes();
+	static QVector<quint8> aubWetFloors = IconEngine::statesFloorsWet();
 
 	QFrame::paintEvent(pEvent);
 
@@ -362,10 +363,11 @@ void SurfaceCell::paintEvent(QPaintEvent *pEvent) {
 
 	} // if builder mode
 
+	QColor oColour = this->colour();
+
 	if (aubSnakes.contains(this->ubState)) {
 
 		// draw snake
-		QColor oColour = this->colour();
 
 		oP.fillRect(this->rect(), Qt::black);
 
@@ -444,8 +446,16 @@ void SurfaceCell::paintEvent(QPaintEvent *pEvent) {
 
 	} // if snake
 
+	if (aubWetFloors.contains(this->ubState)) {
+
+		//oColour = Qt::gray;
+
+		oColour.setAlpha(this->ubState * 255/9);
+
+	} // if post snake
+
 	// fallback to just a coloured tile
-	oP.fillRect(this->rect(), this->colour());
+	oP.fillRect(this->rect(), oColour);
 
 }  // paintEvent
 

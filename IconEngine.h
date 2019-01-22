@@ -53,6 +53,7 @@ public:
 	virtual void removeCacheOfLevel(const quint8 ubLevel);
 
 	static QVector<quint8> statesFloors();
+	static QVector<quint8> statesFloorsWet();
 	static QVector<quint8> statesPickups();
 	static QVector<quint8> statesSnake(const quint8 ubSnake);
 	static QVector<quint8> statesSnakes();

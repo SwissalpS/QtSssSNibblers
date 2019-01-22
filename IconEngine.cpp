@@ -595,6 +595,22 @@ QVector<quint8> IconEngine::statesFloors() {
 
 
 // static
+QVector<quint8> IconEngine::statesFloorsWet() {
+
+	static QVector<quint8> aStates;
+
+	if (!aStates.empty()) return aStates;
+
+	quint8 ubCount;
+	for (ubCount = L::FloorWet1; ubCount <= L::FloorWet9; ++ubCount)
+		aStates.append(ubCount);
+
+	return aStates;
+
+} // statesFloorsWet
+
+
+// static
 QVector<quint8> IconEngine::statesPickups() {
 
 	static QVector<quint8> aStates;
