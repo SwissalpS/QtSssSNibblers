@@ -955,7 +955,7 @@ void MainWindow::on_radioBLloop_toggled(bool bChecked) {
 
 	if (!bChecked) return;
 
-	this->onDebugMessage("on_radioBLloop_toggled");
+	//this->onDebugMessage("on_radioBLloop_toggled");
 
 	this->pAS->setValue(AppSettings::sSettingGameBadLevelMode, 1u);
 
@@ -966,7 +966,7 @@ void MainWindow::on_radioBLskip_toggled(bool bChecked) {
 
 	if (!bChecked) return;
 
-	this->onDebugMessage("on_radioBLskip_toggled");
+	//this->onDebugMessage("on_radioBLskip_toggled");
 
 	this->pAS->setValue(AppSettings::sSettingGameBadLevelMode, 2u);
 
@@ -977,7 +977,7 @@ void MainWindow::on_radioBLwin_toggled(bool bChecked) {
 
 	if (!bChecked) return;
 
-	this->onDebugMessage("on_radioBLwin_toggled");
+	//this->onDebugMessage("on_radioBLwin_toggled");
 
 	this->pAS->setValue(AppSettings::sSettingGameBadLevelMode, 0u);
 
