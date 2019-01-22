@@ -124,6 +124,8 @@ void MainWindow::initGame() {
 	connect(this, SIGNAL(settingsRelativeChanged(quint8,bool)),
 			pSurface, SLOT(onPlayerRelativeChanged(quint8,bool)));
 
+	connect(this, SIGNAL(settingsPlayerUseMouseChanged()),
+			pSurface, SLOT(onPlayerUseMouseChanged()));
 
 	connect(pSurface, SIGNAL(debugMessage(QString)),
 			this, SLOT(onDebugMessage(QString)));
@@ -944,7 +946,7 @@ void MainWindow::onPlayerUseMouseToggled(const quint8 ubWorm, const bool bChecke
 
 	this->settingsUpdatePlayerMouseAndRelative();
 
-	//Q_EMIT this->settingsPlayerMouseChanged(ubWorm, bChecked);
+	Q_EMIT this->settingsPlayerUseMouseChanged();
 
 } // onPlayerUseMouseToggled
 

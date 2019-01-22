@@ -159,6 +159,7 @@ signals:
 						  const QKeySequence &oKeySequence,
 						  const L::Heading eHeading) const;
 	void settingsPlayerNameChanged(const quint8 ubWorm, const QString sName) const;
+	void settingsPlayerUseMouseChanged() const;
 	void settingsSpeedChanged(const int iIndex) const;
 	void settingsRelativeChanged(const quint8 ubWorm, const bool bRelative) const;
 

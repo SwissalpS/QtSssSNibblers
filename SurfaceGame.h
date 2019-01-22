@@ -136,6 +136,7 @@ public slots:
 									const QKeySequence &oKeySequence,
 									const L::Heading eHeading);
 	virtual void onPlayerRelativeChanged(const quint8 ubWorm, const bool bRelative);
+	inline virtual void onPlayerUseMouseChanged() { this->initKeys(); }
 	virtual void onQuitting();
 	virtual void onSpawnWorm(Worm *pWorm);
 	virtual void onWormAteBonus(Worm *pWorm);
