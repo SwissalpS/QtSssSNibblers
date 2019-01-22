@@ -55,6 +55,7 @@ protected:
 	AppSettings *pAS;
 	DialogLoad *pDialogLoad;
 	FrameStartCountdown *pStartCountDownFrame;
+	qint8 ibWormMouse;
 	quint8 ubCurrentLevel;
 	mutable int iLastHeight;
 
@@ -70,6 +71,7 @@ protected:
 	virtual SurfaceCell* getCell(const QPoint oPoint);
 	virtual SurfaceCell* getCell(const quint8 ubColumn, const quint8 ubRow);
 	virtual void keyPressEvent(QKeyEvent *pEvent) override;
+	virtual void mouseReleaseEvent(QMouseEvent *pEvent) override;
 	virtual void pauseIfRunning();
 	virtual void resetButtons();
 	virtual void resizeEvent(QResizeEvent *pEvent) override;
@@ -128,6 +130,8 @@ public slots:
 	virtual void onDoLevelStartCountdown();
 	virtual void onLoadLevel(MapGame *pMap, const quint8 ubLevel);
 	virtual void onMainTabChanged(const int iIndex);
+	virtual void onMouseLeft();
+	virtual void onMouseRight();
 	virtual void onPlayerKeyChanged(const quint8 ubWorm,
 									const QKeySequence &oKeySequence,
 									const L::Heading eHeading);

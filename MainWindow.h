@@ -127,6 +127,7 @@ protected:
 	virtual void initGame();
 	virtual void initHistory();
 	virtual void initSettings();
+	virtual void mouseReleaseEvent(QMouseEvent *pEvent) override;
 	virtual void onPlayerColourChanged(const quint8 ubWorm, const quint8 ubIndex);
 	virtual void onPlayerKeyDownChanged(const quint8 ubWorm, const QKeySequence &oKeySequence);
 	virtual void onPlayerKeyLeftChanged(const quint8 ubWorm, const QKeySequence &oKeySequence);
@@ -148,6 +149,8 @@ public:
 signals:
 	void debugMessage(const QString &sMessage) const;
 	void mainTabIndexChanged(const int iIndex) const;
+	void mouseButtonLeft() const;
+	void mouseButtonRight() const;
 	void quitting() const;
 	void settingsPlayerColoursChanged(const QVector<quint8> aubColours) const;
 	void settingsPlayerCountChanged(const quint8 ubCountHumans,

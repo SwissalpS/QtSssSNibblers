@@ -25,6 +25,7 @@ SurfaceGame::SurfaceGame(QWidget *pParent) :
 	pAS(AppSettings::pAppSettings()),
 	pDialogLoad(nullptr),
 	pStartCountDownFrame(nullptr),
+	ibWormMouse(-1),
 	ubCurrentLevel(0xFFu) {
 
 	this->pUi->setupUi(this);
@@ -370,6 +371,7 @@ void SurfaceGame::initKeys() {
 
 	//this->onDebugMessage("initKeys");
 
+	this->ibWormMouse = -1;
 	this->ahKeys.clear();
 
 	QHash<QKeySequence, L::Heading> hKeys;
@@ -378,6 +380,8 @@ void SurfaceGame::initKeys() {
 	for (quint8 ubWorm = 0u; ubWorm < 4; ++ubWorm) {
 
 		hKeys.clear();
+
+		if (this->pAS->getPlayerUseMouse(ubWorm)) this->ibWormMouse = ubWorm;
 
 		oKS = QKeySequence(this->pAS->getPlayerKeyDown(ubWorm),
 						   QKeySequence::PortableText);
@@ -432,6 +436,23 @@ void SurfaceGame::keyPressEvent(QKeyEvent *pEvent) {
 	if (bNoMatchFound) QFrame::keyPressEvent(pEvent);
 
 } // keyPressEvent
+
+
+void SurfaceGame::mouseReleaseEvent(QMouseEvent *pEvent) {
+
+	if (Qt::LeftButton == pEvent->button()) {
+
+		this->onMouseLeft();
+
+	} else if (Qt::RightButton == pEvent->button()) {
+
+		this->onMouseRight();
+
+	} // if left or right button
+
+	else QFrame::mouseReleaseEvent(pEvent);
+
+} // mouseReleaseEvent
 
 
 void SurfaceGame::onAdvanceWormTo(Worm *pWorm, const QPoint oPoint) {
@@ -685,6 +706,30 @@ void SurfaceGame::onMainTabChanged(const int iIndex) {
 	//this->pauseIfRunning();
 
 } // onMainTabChanged
+
+
+void SurfaceGame::onMouseLeft() {
+
+	if (0 > this->ibWormMouse) return;
+	if (this->ibWormMouse >= this->apWorms.length()) return;
+
+	//this->onDebugMessage("onMouseLeft");
+
+	this->apWorms.at(this->ibWormMouse)->onTurn(L::Left);
+
+} // onMouseLeft
+
+
+void SurfaceGame::onMouseRight() {
+
+	if (0 > this->ibWormMouse) return;
+	if (this->ibWormMouse >= this->apWorms.length()) return;
+
+	//this->onDebugMessage("onMouseRight");
+
+	this->apWorms.at(this->ibWormMouse)->onTurn(L::Right);
+
+} // onMouseRight
 
 
 void SurfaceGame::onPlayerKeyChanged(const quint8 ubWorm,

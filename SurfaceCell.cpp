@@ -287,7 +287,14 @@ void SurfaceCell::desnakeState() {
 
 void SurfaceCell::mouseReleaseEvent(QMouseEvent *pEvent) {
 
-	if (!this->bBuilder) return;
+	if (!this->bBuilder) {
+
+		// let it bubble up to surface
+		QFrame::mouseReleaseEvent(pEvent);
+
+		return;
+
+	} // if in game mode
 
 	if (Qt::LeftButton != pEvent->button()) return;
 

@@ -99,6 +99,12 @@ void MainWindow::initGame() {
 	connect(this, SIGNAL(mainTabIndexChanged(int)),
 			pSurface, SLOT(onMainTabChanged(int)));
 
+	connect(this, SIGNAL(mouseButtonLeft()),
+			pSurface, SLOT(onMouseLeft()));
+
+	connect(this, SIGNAL(mouseButtonRight()),
+			pSurface, SLOT(onMouseRight()));
+
 	connect(this, SIGNAL(quitting()),
 			pSurface, SLOT(onQuitting()));
 
@@ -315,6 +321,23 @@ void MainWindow::initSettings() {
 	this->settingsUpdatePlayerNames();
 
 } // initSettings
+
+
+void MainWindow::mouseReleaseEvent(QMouseEvent *pEvent) {
+
+	QMainWindow::mouseReleaseEvent(pEvent);
+
+	if (Qt::LeftButton == pEvent->button()) {
+
+		Q_EMIT this->mouseButtonLeft();
+
+	} else if (Qt::RightButton == pEvent->button()) {
+
+		Q_EMIT this->mouseButtonRight();
+
+	} // if left or right button
+
+} // mouseReleaseEvent
 
 
 void MainWindow::on_buttonAP0_clicked() {
