@@ -355,6 +355,8 @@ void SurfaceGame::initCells() {
 			connect(pCell, SIGNAL(changed(QPoint,quint8)),
 					this, SLOT(onCellChanged(QPoint,quint8)));
 
+			pCell->setCursor(Qt::BlankCursor);
+
 		} // loop columns
 
 		this->aopRows.append(aRow);
