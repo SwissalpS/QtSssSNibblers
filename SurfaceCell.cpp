@@ -287,6 +287,14 @@ void SurfaceCell::defrostState() {
 
 void SurfaceCell::desnakeState() {
 
+	if (1 > this->pTimer->interval()) {
+
+		this->defrostState();
+
+		return;
+
+	} // if no need to bother
+
 	// start counter and cycle through
 	// slime states and eventually reach original state
 
