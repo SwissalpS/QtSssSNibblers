@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<html>
+	<head>
+		<meta name="qrichtext" content="1" />
+		<style type="text/css">
+			p, li { white-space: pre-wrap; }
+			.nMT { -qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; }
+			.nText { margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; }
+		</style>
+	</head>
+	<body style=" font-family:'Cantarell'; font-size:11pt; font-weight:400; font-style:normal;">
+<p class="nText">Copyright 2018-2019 by Luke J. Zimmermann aka SwissalpS <a href="http://www.gnu.org/licenses/gpl.txt" >License: GPL3</a></p>
+<p class="nText">Inspired by work by Rick Raddatz (<a href="https://github.com/tangentstorm/tangentlabs/blob/master/qbasic/NIBBLES.BAS" >QBasic Nibbles</a>), Iulian-Gabriel Radu, Sean MacIsaac, Ian Peters, Guillaume B&eacute;land and probably others.</p>
+<p class="nMT"><br /></p>
+<p class="nText">One of my first encounters with programming was back in the day on a 80286 with <a href="https://en.wikipedia.org/wiki/MS-DOS" >MS-DOS</a>. It came with <a href="https://en.wikipedia.org/wiki/QBasic" >QBasic</a> and two games, one was called <a href="https://en.wikipedia.org/wiki/Nibbles_(video_game)" >Nibbles</a>.</p>
+<p class="nMT"><br /></p>
+<p class="nText">First I changed the Player Names and took a copy to school to play against my classmates.</p>
+<p class="nText">Later we could start at any level and some versions gave certain players invinsibility.</p>
+<p class="nText">Of course we needed per player choice of input mode. Some liked 2-button others prefered the 4-button mode.</p>
+<p class="nText">Motivated by the short breaks we had to play, we tended to make the game more difficult than easier.</p>
+<p class="nText">Making new levels was hard work, but we did make some.</p>
+<p class="nMT"><br /></p>
+<p class="nText">I say 'we' though I was responsible for 99% of the coding, I valued my friends input just as much.</p>
+<p class="nMT"><br /></p>
+<p class="nText">In a moment of nostalgia, I searched for Linux-based versions of <a href="https://en.wikipedia.org/wiki/Nibbles_(video_game)" >Nibbles</a> and stumbled upon <a href="https://wiki.gnome.org/Apps/Nibbles" >GNOME Nibbles</a>.</p>
+<p class="nText">After having played a couple rounds I yearned for the options to start at any level and mainly build my own levels.</p>
+<p class="nMT"><br /></p>
+<p class="nMT"><br /></p>
+<p class="nText">So over the Holidays I began a level designer and soon started coding game logic. After having had reasonable AI, I browsed the <a href="https://github.com/GNOME/gnome-nibbles" >GNOME Nibbles project source</a> and adapted it's AI.</p>
+<p class="nText">Adding more AI players was just done because it's now easily possible on todays hard-ware.</p>
+<p class="nMT"><br /></p>
+<p class="nText">I've adapted the major aspects of the game's behavior to that of <a href="https://wiki.gnome.org/Apps/Nibbles" >GNOME Nibbles</a>. Points, speed etc. should feel similar on same hard-ware.</p>
+<p class="nMT"><br /></p>
+<p class="nText">The icons are almost all based on those in <a href="https://github.com/GNOME/gnome-nibbles" >GNOME Nibbles project</a>.</p>
+<p class="nText">Audio snipets have been copied with only 2 changes:</p>
+<p class="nText">1. I had to convert them to .wav as QSoundEffect did not play .ogg files</p>
+<p class="nText">2. The teleporter sound was too aggressive for my taste, so I made it less so.</p>
+<p class="nMT"><br /></p>
+<p class="nText">What does SwissalpS Nibblers add to <a href="https://wiki.gnome.org/Apps/Nibbles" target="blank_" >GNOME Nibbles</a>?</p>
+<ul>
+<li>Level designer</li>
+<li>More levels possible</li>
+<li>More AI-worms</li>
+<li>More health possible</li>
+<li>Start at any Level</li>
+<li>Two-button steering</li>
+<li>Mouse-button steering</li>
+<li>Setting for Game-Over only when all worms have run out of health</li>
+<li>On every level spawn-points are distributed randomly among worms</li>
+<li>Name worms before game-end</li>
+<li>High score is not defined as there are so many configurables that I resigned to making a sortable table with many columns</li>
+<li>Three modes on encounter of an unplayable level</li>
+<li>AI-worms hug walls less closely</li>
+</ul>
+	</body>
+</html>
