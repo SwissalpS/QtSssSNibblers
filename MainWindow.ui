@@ -461,7 +461,7 @@
            <string/>
           </property>
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="tabPlayerCount">
            <attribute name="title">
@@ -482,7 +482,7 @@
              </spacer>
             </item>
             <item row="1" column="0">
-             <widget class="QLabel" name="label_4">
+             <widget class="QLabel" name="label_playerCountHumans">
               <property name="text">
                <string>Human Players</string>
               </property>
@@ -1390,7 +1390,7 @@
              </widget>
             </item>
             <item row="3" column="0">
-             <widget class="QLabel" name="label_5">
+             <widget class="QLabel" name="label_playerCountAIs">
               <property name="text">
                <string>Computer Players</string>
               </property>
@@ -3064,7 +3064,7 @@
                </attribute>
                <layout class="QFormLayout" name="formLayout_6">
                 <item row="1" column="0">
-                 <widget class="QLabel" name="label_12">
+                 <widget class="QLabel" name="label_worm1colour">
                   <property name="text">
                    <string>Colour</string>
                   </property>
@@ -3115,14 +3115,14 @@
                  </widget>
                 </item>
                 <item row="2" column="0">
-                 <widget class="QLabel" name="label_39">
+                 <widget class="QLabel" name="label_worm1controls">
                   <property name="text">
                    <string>Controls</string>
                   </property>
                  </widget>
                 </item>
                 <item row="3" column="0">
-                 <widget class="QLabel" name="label_34">
+                 <widget class="QLabel" name="label_worm1action">
                   <property name="styleSheet">
                    <string notr="true">color: rgb(193, 125, 17);</string>
                   </property>
@@ -3132,7 +3132,7 @@
                  </widget>
                 </item>
                 <item row="3" column="1">
-                 <widget class="QLabel" name="label_38">
+                 <widget class="QLabel" name="label_worm1key">
                   <property name="styleSheet">
                    <string notr="true">color: rgb(193, 125, 17);</string>
                   </property>
@@ -3142,7 +3142,7 @@
                  </widget>
                 </item>
                 <item row="4" column="0">
-                 <widget class="QLabel" name="label_35">
+                 <widget class="QLabel" name="label_worm1up">
                   <property name="text">
                    <string>Up</string>
                   </property>
@@ -3152,7 +3152,7 @@
                  <widget class="QKeySequenceEdit" name="kseUp1"/>
                 </item>
                 <item row="5" column="0">
-                 <widget class="QLabel" name="label_36">
+                 <widget class="QLabel" name="label_worm1down">
                   <property name="text">
                    <string>Down</string>
                   </property>
@@ -3162,7 +3162,7 @@
                  <widget class="QKeySequenceEdit" name="kseDown1"/>
                 </item>
                 <item row="6" column="0">
-                 <widget class="QLabel" name="label_40">
+                 <widget class="QLabel" name="label_worm1left">
                   <property name="text">
                    <string>Left</string>
                   </property>
@@ -3172,7 +3172,7 @@
                  <widget class="QKeySequenceEdit" name="kseLeft1"/>
                 </item>
                 <item row="7" column="0">
-                 <widget class="QLabel" name="label_37">
+                 <widget class="QLabel" name="label_worm1right">
                   <property name="text">
                    <string>Right</string>
                   </property>
@@ -3199,7 +3199,7 @@
                  </widget>
                 </item>
                 <item row="0" column="0">
-                 <widget class="QLabel" name="label_45">
+                 <widget class="QLabel" name="label_worm1name">
                   <property name="text">
                    <string>Name</string>
                   </property>
@@ -3220,7 +3220,7 @@
                </attribute>
                <layout class="QFormLayout" name="formLayout_7">
                 <item row="1" column="0">
-                 <widget class="QLabel" name="label_11">
+                 <widget class="QLabel" name="label_worm2colour">
                   <property name="text">
                    <string>Colour</string>
                   </property>
@@ -3271,14 +3271,14 @@
                  </widget>
                 </item>
                 <item row="2" column="0">
-                 <widget class="QLabel" name="label_32">
+                 <widget class="QLabel" name="label_worm2controls">
                   <property name="text">
                    <string>Controls</string>
                   </property>
                  </widget>
                 </item>
                 <item row="3" column="0">
-                 <widget class="QLabel" name="label_27">
+                 <widget class="QLabel" name="label_worm2action">
                   <property name="styleSheet">
                    <string notr="true">color: rgb(193, 125, 17);</string>
                   </property>
@@ -3288,7 +3288,7 @@
                  </widget>
                 </item>
                 <item row="3" column="1">
-                 <widget class="QLabel" name="label_31">
+                 <widget class="QLabel" name="label_worm2key">
                   <property name="styleSheet">
                    <string notr="true">color: rgb(193, 125, 17);</string>
                   </property>
@@ -3298,7 +3298,7 @@
                  </widget>
                 </item>
                 <item row="4" column="0">
-                 <widget class="QLabel" name="label_28">
+                 <widget class="QLabel" name="label_worm2up">
                   <property name="text">
                    <string>Up</string>
                   </property>
@@ -3308,7 +3308,7 @@
                  <widget class="QKeySequenceEdit" name="kseUp2"/>
                 </item>
                 <item row="5" column="0">
-                 <widget class="QLabel" name="label_29">
+                 <widget class="QLabel" name="label_worm2down">
                   <property name="text">
                    <string>Down</string>
                   </property>
@@ -3318,7 +3318,7 @@
                  <widget class="QKeySequenceEdit" name="kseDown2"/>
                 </item>
                 <item row="6" column="0">
-                 <widget class="QLabel" name="label_33">
+                 <widget class="QLabel" name="label_worm2left">
                   <property name="text">
                    <string>Left</string>
                   </property>
@@ -3328,7 +3328,7 @@
                  <widget class="QKeySequenceEdit" name="kseLeft2"/>
                 </item>
                 <item row="7" column="0">
-                 <widget class="QLabel" name="label_30">
+                 <widget class="QLabel" name="label_worm2right">
                   <property name="text">
                    <string>Right</string>
                   </property>
@@ -3355,7 +3355,7 @@
                  </widget>
                 </item>
                 <item row="0" column="0">
-                 <widget class="QLabel" name="label_46">
+                 <widget class="QLabel" name="label_worm2name">
                   <property name="text">
                    <string>Name</string>
                   </property>
@@ -3376,7 +3376,7 @@
                </attribute>
                <layout class="QFormLayout" name="formLayout_8">
                 <item row="1" column="0">
-                 <widget class="QLabel" name="label_10">
+                 <widget class="QLabel" name="label_worm3colour">
                   <property name="text">
                    <string>Colour</string>
                   </property>
@@ -3427,14 +3427,14 @@
                  </widget>
                 </item>
                 <item row="3" column="0">
-                 <widget class="QLabel" name="label_25">
+                 <widget class="QLabel" name="label_worm3controls">
                   <property name="text">
                    <string>Controls</string>
                   </property>
                  </widget>
                 </item>
                 <item row="4" column="0">
-                 <widget class="QLabel" name="label_20">
+                 <widget class="QLabel" name="label_worm3action">
                   <property name="styleSheet">
                    <string notr="true">color: rgb(193, 125, 17);</string>
                   </property>
@@ -3444,7 +3444,7 @@
                  </widget>
                 </item>
                 <item row="4" column="1">
-                 <widget class="QLabel" name="label_24">
+                 <widget class="QLabel" name="label_worm3key">
                   <property name="styleSheet">
                    <string notr="true">color: rgb(193, 125, 17);</string>
                   </property>
@@ -3454,7 +3454,7 @@
                  </widget>
                 </item>
                 <item row="5" column="0">
-                 <widget class="QLabel" name="label_21">
+                 <widget class="QLabel" name="label_worm3up">
                   <property name="text">
                    <string>Up</string>
                   </property>
@@ -3464,7 +3464,7 @@
                  <widget class="QKeySequenceEdit" name="kseUp3"/>
                 </item>
                 <item row="7" column="0">
-                 <widget class="QLabel" name="label_22">
+                 <widget class="QLabel" name="label_worm3down">
                   <property name="text">
                    <string>Down</string>
                   </property>
@@ -3474,7 +3474,7 @@
                  <widget class="QKeySequenceEdit" name="kseDown3"/>
                 </item>
                 <item row="9" column="0">
-                 <widget class="QLabel" name="label_26">
+                 <widget class="QLabel" name="label_worm3left">
                   <property name="text">
                    <string>Left</string>
                   </property>
@@ -3484,7 +3484,7 @@
                  <widget class="QKeySequenceEdit" name="kseLeft3"/>
                 </item>
                 <item row="11" column="0">
-                 <widget class="QLabel" name="label_23">
+                 <widget class="QLabel" name="label_worm3right">
                   <property name="text">
                    <string>Right</string>
                   </property>
@@ -3511,7 +3511,7 @@
                  </widget>
                 </item>
                 <item row="0" column="0">
-                 <widget class="QLabel" name="label_47">
+                 <widget class="QLabel" name="label_worm3name">
                   <property name="text">
                    <string>Name</string>
                   </property>
@@ -3532,7 +3532,7 @@
                </attribute>
                <layout class="QFormLayout" name="formLayout_9">
                 <item row="1" column="0">
-                 <widget class="QLabel" name="label_9">
+                 <widget class="QLabel" name="label_worm4colour">
                   <property name="text">
                    <string>Colour</string>
                   </property>
@@ -3583,14 +3583,14 @@
                  </widget>
                 </item>
                 <item row="2" column="0">
-                 <widget class="QLabel" name="label_13">
+                 <widget class="QLabel" name="label_worm4controls">
                   <property name="text">
                    <string>Controls</string>
                   </property>
                  </widget>
                 </item>
                 <item row="3" column="0">
-                 <widget class="QLabel" name="label_14">
+                 <widget class="QLabel" name="label_worm4action">
                   <property name="styleSheet">
                    <string notr="true">color: rgb(193, 125, 17);</string>
                   </property>
@@ -3600,7 +3600,7 @@
                  </widget>
                 </item>
                 <item row="3" column="1">
-                 <widget class="QLabel" name="label_15">
+                 <widget class="QLabel" name="label_worm4key">
                   <property name="styleSheet">
                    <string notr="true">color: rgb(193, 125, 17);</string>
                   </property>
@@ -3610,7 +3610,7 @@
                  </widget>
                 </item>
                 <item row="4" column="0">
-                 <widget class="QLabel" name="label_16">
+                 <widget class="QLabel" name="label_worm4up">
                   <property name="text">
                    <string>Up</string>
                   </property>
@@ -3620,7 +3620,7 @@
                  <widget class="QKeySequenceEdit" name="kseUp4"/>
                 </item>
                 <item row="6" column="0">
-                 <widget class="QLabel" name="label_17">
+                 <widget class="QLabel" name="label_worm4down">
                   <property name="text">
                    <string>Down</string>
                   </property>
@@ -3630,7 +3630,7 @@
                  <widget class="QKeySequenceEdit" name="kseDown4"/>
                 </item>
                 <item row="8" column="0">
-                 <widget class="QLabel" name="label_18">
+                 <widget class="QLabel" name="label_worm4left">
                   <property name="text">
                    <string>Left</string>
                   </property>
@@ -3640,7 +3640,7 @@
                  <widget class="QKeySequenceEdit" name="kseLeft4"/>
                 </item>
                 <item row="10" column="0">
-                 <widget class="QLabel" name="label_19">
+                 <widget class="QLabel" name="label_worm4right">
                   <property name="text">
                    <string>Right</string>
                   </property>
@@ -3667,7 +3667,7 @@
                  </widget>
                 </item>
                 <item row="0" column="0">
-                 <widget class="QLabel" name="label_48">
+                 <widget class="QLabel" name="label_worm4name">
                   <property name="text">
                    <string>Name</string>
                   </property>
@@ -3688,7 +3688,7 @@
                </attribute>
                <layout class="QFormLayout" name="formLayout_10">
                 <item row="0" column="0">
-                 <widget class="QLabel" name="label_8">
+                 <widget class="QLabel" name="label_worm5colour">
                   <property name="text">
                    <string>Colour</string>
                   </property>
@@ -3746,7 +3746,7 @@
                </attribute>
                <layout class="QFormLayout" name="formLayout_5">
                 <item row="0" column="0">
-                 <widget class="QLabel" name="label_7">
+                 <widget class="QLabel" name="label_worm6colour">
                   <property name="text">
                    <string>Colour</string>
                   </property>
@@ -3804,7 +3804,7 @@
                </attribute>
                <layout class="QFormLayout" name="formLayout_4">
                 <item row="0" column="0">
-                 <widget class="QLabel" name="label_6">
+                 <widget class="QLabel" name="label_worm7colour">
                   <property name="text">
                    <string>Colour</string>
                   </property>
@@ -3906,7 +3906,7 @@
                  </widget>
                 </item>
                 <item row="0" column="0">
-                 <widget class="QLabel" name="label">
+                 <widget class="QLabel" name="label_worm8colour">
                   <property name="text">
                    <string>Colour</string>
                   </property>
@@ -3919,7 +3919,7 @@
             <item row="1" column="0">
              <layout class="QHBoxLayout" name="horizontalLayout_7">
               <item>
-               <widget class="QLabel" name="label_43">
+               <widget class="QLabel" name="label_dustTrailLeft">
                 <property name="text">
                  <string>Dust-Trail-Length: None</string>
                 </property>
@@ -3948,7 +3948,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="label_44">
+               <widget class="QLabel" name="label_dustTrailRight">
                 <property name="text">
                  <string>Long</string>
                 </property>
@@ -3977,7 +3977,7 @@
              </spacer>
             </item>
             <item row="1" column="0">
-             <widget class="QLabel" name="label_2">
+             <widget class="QLabel" name="label_gameSpeed">
               <property name="toolTip">
                <string>Can be changed during active game.</string>
               </property>
@@ -4078,7 +4078,7 @@
              </spacer>
             </item>
             <item row="12" column="0">
-             <widget class="QLabel" name="label_3">
+             <widget class="QLabel" name="label_gameStartingLevel">
               <property name="toolTip">
                <string>Classic levels 1-26</string>
               </property>
@@ -4117,7 +4117,7 @@
              </spacer>
             </item>
             <item row="15" column="0">
-             <widget class="QLabel" name="label_41">
+             <widget class="QLabel" name="label_gameStartingHealth">
               <property name="toolTip">
                <string>Default is 6</string>
               </property>
@@ -4169,7 +4169,7 @@
              </spacer>
             </item>
             <item row="11" column="0">
-             <widget class="QLabel" name="label_42">
+             <widget class="QLabel" name="label_game42">
               <property name="enabled">
                <bool>true</bool>
               </property>
@@ -4219,14 +4219,14 @@
              </layout>
             </item>
             <item row="18" column="0">
-             <widget class="QLabel" name="label_49">
+             <widget class="QLabel" name="label_game49">
               <property name="text">
                <string/>
               </property>
              </widget>
             </item>
             <item row="18" column="1">
-             <widget class="QLabel" name="label_50">
+             <widget class="QLabel" name="label_gameUnplayableLevel">
               <property name="toolTip">
                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Reasons are: 1. Current Player Count is greater than the number of Spawn Points provided in the Level Map.&lt;/p&gt;&lt;p&gt;2. File may not exist or be corrupt.&lt;/p&gt;&lt;p&gt;Has effect if changed during game-play.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
@@ -4236,7 +4236,7 @@
              </widget>
             </item>
             <item row="19" column="0">
-             <widget class="QLabel" name="label_51">
+             <widget class="QLabel" name="label_game51">
               <property name="text">
                <string/>
               </property>
@@ -4296,7 +4296,7 @@
              </spacer>
             </item>
             <item row="16" column="0">
-             <widget class="QLabel" name="label_52">
+             <widget class="QLabel" name="label_game52">
               <property name="text">
                <string/>
               </property>
