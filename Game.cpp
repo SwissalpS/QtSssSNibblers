@@ -21,7 +21,7 @@
 #include "IconEngine.h"
 #include "Randomizer.h"
 
-#include <QTime>
+#include <QElapsedTimer>
 
 
 
@@ -1072,7 +1072,7 @@ void Game::onTileChanged(const QPoint oPoint, const quint8 ubState) {
 
 void Game::onTick() {
 
-	static QTime oTime;
+	static QElapsedTimer oTime;
 	//int iElapsedLast = oTime.elapsed();
 	oTime.start();
 	int iElapsed;
