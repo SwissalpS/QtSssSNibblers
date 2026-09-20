@@ -141,7 +141,6 @@ QVector<QPoint> MapGame::freeSpotForBonus() {
 	} // if no free space to put any bonus
 
 	int iIndex;
-	int iMin = 0;
 	QPoint oPoint2;
 	QVector<QPoint> aoTriedPoints;
 	bool bOK = false;
