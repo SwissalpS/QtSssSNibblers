@@ -66,6 +66,7 @@ HEADERS += \
 	Map.h \
 	MapGame.h \
 	PersistantObject.h \
+	Randomizer.h \
 	ScoreBoard.h \
 	SurfaceBuilder.h \
 	SurfaceCell.h \

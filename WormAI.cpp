@@ -18,6 +18,7 @@
 #include "WormAI.h"
 
 #include "IconEngine.h"
+#include "Randomizer.h"
 
 #include <QTime>
 
@@ -35,9 +36,6 @@ WormAI::WormAI(QObject *pParent) :
 
 	this->pMapShaddow = new Map(SssS_Nibblers_Surface_Width,
 								SssS_Nibblers_Surface_Height, this);
-
-	// init randomizer
-	qsrand(uint(QTime::currentTime().msecsSinceStartOfDay()));
 
 } // construct
 
@@ -206,9 +204,9 @@ void WormAI::move(Worm *pWorm, const QVector<Worm *> apWorms, const MapGame *pMa
 		else {
 
 			// move randomly
-			if ((qrand() % 31) == 1) {
+			if (Randomizer::chance(30)) {
 
-				if (qrand() & 1) pWorm->onTurnLeft();
+				if (Randomizer::yeahNah()) pWorm->onTurnLeft();
 				else pWorm->onTurnRight();
 
 			} // if random turn
@@ -269,7 +267,7 @@ void WormAI::move(Worm *pWorm, const QVector<Worm *> apWorms, const MapGame *pMa
 		 */
 		if (0 >= ilLen) {
 
-			ilLen -= (qrand() % 101);
+			ilLen -= Randomizer::bounded(100);
 
 		} // if introduce noise
 
