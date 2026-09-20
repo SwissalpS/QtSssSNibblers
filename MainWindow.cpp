@@ -1012,7 +1012,7 @@ void MainWindow::on_sliderDust_valueChanged(int iValue) {
 
 	this->onDebugMessage("on_sliderDust_valueChanged " + QString::number(iValue));
 
-	if (iValue == this->pAS->get(AppSettings::sSettingGameTrailLength).toUInt())
+	if (iValue == this->pAS->get(AppSettings::sSettingGameTrailLength).toInt())
 		return;
 
 	// actually changed
