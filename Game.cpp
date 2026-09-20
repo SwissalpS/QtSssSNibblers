@@ -1073,7 +1073,7 @@ void Game::onTileChanged(const QPoint oPoint, const quint8 ubState) {
 void Game::onTick() {
 
 	static QTime oTime;
-	int iElapsedLast = oTime.elapsed();
+	//int iElapsedLast = oTime.elapsed();
 	oTime.start();
 	int iElapsed;
 	static int iLongest = 0;
