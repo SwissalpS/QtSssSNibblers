@@ -21,7 +21,7 @@
 #define SssS_Nibblers_App_Domain_QString QStringLiteral("ws.swissalps.qtssssnibblers")
 #define SssS_Nibblers_App_Name_QString QStringLiteral("QtSssSNibblers")
 #define SssS_Nibblers_App_Org_QString QStringLiteral("SwissalpS")
-#define SssS_Nibblers_App_Version_QString QStringLiteral("0_1")
+#define SssS_Nibblers_App_Version_QString QStringLiteral("515_2")
 
 #define SssS_Nibblers_Bonus_Apple_Lifetime quint16(300u)
 #define SssS_Nibblers_Bonus_Apple_Grow float(1.0f)
