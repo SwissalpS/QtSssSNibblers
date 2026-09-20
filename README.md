@@ -2,6 +2,8 @@
 Qt SwissalpS Nibblers is a worm game inspired by NIBBLES.BAS
 [https://github.com/tangentstorm/tangentlabs/blob/master/qbasic/NIBBLES.BAS]
 and GNOME-Nibbles [https://github.com/GNOME/gnome-nibbles]
+([https://github.com/GNOME/gnome-nibbles/tree/ea9a183b2a0f3e9b2339c6f21b802b377c5bdefb/src])
+
 The AI is almost identical to that used in GNOME-Nibbles.
 The sounds and icons are based on those from the GNOME-Nibbles project.
 

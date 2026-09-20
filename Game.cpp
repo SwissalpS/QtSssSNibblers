@@ -19,6 +19,7 @@
 
 #include "Fx.h"
 #include "IconEngine.h"
+#include "Randomizer.h"
 
 #include <QTime>
 
@@ -59,9 +60,6 @@ Game::Game(QObject *pParent) :
 	// init 'AI'
 	this->pWormAI = new WormAI(this);
 
-	// init randomizer
-	qsrand(uint(QTime::currentTime().msecsSinceStartOfDay()));
-
 } // construct
 
 
@@ -101,13 +99,15 @@ void Game::addBonus(const bool bApple) {
 
 		if (this->ubCountBonusMissed >= SssS_Nibblers_Bonus_Max_Missed) return;
 
-		if ((qrand() % 51) != 0) return;
+		if (!this->bUseFakes) return;
 
-		bool bMakeFake = ((qrand() % 8) != 0);
+		if (!Randomizer::chance(50)) return;
 
-		if (bMakeFake && !this->bUseFakes) return;
+		if (Randomizer::chance(7)) return;
 
-		switch (qrand() % 22) {
+		bool bMakeFake = false;
+
+		switch (Randomizer::bounded(21)) {
 
 			case 0: case 1: case 2: case 3: case 4:
 			case 5: case 6: case 7: case 8: case 9:
@@ -134,7 +134,7 @@ void Game::addBonus(const bool bApple) {
 		// regular apple
 
 		// also add a fake?
-		if (this->bUseFakes	&& ((qrand() % 8) == 0)) {
+		if (this->bUseFakes	&& Randomizer::chance(7)) {
 
 			this->placeBonus(L::BonusApple, true);
 

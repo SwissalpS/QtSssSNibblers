@@ -19,6 +19,7 @@
 
 #include "definitions.h"
 #include "IconEngine.h"
+#include "Randomizer.h"
 
 #include <QFileInfo>
 
@@ -146,7 +147,7 @@ QVector<QPoint> MapGame::freeSpotForBonus() {
 	bool bOK = false;
 	while (!bOK) {
 
-		iIndex = iMin + (qrand() % (iMaxPlusOne - iMin));
+		iIndex = Randomizer::bounded(iMaxPlusOne);
 		oPoint = aoFreePoints.at(iIndex);
 
 		if (aoTriedPoints.contains(oPoint)) continue;
@@ -267,7 +268,7 @@ void MapGame::randomizeSpawnOrder() {
 	QVector<QPoint> aNew;
 	while(this->aPointsSpawn.length()) {
 
-		iPos = qrand() % this->aPointsSpawn.length();
+		iPos = Randomizer::bounded(this->aPointsSpawn.length());
 		aNew.append(this->aPointsSpawn.takeAt(iPos));
 
 	} // loop all out
