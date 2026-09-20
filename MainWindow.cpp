@@ -1250,6 +1250,8 @@ void MainWindow::onUpdateHistory() {
 	int iHighestIndex = iTotal - 1;
 	for (int i = iTotal - 1; i > iTotal - 5; --i) {
 
+		if (0 > i || i >= iTotal) break;
+
 		pHI = apHIs.at(i);
 		if (pHI->timeStamp() == illMostRecent) {
 
