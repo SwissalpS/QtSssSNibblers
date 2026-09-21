@@ -205,6 +205,9 @@ void MainWindow::initGame() {
 	connect(pGame, SIGNAL(loadLevel(MapGame*,quint8)),
 			pSurface, SLOT(onLoadLevel(MapGame*,quint8)));
 
+	connect(pGame, SIGNAL(maxApplesChanged(quint8)),
+			pSurface, SLOT(onMaxApplesChanged(quint8)));
+
 	connect(pGame, SIGNAL(spawnWorm(Worm*)),
 			pSurface, SLOT(onSpawnWorm(Worm*)));
 

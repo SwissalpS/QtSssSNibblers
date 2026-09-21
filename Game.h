@@ -101,6 +101,7 @@ signals:
 	void doLevelLoadError() const;
 	void doLevelStartCountdown() const;
 	void debugMessage(const QString &sMessage) const;
+	void maxApplesChanged(const quint8 ubApples);
 	void move() const;
 	void newHistoryItem(HistoryItem *pHI) const;
 	void loadLevel(MapGame *pMap, const quint8 ubLevel);

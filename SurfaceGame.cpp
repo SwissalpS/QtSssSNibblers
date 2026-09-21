@@ -695,6 +695,8 @@ void SurfaceGame::onLoadLevel(MapGame *pMap, const quint8 ubLevel) {
 
 	this->pUi->labelLevel->setText(tr("Level") + " " + QString::number(ubLevel));
 
+	this->pUi->progressBar->setValue(0);
+
 	this->clearSurface();
 
 	quint8 ubColumns = 0u;
@@ -730,6 +732,13 @@ void SurfaceGame::onMainTabChanged(const int iIndex) {
 	//this->pauseIfRunning();
 
 } // onMainTabChanged
+
+
+void SurfaceGame::onMaxApplesChanged(const quint8 ubApples) {
+
+	this->pUi->progressBar->setMaximum(ubApples);
+
+} // onMaxApplesChanged
 
 
 void SurfaceGame::onMouseLeft() {
@@ -813,6 +822,8 @@ void SurfaceGame::onWormAteBonus(Worm *pWorm) {
 
 	// this should be dealt with by Worm automatically
 	//pWorm->setNextBloatHeading(L::oppositeHeading(pWorm->currentDirection()));
+
+	this->pUi->progressBar->setValue(this->pUi->progressBar->value() + 1);
 
 } // onWormAteBonus
 

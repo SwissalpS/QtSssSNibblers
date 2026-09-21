@@ -148,6 +148,7 @@ public slots:
 	virtual void onDoLevelStartCountdown();
 	virtual void onLoadLevel(MapGame *pMap, const quint8 ubLevel);
 	virtual void onMainTabChanged(const int iIndex);
+	virtual void onMaxApplesChanged(const quint8 ubApples);
 	virtual void onMouseLeft();
 	virtual void onMouseRight();
 	virtual void onPlayerKeyChanged(const quint8 ubWorm,

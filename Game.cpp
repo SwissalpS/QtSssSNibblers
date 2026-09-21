@@ -961,6 +961,8 @@ void Game::onResetSoft() {
 	this->ubCountBonusMissed = 0;
 	this->ubCountNeedApple = SssS_Nibblers_Bonus_Delay_Ticks;
 
+	Q_EMIT this->maxApplesChanged(this->ubCountApplesLeft);
+
 	Worm *pWorm;
 	for (int iCount = 0; iCount < this->apWorms.length(); ++iCount) {
 
