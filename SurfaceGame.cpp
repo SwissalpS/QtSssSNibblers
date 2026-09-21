@@ -933,6 +933,9 @@ void SurfaceGame::resizeDelayDone() {
 
 void SurfaceGame::resizeEvent(QResizeEvent *pEvent) {
 
+	if (this->pStartCountDownFrame)
+		this->pStartCountDownFrame->setGeometry(this->pUi->frameSurface->geometry());
+
 	QFrame::resizeEvent(pEvent);
 
 	// throttle that we don't end up hanging
@@ -991,9 +994,7 @@ void SurfaceGame::showStartCountDownFrame(const QString sMessage,
 	FrameStartCountdown *pFrame = this->pStartCountDownFrame;
 	if (nullptr == pFrame) {
 
-		pFrame = new FrameStartCountdown();
-		pFrame->setWindowFlags(Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint);
-
+		pFrame = new FrameStartCountdown(this);
 		this->pStartCountDownFrame = pFrame;
 
 		connect(pFrame, SIGNAL(debugMessage(QString)),
@@ -1024,11 +1025,8 @@ void SurfaceGame::updateFrameStartCountdown() {
 	if (nullptr == pFrame) return;
 	if (pFrame->isHidden()) return;
 
-	QRect oRect = this->pUi->frameSurface->geometry();
-	pFrame->setGeometry(oRect);
-	pFrame->move(mapToGlobal(QPoint(oRect.left(), oRect.top())));
+	pFrame->setGeometry(this->pUi->frameSurface->geometry());
 	pFrame->show();
-	pFrame->raise();
 	pFrame->update();
 
 } // updateFrameStartCountdown

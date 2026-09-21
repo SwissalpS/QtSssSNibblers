@@ -102,4 +102,5 @@
 		<file>Sounds/reverse.wav</file>
 		<file>Sounds/teleport.wav</file>
 	</qresource>
+        <file>Images/semitransp.png</file>
 </RCC>

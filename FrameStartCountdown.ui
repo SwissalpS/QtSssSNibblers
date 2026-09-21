@@ -19,6 +19,9 @@
   <property name="windowOpacity">
    <double>0.300000000000000</double>
   </property>
+  <property name="styleSheet">
+   <string notr="true">background-image: url(:/Images/semitransp.png);</string>
+  </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="1">
     <widget class="QLabel" name="labelNumber">
