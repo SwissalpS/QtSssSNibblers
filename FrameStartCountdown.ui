@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="contextMenuPolicy">
-   <enum>Qt::NoContextMenu</enum>
+   <enum>Qt::ContextMenuPolicy::NoContextMenu</enum>
   </property>
   <property name="windowTitle">
    <string>Frame</string>
@@ -35,12 +35,11 @@
       <font>
        <family>Noto Sans</family>
        <pointsize>44</pointsize>
-       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
      <property name="contextMenuPolicy">
-      <enum>Qt::NoContextMenu</enum>
+      <enum>Qt::ContextMenuPolicy::NoContextMenu</enum>
      </property>
      <property name="styleSheet">
       <string notr="true"/>
@@ -55,13 +54,13 @@
       <bool>true</bool>
      </property>
      <property name="alignment">
-      <set>Qt::AlignCenter</set>
+      <set>Qt::AlignmentFlag::AlignCenter</set>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
      </property>
      <property name="textInteractionFlags">
-      <set>Qt::TextSelectableByMouse</set>
+      <set>Qt::TextInteractionFlag::TextSelectableByMouse</set>
      </property>
     </widget>
    </item>
