@@ -47,11 +47,11 @@ private:
 	Ui::FrameStartCountdown *pUi;
 
 private slots:
-	void on_button_clicked();
 
 protected:
 	virtual void changeEvent(QEvent *pEvent) override;
 	virtual void keyPressEvent(QKeyEvent *pEvent) override;
+	virtual void mousePressEvent(QMouseEvent *pEvent) override;
 
 
 public:

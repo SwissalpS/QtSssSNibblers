@@ -107,7 +107,7 @@ protected slots:
 	virtual void dialogLoadFinished(const int iResult);
 	virtual void initKeys();
 	virtual void initCells();
-	inline virtual void onSCDFdone() { this->on_buttonPP_toggled(true); }
+	virtual void onSCDFdone();
 	virtual void resizeDelayDone();
 
 public:

@@ -62,8 +62,6 @@ void FrameStartCountdown::changeEvent(QEvent *pEvent) {
 
 void FrameStartCountdown::keyPressEvent(QKeyEvent *pEvent) {
 
-	if (!this->pUi->button->isVisible()) return;
-
 	QKeySequence oKSin(pEvent->key());
 
 	static QKeySequence oKeyReturn(16777220);
@@ -71,39 +69,35 @@ void FrameStartCountdown::keyPressEvent(QKeyEvent *pEvent) {
 	static QKeySequence oKeySpace(32);
 
 	if ((oKSin == oKeyEnter)
+			|| (oKSin == QKeySequence::Cancel) // Qt::Key_Escape
 			|| (oKSin == oKeyReturn)
-			|| (oKSin == oKeySpace)) this->on_button_clicked();
+			|| (oKSin == oKeySpace)) {
 
-	else QFrame::keyPressEvent(pEvent);
+		pEvent->accept();
+		Q_EMIT this->done();
+
+	} else QFrame::keyPressEvent(pEvent);
 
 } // keyPressEvent
 
 
-void FrameStartCountdown::on_button_clicked() {
+void FrameStartCountdown::mousePressEvent(QMouseEvent *pEvent) {
 
+	pEvent->accept();
 	Q_EMIT this->done();
 
-} // on_button_clicked
+} // mousePressEvent
 
 
 void FrameStartCountdown::onSetText(const QString sText, const QString sTextButton) {
 
-	this->pUi->labelNumber->setText(sText);
-
-	QPushButton *pButton = this->pUi->button;
 	if (sTextButton.length()) {
-
-		pButton->setText(sTextButton);
-		pButton->setVisible(true);
-		pButton->setEnabled(true);
-		pButton->setFocus();
-
+		this->pUi->labelNumber->setText(sText + "\n\n" + sTextButton);
 	} else {
-
-		pButton->setVisible(false);
-		pButton->setEnabled(false);
-
+		this->pUi->labelNumber->setText(sText);
 	} // if got button text
+
+	this->setFocus();
 
 } // onSetText
 

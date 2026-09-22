@@ -391,6 +391,13 @@ void SurfaceGame::initCells() {
 } // initCells
 
 
+void SurfaceGame::onSCDFdone() {
+
+	this->pUi->buttonPP->animateClick();
+
+} // onSCDFdone
+
+
 void SurfaceGame::initKeys() {
 
 	//this->onDebugMessage("initKeys");
@@ -516,11 +523,11 @@ void SurfaceGame::onBonusPlaced(const QVector<QPoint> aoPoints,
 
 void SurfaceGame::on_buttonPP_toggled(bool bStartPlaying) {
 
-	this->pUi->buttonPP->setText(bStartPlaying ? tr("Pause") : tr("Play"));
+	//this->onDebugMessage("bPP startPlaying? " + QString::number(bStartPlaying) + " protected? " + QString::number(this->bProtectPP));
 
 	if (this->bProtectPP) return;
 
-	//this->onDebugMessage("bPP startPlaying? " + QString::number(bStartPlaying) + " protected? " + QString::number(this->bProtectPP));
+	this->pUi->buttonPP->setText(bStartPlaying ? tr("Pause") : tr("Play"));
 
 	if (bStartPlaying) {
 
@@ -545,7 +552,7 @@ void SurfaceGame::on_buttonPP_toggled(bool bStartPlaying) {
 		this->onDebugMessage("pausing");
 
 		// going into paused state
-		this->showStartCountDownFrame(tr("Paused"));
+		this->showStartCountDownFrame(tr("Paused"), tr("Click To Resume"));
 
 	} // starting/resuming or pausing
 
@@ -608,9 +615,9 @@ void SurfaceGame::onDoGameOver(const QString &sRanking) {
 
 	// show game over dialog
 	QString sMessage = tr("Game Done. Start a new one by clicking the 'Load New Game' button in the upper left.");
-	this->showStartCountDownFrame(sRanking);
 
 	Q_EMIT this->statusMessage(sMessage);
+	this->showStartCountDownFrame(sRanking); //, sMessage);
 
 } // onDoGameOver
 
@@ -621,7 +628,7 @@ void SurfaceGame::onDoLevelDone() {
 
 	this->bLevelDone = true;
 
-	QString sButton = tr("Start Next Level");
+	QString sButton = tr("Click To Start Next Level");
 	QString sMessage = tr("Level Done");
 	QPushButton *pButton = this->pUi->buttonPP;
 	// button is probably showing "Pause"
@@ -720,6 +727,8 @@ void SurfaceGame::onLoadLevel(MapGame *pMap, const quint8 ubLevel) {
 	this->update();
 
 	this->bLevelLoading = false;
+
+	this->showStartCountDownFrame(tr("Level Loaded"), tr("Click To Start"));
 
 	Q_EMIT this->levelIsLoaded();
 
