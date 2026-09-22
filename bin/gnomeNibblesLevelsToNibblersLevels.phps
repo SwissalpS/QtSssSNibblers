@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
 /* * * *
- * * gnomeNibblesLevelsToNibbersLevels.phps
+ * * gnomeNibblesLevelsToNibblersLevels.phps
  * *
  * * adjust $sIn, $sOut and run at own risk.
  * *
@@ -39,17 +39,17 @@ while (false !== ($sFile = readDir($hD))) {
 		//echo 'Dir found: ' . $sPF . NL;
 		continue;
 	} // if is dir
-	
+
 	if ('level' != substr($sFile, 0, 5)) continue;
-	
+
 	$sNum = substr($sFile, 6, 2);
 	if ('0' == $sNum{0}) $sNum = substr($sNum, 1);
 	$sPFout = $sOut . 'Level_' . $sNum;
-	
+
 	echo $sPF . NL;
 	echo $sPFout . NL;
 	doLevel($sPF, $sPFout);
-	
+
 } // loop all level files
 
 exit(0);
@@ -59,41 +59,41 @@ function doLevel($sPFin, $sPFout) {
 
 	$sOut = '';
 	$aIn = @file($sPFin);
-	
+
 	if (false === $aIn) {
-	
+
 		echo 'KO:Can not open file: ' . $sPFin . NL;
 		exit(2);
-		
+
 	} // if failed to read file
 
 	foreach($aIn as $sLine) {
 
 		$sLine = trim($sLine);
-	
+
 		if (empty($sLine)) continue;
-		
+
 		for($i = 0; $i < strlen($sLine); $i++) {
-			
+
 			$sChar = $sLine{$i};
-			
+
 			$sOut .= translateChar($sChar);
-			
+
 		} // loop each char
 
 	} // loop each line
-	
+
 	//echo $sOut . NL;
 
 	file_put_contents($sPFout, $sOut);
-	
+
 } // doLevel
 
 
 function translateChar($sChar) {
 
 	switch (ord($sChar)) {
-	
+
 		// R teleporter entrance
 		case 82: return chr(220);
 		// S teleporter entrance
@@ -106,10 +106,10 @@ function translateChar($sChar) {
 		case 86: return chr(228);
 		// W teleporter entrance
 		case 87: return chr(230);
-		
+
 		// a empty space
 		case 97: return chr(0);
-		
+
 		// b wall vertical
 		case 98: return chr(200);
 		// c wall horizontal
@@ -132,7 +132,7 @@ function translateChar($sChar) {
 		case 107: return chr(209);
 		// l wall cross
 		case 108: return chr(210);
-		
+
 		// m spawn point headed north
 		case 109: return chr(90);
 		// n spawn point headed west
@@ -141,7 +141,7 @@ function translateChar($sChar) {
 		case 111: return chr(92);
 		// p spawn point headed east
 		case 112: return chr(93);
-		
+
 		// r teleporter exit
 		case 114: return chr(221);
 		// s teleporter exit
@@ -154,14 +154,14 @@ function translateChar($sChar) {
 		case 118: return chr(229);
 		// w teleporter exit
 		case 119: return chr(231);
-		
+
 		default:
 			echo 'Found unknown char "' . $sChar . '" ' . ord($sChar) . NL;
 			exit(3);
 		break;
-	
+
 	} // switch
-	
+
 	return $sChar;
 
 } // translateChar

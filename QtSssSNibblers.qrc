@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/">
-        <file>bin/gnomeNibblesLevelsToNibbersLevels.phps</file>
+        <file>bin/gnomeNibblesLevelsToNibblersLevels.phps</file>
         <file>html/About/About.html</file>
         <file>html/Help/Help.html</file>
         <file>Images/arrow.png</file>
