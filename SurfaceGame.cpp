@@ -222,6 +222,8 @@ void SurfaceGame::countdownTick() {
 	this->pUi->buttonPP->setText(tr("Pause"));
 	this->bProtectPP = false;
 
+	this->setFocus();
+
 	Q_EMIT this->statusMessage(tr("Go, Go, Goooooh!"));
 
 	//this->onDebugMessage("countdown over!! onPRT--->)))");
@@ -443,6 +445,14 @@ void SurfaceGame::keyPressEvent(QKeyEvent *pEvent) {
 
 	QKeySequence oKSin(pEvent->key());
 
+	if (oKSin == QKeySequence::Cancel) {
+
+		pEvent->accept();
+		this->pUi->buttonPP->animateClick();
+		return;
+
+	} // if escape-key
+
 	quint8 ubWorm;
 	Worm *pWorm;
 	QHash<QKeySequence, L::Heading> hKeys;
@@ -465,6 +475,7 @@ void SurfaceGame::keyPressEvent(QKeyEvent *pEvent) {
 	} // loop each set of keys
 
 	if (bNoMatchFound) QFrame::keyPressEvent(pEvent);
+	else pEvent->accept();
 
 } // keyPressEvent
 
@@ -473,10 +484,12 @@ void SurfaceGame::mousePressEvent(QMouseEvent *pEvent) {
 
 	if (Qt::LeftButton == pEvent->button()) {
 
+		pEvent->accept();
 		this->onMouseLeft();
 
 	} else if (Qt::RightButton == pEvent->button()) {
 
+		pEvent->accept();
 		this->onMouseRight();
 
 	} // if left or right button

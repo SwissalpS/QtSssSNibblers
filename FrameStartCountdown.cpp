@@ -18,8 +18,6 @@
 #include "FrameStartCountdown.h"
 #include "ui_FrameStartCountdown.h"
 
-#include <QPushButton>
-
 
 
 namespace SwissalpS { namespace QtNibblers {
