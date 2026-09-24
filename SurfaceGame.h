@@ -24,7 +24,7 @@
 
 #include "AppSettings.h"
 #include "DialogLoad.h"
-#include "FrameStartCountdown.h"
+#include "SurfaceOverlay.h"
 #include "Map.h"
 #include "MapGame.h"
 #include "ScoreBoard.h"
@@ -71,7 +71,7 @@ protected:
 	QVector<QHash<QKeySequence, L::Heading>> ahKeys;
 	AppSettings *pAS;
 	DialogLoad *pDialogLoad;
-	FrameStartCountdown *pStartCountDownFrame;
+	SurfaceOverlay *pStartCountDownFrame;
 	qint8 ibWormMouse;
 	quint8 ubCurrentLevel;
 	mutable int iLastHeight;
@@ -100,7 +100,7 @@ protected:
 							  const quint8 ubState, const bool bUpdate = true);
 
 	virtual void showStartCountDownFrame(const QString sMessage, const QString sButton = QString());
-	virtual void updateFrameStartCountdown();
+	virtual void updateSurfaceOverlay();
 
 protected slots:
 	virtual void countdownTick();

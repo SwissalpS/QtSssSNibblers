@@ -30,7 +30,6 @@ SOURCES += \
 	Bonus.cpp \
 	DialogLoad.cpp \
 	DialogSave.cpp \
-	FrameStartCountdown.cpp \
 	Fx.cpp \
 	Game.cpp \
 	IconEngine.cpp \
@@ -46,6 +45,7 @@ SOURCES += \
 	SurfaceCell.cpp \
 	SurfaceFrame.cpp \
 	SurfaceGame.cpp \
+	SurfaceOverlay.cpp \
 	Worm.cpp \
 	WormAI.cpp
 
@@ -55,7 +55,6 @@ HEADERS += \
 	definitions.h \
 	DialogLoad.h \
 	DialogSave.h \
-	FrameStartCountdown.h \
 	Fx.h \
 	Game.h \
 	History.h \
@@ -72,17 +71,18 @@ HEADERS += \
 	SurfaceCell.h \
 	SurfaceFrame.h \
 	SurfaceGame.h \
+	SurfaceOverlay.h \
 	Worm.h \
 	WormAI.h
 
 FORMS += \
 	DialogLoad.ui \
 	DialogSave.ui \
-	FrameStartCountdown.ui \
 	MainWindow.ui \
 	ScoreBoard.ui \
 	SurfaceBuilder.ui \
 	SurfaceCell.ui \
-	SurfaceGame.ui
+	SurfaceGame.ui \
+	SurfaceOverlay.ui
 
 RESOURCES += QtSssSNibblers.qrc

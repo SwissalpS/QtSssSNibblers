@@ -15,8 +15,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "FrameStartCountdown.h"
-#include "ui_FrameStartCountdown.h"
+#include "SurfaceOverlay.h"
+#include "ui_SurfaceOverlay.h"
 
 
 
@@ -24,23 +24,23 @@ namespace SwissalpS { namespace QtNibblers {
 
 
 
-FrameStartCountdown::FrameStartCountdown(QWidget *pParent) :
+SurfaceOverlay::SurfaceOverlay(QWidget *pParent) :
 	QFrame(pParent),
-	pUi(new Ui::FrameStartCountdown) {
+	pUi(new Ui::SurfaceOverlay) {
 
 	this->pUi->setupUi(this);
 
 } // construct
 
 
-FrameStartCountdown::~FrameStartCountdown() {
+SurfaceOverlay::~SurfaceOverlay() {
 
 	delete this->pUi;
 
 } // dealloc
 
 
-void FrameStartCountdown::changeEvent(QEvent *pEvent) {
+void SurfaceOverlay::changeEvent(QEvent *pEvent) {
 
 	QFrame::changeEvent(pEvent);
 
@@ -58,7 +58,7 @@ void FrameStartCountdown::changeEvent(QEvent *pEvent) {
 } // changeEvent
 
 
-void FrameStartCountdown::keyPressEvent(QKeyEvent *pEvent) {
+void SurfaceOverlay::keyPressEvent(QKeyEvent *pEvent) {
 
 	QKeySequence oKSin(pEvent->key());
 
@@ -79,7 +79,7 @@ void FrameStartCountdown::keyPressEvent(QKeyEvent *pEvent) {
 } // keyPressEvent
 
 
-void FrameStartCountdown::mousePressEvent(QMouseEvent *pEvent) {
+void SurfaceOverlay::mousePressEvent(QMouseEvent *pEvent) {
 
 	pEvent->accept();
 	Q_EMIT this->done();
@@ -87,7 +87,7 @@ void FrameStartCountdown::mousePressEvent(QMouseEvent *pEvent) {
 } // mousePressEvent
 
 
-void FrameStartCountdown::onSetText(const QString sText, const QString sTextButton) {
+void SurfaceOverlay::onSetText(const QString sText, const QString sTextButton) {
 
 	if (sTextButton.length()) {
 		this->pUi->labelNumber->setText(sText + "\n\n" + sTextButton);

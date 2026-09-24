@@ -283,7 +283,7 @@ void SurfaceGame::focusInEvent(QFocusEvent *pEvent) {
 	if (nullptr != this->pStartCountDownFrame
 			&& this->pStartCountDownFrame->isVisible()) {
 
-		this->updateFrameStartCountdown();
+		this->updateSurfaceOverlay();
 
 	}
 
@@ -1032,10 +1032,10 @@ void SurfaceGame::showStartCountDownFrame(const QString sMessage,
 
 	//this->onDebugMessage("showStartCountDownFrame");
 
-	FrameStartCountdown *pFrame = this->pStartCountDownFrame;
+	SurfaceOverlay *pFrame = this->pStartCountDownFrame;
 	if (nullptr == pFrame) {
 
-		pFrame = new FrameStartCountdown(this);
+		pFrame = new SurfaceOverlay(this);
 		this->pStartCountDownFrame = pFrame;
 
 		connect(pFrame, SIGNAL(debugMessage(QString)),
@@ -1048,7 +1048,7 @@ void SurfaceGame::showStartCountDownFrame(const QString sMessage,
 
 	pFrame->onSetText(sMessage, sButton);
 	pFrame->show();
-	this->updateFrameStartCountdown();
+	this->updateSurfaceOverlay();
 
 } // showStartCountDownFrame
 
@@ -1060,9 +1060,9 @@ QSize SurfaceGame::sizeHint() const {
 } // sizeHint
 
 
-void SurfaceGame::updateFrameStartCountdown() {
+void SurfaceGame::updateSurfaceOverlay() {
 
-	FrameStartCountdown *pFrame = this->pStartCountDownFrame;
+	SurfaceOverlay *pFrame = this->pStartCountDownFrame;
 	if (nullptr == pFrame) return;
 	if (pFrame->isHidden()) return;
 
@@ -1070,7 +1070,7 @@ void SurfaceGame::updateFrameStartCountdown() {
 	pFrame->show();
 	pFrame->update();
 
-} // updateFrameStartCountdown
+} // updateSurfaceOverlay
 
 
 

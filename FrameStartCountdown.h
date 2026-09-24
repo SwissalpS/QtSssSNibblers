@@ -15,8 +15,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef FRAMESTARTCOUNTDOWN_H
-#define FRAMESTARTCOUNTDOWN_H
+#ifndef SURFACEOVERLAY_H
+#define SURFACEOVERLAY_H
 
 #include <QFrame>
 #include <QKeyEvent>
@@ -27,7 +27,7 @@ namespace Ui {
 
 
 
-class FrameStartCountdown;
+class SurfaceOverlay;
 
 
 
@@ -39,12 +39,12 @@ namespace SwissalpS { namespace QtNibblers {
 
 
 
-class FrameStartCountdown : public QFrame {
+class SurfaceOverlay : public QFrame {
 
 	Q_OBJECT
 
 private:
-	Ui::FrameStartCountdown *pUi;
+	Ui::SurfaceOverlay *pUi;
 
 private slots:
 
@@ -55,8 +55,8 @@ protected:
 
 
 public:
-	explicit FrameStartCountdown(QWidget *pParent = nullptr);
-	~FrameStartCountdown() override;
+	explicit SurfaceOverlay(QWidget *pParent = nullptr);
+	~SurfaceOverlay() override;
 
 signals:
 	void debugMessage(const QString &sMessage) const;
@@ -69,10 +69,10 @@ public slots:
 	virtual void onSetText(const QString sText,
 						   const QString sTextButton = QString());
 
-}; // FrameStartCountdown
+}; // SurfaceOverlay
 
 
 
 }	} // namespace SwissalpS::QtNibblers
 
-#endif // FRAMESTARTCOUNTDOWN_H
+#endif // SURFACEOVERLAY_H
