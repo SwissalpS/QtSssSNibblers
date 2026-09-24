@@ -969,13 +969,13 @@ void SurfaceGame::resizeDelayDone() {
 
 	} // loop
 
+	if (this->pStartCountDownFrame)
+		this->pStartCountDownFrame->setGeometry(this->pUi->frameSurface->geometry());
+
 } // resizeDelayDone
 
 
 void SurfaceGame::resizeEvent(QResizeEvent *pEvent) {
-
-	if (this->pStartCountDownFrame)
-		this->pStartCountDownFrame->setGeometry(this->pUi->frameSurface->geometry());
 
 	QFrame::resizeEvent(pEvent);
 
