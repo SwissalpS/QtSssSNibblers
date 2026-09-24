@@ -21,7 +21,6 @@
 #include "Game.h"
 #include "IconEngine.h"
 #include "SurfaceBuilder.h"
-#include "SurfaceGame.h"
 
 #include <iostream>
 #include <QDateTime>
@@ -149,6 +148,9 @@ void MainWindow::initGame() {
 
 	connect(pSurface, SIGNAL(statusMessage(QString)),
 			this, SLOT(onStatusMessage(QString)));
+
+	connect(pSurface, SIGNAL(toggleFullScreen(QFrame*)),
+			this, SLOT(onToggleFullScreen(QFrame*)));
 
 
 	connect(pSurface, SIGNAL(debugMessage(QString)),
@@ -1139,6 +1141,26 @@ void MainWindow::on_tabWidgetMain_currentChanged(int iIndex) {
 	this->onStatusMessage(sMessage);
 
 } // on_tabWidgetMain_currentChanged
+
+
+void MainWindow::onToggleFullScreen(QFrame *pSurface) {
+
+	//this->onDebugMessage("toggleFS");
+
+	if (pSurface->isFullScreen()) {
+
+		this->setVisible(true);
+		this->pUi->tabPlay->layout()->addWidget(pSurface);
+
+	} else {
+
+		pSurface->setParent(0);
+		pSurface->showFullScreen();
+		this->setVisible(false);
+
+	}
+
+} // onToggleFullScreen
 
 
 void MainWindow::onUpdateHistory() {

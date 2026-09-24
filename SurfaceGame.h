@@ -126,6 +126,7 @@ signals:
 	void startNewGame(const quint8 ubLevel) const;
 	void statusMessage(const QString &sMessage) const;
 	void tileChanged(const QPoint oPoint, const quint8 ubState) const;
+	void toggleFullScreen(QFrame *pSurface) const;
 	void trailChanged(const int iValue) const;
 	void turnWorm(const quint8 ubWorm, const L::Heading eDirection) const;
 

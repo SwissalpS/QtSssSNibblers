@@ -445,10 +445,18 @@ void SurfaceGame::keyPressEvent(QKeyEvent *pEvent) {
 
 	QKeySequence oKSin(pEvent->key());
 
+	static QKeySequence oKeyF11(Qt::Key_F11);
+
 	if (oKSin == QKeySequence::Cancel) {
 
 		pEvent->accept();
 		this->pUi->buttonPP->animateClick();
+		return;
+
+	} else if (oKSin == oKeyF11) {
+
+		pEvent->accept();
+		Q_EMIT this->toggleFullScreen(this);
 		return;
 
 	} // if escape-key
@@ -943,7 +951,7 @@ void SurfaceGame::resizeDelayDone() {
 	} // if need to break a moment to avoid a jittering and a hanging
 
 	int iSBwidth = 200;
-	int iDiff = this->window()->width() - this->width();
+	int iDiff = this->window()->width() - this->pUi->frameSurface->width();
 
 	for (int i = 0; i < this->apScoreBoards.length(); ++i) {
 

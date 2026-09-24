@@ -22,6 +22,7 @@
 #include "AppSettings.h"
 #include "History.h"
 #include "Lingo.h"
+#include "SurfaceGame.h"
 
 
 
@@ -181,6 +182,7 @@ signals:
 public slots:
 	void onDebugMessage(const QString &sMessage) const;
 	void onStatusMessage(const QString &sMessage) const;
+	void onToggleFullScreen(QFrame *pSurface);
 	virtual void onUpdateHistory();
 
 	void run();
