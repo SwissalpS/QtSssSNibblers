@@ -41,7 +41,7 @@ SurfaceGame::SurfaceGame(QWidget *pParent) :
 	bProtectPP(false),
 	pAS(AppSettings::pAppSettings()),
 	pDialogLoad(nullptr),
-	pStartCountDownFrame(nullptr),
+	pSurfaceOverlay(nullptr),
 	ibWormMouse(-1),
 	ubCurrentLevel(0xFFu) {
 
@@ -200,7 +200,7 @@ void SurfaceGame::countdownTick() {
 
 		QString sMessage = QString::number(iTick);
 
-		this->showStartCountDownFrame(sMessage);
+		this->showSurfaceOverlay(sMessage);
 
 		this->pUi->buttonPP->setText(sMessage);
 
@@ -212,7 +212,7 @@ void SurfaceGame::countdownTick() {
 
 	} // if still got ticks to go
 
-	this->pStartCountDownFrame->hide();
+	this->pSurfaceOverlay->hide();
 
 	this->bProtectPP = true;
 	this->pUi->buttonPP->setChecked(true);
@@ -280,8 +280,8 @@ void SurfaceGame::focusInEvent(QFocusEvent *pEvent) {
 
 	//this->onDebugMessage("focusInEvent");
 
-	if (nullptr != this->pStartCountDownFrame
-			&& this->pStartCountDownFrame->isVisible()) {
+	if (nullptr != this->pSurfaceOverlay
+			&& this->pSurfaceOverlay->isVisible()) {
 
 		this->updateSurfaceOverlay();
 
@@ -298,7 +298,8 @@ void SurfaceGame::focusOutEvent(QFocusEvent *pEvent) {
 
 	if (this->pUi->buttonPP->hasFocus()) return;
 
-	if (this->pStartCountDownFrame->isVisible()) {
+	if ((nullptr != this->pSurfaceOverlay)
+			&& this->pSurfaceOverlay->isVisible()) {
 
 		if (Qt::TabFocusReason == pEvent->reason()) this->window()->raise();
 		return;
@@ -393,11 +394,11 @@ void SurfaceGame::initCells() {
 } // initCells
 
 
-void SurfaceGame::onSCDFdone() {
+void SurfaceGame::onSurfaceOverlayDone() {
 
 	this->pUi->buttonPP->animateClick();
 
-} // onSCDFdone
+} // onSurfaceOverlayDone
 
 
 void SurfaceGame::initKeys() {
@@ -555,7 +556,7 @@ void SurfaceGame::on_buttonPP_toggled(bool bStartPlaying) {
 		// starting or resuming?
 
 		// no matter hide cover frame
-		if (this->pStartCountDownFrame) this->pStartCountDownFrame->hide();
+		if (this->pSurfaceOverlay) this->pSurfaceOverlay->hide();
 
 		// and give us focus for keystrokes
 		this->setFocus();
@@ -573,7 +574,7 @@ void SurfaceGame::on_buttonPP_toggled(bool bStartPlaying) {
 		this->onDebugMessage("pausing");
 
 		// going into paused state
-		this->showStartCountDownFrame(tr("Paused"), tr("Click To Resume"));
+		this->showSurfaceOverlay(tr("Paused"), tr("Click To Resume"));
 
 	} // starting/resuming or pausing
 
@@ -638,7 +639,7 @@ void SurfaceGame::onDoGameOver(const QString &sRanking) {
 	QString sMessage = tr("Game Done. Start a new one by clicking the 'Load New Game' button in the upper left.");
 
 	Q_EMIT this->statusMessage(sMessage);
-	this->showStartCountDownFrame(sRanking); //, sMessage);
+	this->showSurfaceOverlay(sRanking); //, sMessage);
 
 } // onDoGameOver
 
@@ -662,7 +663,7 @@ void SurfaceGame::onDoLevelDone() {
 	pButton->setText(sButton);
 
 	// show level done dialog
-	this->showStartCountDownFrame(sMessage, sButton);
+	this->showSurfaceOverlay(sMessage, sButton);
 
 	Q_EMIT this->statusMessage(sMessage);
 
@@ -676,7 +677,7 @@ void SurfaceGame::onDoLevelIsMissingSpawnPoints(const quint8 ubMissing) {
 
 	this->pUi->buttonPP->setEnabled(false);
 
-	this->showStartCountDownFrame(tr("Level Is Missing Spawn Points\nCan't be played with this many worms."));
+	this->showSurfaceOverlay(tr("Level Is Missing Spawn Points\nCan't be played with this many worms."));
 
 } // onDoLevelIsMissingSpawnPoints
 
@@ -687,7 +688,7 @@ void SurfaceGame::onDoLevelLoadError() {
 
 	this->pUi->buttonPP->setEnabled(false);
 
-	this->showStartCountDownFrame(tr("Error Loading Level."));
+	this->showSurfaceOverlay(tr("Error Loading Level."));
 
 } // onDoLevelLoadError
 
@@ -700,7 +701,7 @@ void SurfaceGame::onDoLevelStartCountdown() {
 
 	// open count-down dialog
 	QString sCount = QString::number(SssS_Nibblers_Game_Start_Countdown);
-	this->showStartCountDownFrame(sCount);
+	this->showSurfaceOverlay(sCount);
 
 	this->pUi->buttonPP->setText(sCount);
 	this->pUi->buttonPP->setEnabled(false);
@@ -749,7 +750,7 @@ void SurfaceGame::onLoadLevel(MapGame *pMap, const quint8 ubLevel) {
 
 	this->bLevelLoading = false;
 
-	this->showStartCountDownFrame(tr("Level Loaded"), tr("Click To Start"));
+	this->showSurfaceOverlay(tr("Level Loaded"), tr("Click To Start"));
 
 	Q_EMIT this->levelIsLoaded();
 
@@ -823,7 +824,7 @@ void SurfaceGame::onPlayerRelativeChanged(const quint8 ubWorm,
 
 void SurfaceGame::onQuitting() {
 
-	if (this->pStartCountDownFrame) this->pStartCountDownFrame->close();
+	if (this->pSurfaceOverlay) this->pSurfaceOverlay->close();
 
 } // onQuitting
 
@@ -969,8 +970,8 @@ void SurfaceGame::resizeDelayDone() {
 
 	} // loop
 
-	if (this->pStartCountDownFrame)
-		this->pStartCountDownFrame->setGeometry(this->pUi->frameSurface->geometry());
+	if (this->pSurfaceOverlay)
+		this->pSurfaceOverlay->setGeometry(this->pUi->frameSurface->geometry());
 
 } // resizeDelayDone
 
@@ -1027,22 +1028,22 @@ void SurfaceGame::setCellState(const quint8 ubColumn, const quint8 ubRow,
 } // setCellState
 
 
-void SurfaceGame::showStartCountDownFrame(const QString sMessage,
+void SurfaceGame::showSurfaceOverlay(const QString sMessage,
 										  const QString sButton) {
 
-	//this->onDebugMessage("showStartCountDownFrame");
+	//this->onDebugMessage("showSurfaceOverlay");
 
-	SurfaceOverlay *pFrame = this->pStartCountDownFrame;
+	SurfaceOverlay *pFrame = this->pSurfaceOverlay;
 	if (nullptr == pFrame) {
 
 		pFrame = new SurfaceOverlay(this);
-		this->pStartCountDownFrame = pFrame;
+		this->pSurfaceOverlay = pFrame;
 
 		connect(pFrame, SIGNAL(debugMessage(QString)),
 				this, SLOT(onDebugMessage(QString)));
 
 		connect(pFrame, SIGNAL(done()),
-				this, SLOT(onSCDFdone()));
+				this, SLOT(onSurfaceOverlayDone()));
 
 	} // if first time
 
@@ -1050,7 +1051,7 @@ void SurfaceGame::showStartCountDownFrame(const QString sMessage,
 	pFrame->show();
 	this->updateSurfaceOverlay();
 
-} // showStartCountDownFrame
+} // showSurfaceOverlay
 
 
 QSize SurfaceGame::sizeHint() const {
@@ -1062,7 +1063,7 @@ QSize SurfaceGame::sizeHint() const {
 
 void SurfaceGame::updateSurfaceOverlay() {
 
-	SurfaceOverlay *pFrame = this->pStartCountDownFrame;
+	SurfaceOverlay *pFrame = this->pSurfaceOverlay;
 	if (nullptr == pFrame) return;
 	if (pFrame->isHidden()) return;
 

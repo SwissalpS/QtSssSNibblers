@@ -71,7 +71,7 @@ protected:
 	QVector<QHash<QKeySequence, L::Heading>> ahKeys;
 	AppSettings *pAS;
 	DialogLoad *pDialogLoad;
-	SurfaceOverlay *pStartCountDownFrame;
+	SurfaceOverlay *pSurfaceOverlay;
 	qint8 ibWormMouse;
 	quint8 ubCurrentLevel;
 	mutable int iLastHeight;
@@ -99,7 +99,7 @@ protected:
 	virtual void setCellState(const quint8 ubColumn, const quint8 ubRow,
 							  const quint8 ubState, const bool bUpdate = true);
 
-	virtual void showStartCountDownFrame(const QString sMessage, const QString sButton = QString());
+	virtual void showSurfaceOverlay(const QString sMessage, const QString sButton = QString());
 	virtual void updateSurfaceOverlay();
 
 protected slots:
@@ -107,7 +107,7 @@ protected slots:
 	virtual void dialogLoadFinished(const int iResult);
 	virtual void initKeys();
 	virtual void initCells();
-	virtual void onSCDFdone();
+	virtual void onSurfaceOverlayDone();
 	virtual void resizeDelayDone();
 
 public:
