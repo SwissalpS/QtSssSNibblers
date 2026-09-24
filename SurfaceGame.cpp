@@ -394,13 +394,6 @@ void SurfaceGame::initCells() {
 } // initCells
 
 
-void SurfaceGame::onSurfaceOverlayDone() {
-
-	this->pUi->buttonPP->animateClick();
-
-} // onSurfaceOverlayDone
-
-
 void SurfaceGame::initKeys() {
 
 	//this->onDebugMessage("initKeys");
@@ -842,6 +835,13 @@ void SurfaceGame::onSpawnWorm(Worm *pWorm) {
 	pWorm->advanceTo(this->getCell(pWorm->nextPoint()));
 
 } // onSpawnWorm
+
+
+void SurfaceGame::onSurfaceOverlayDone() {
+
+	this->pUi->buttonPP->animateClick();
+
+} // onSurfaceOverlayDone
 
 
 void SurfaceGame::onWormAteBonus(Worm *pWorm) {
